@@ -34,6 +34,7 @@
         element-loading-text="Loading Server files"
         element-loading-spinner="el-icon-loading"
         element-loading-background="rgba(255, 255, 255, 0.8)"
+        :max-height="tableMaxHeight"
         style="width: 100%">
         <el-table-column type="expand">
           <template slot-scope="scope">
@@ -50,14 +51,23 @@
             </template>
         </el-table-column>        
 
-        <el-table-column prop="name" label="Name">
+        <el-table-column prop="name" label="Name" min-width="220">
             <template slot-scope="scope">
-                {{ scope.row.name }} <small v-if="scope.row.sfo?.readSFOHeader">(v{{ scope.row.sfo.APP_VER}})</small>
-                <el-tag size="small" :type="$helper.getAppStoreType(scope.row.sfo.CATEGORY)" style="margin-left: 10px; margin-bottom: 3px;" v-if="scope.row.sfo?.readSFOHeader">{{ scope.row.sfo.CATEGORY }}</el-tag>
-                
-                <div v-if="scope.row.sfo?.readSFOHeader">                
-                    <el-tag size="small" type="info"> {{ scope.row.sfo.CONTENT_ID}} </el-tag>
-                </div>
+                <template v-if="scope.row.sfo?.readSFOHeader && scope.row.sfo.TITLE">
+                    <div class="sfo-title">
+                        <span class="sfo-version-tag" v-if="scope.row.sfo.VERSION">[{{ scope.row.sfo.VERSION }}]</span>
+                        {{ scope.row.sfo.TITLE }}
+                    </div>
+                    <div class="sfo-subtitle">
+                        <span class="sfo-filename">{{ scope.row.name }}</span>
+                        <el-tag size="small" :type="$helper.getSfoCategoryLabel(scope.row.sfo.CATEGORY).color" class="sfo-category-tag" v-if="scope.row.sfo.CATEGORY">{{ $helper.getSfoCategoryLabel(scope.row.sfo.CATEGORY).label }}</el-tag>
+                        <el-tag size="small" type="info" class="sfo-contentid-tag"> {{ scope.row.sfo.CONTENT_ID }} </el-tag>
+                    </div>
+                </template>
+                <template v-else>
+                    {{ scope.row.name }}
+                    <small v-if="scope.row.sfo?.readSFOHeader">(v{{ scope.row.sfo.APP_VER }})</small>
+                </template>
             </template>
         </el-table-column>
 
@@ -128,7 +138,7 @@ export default {
         // files: [],
         debug: false,
         debugItemInRow: true,
-        
+
         showExtension: false,
         showCUSA: true,
         showVersion: false,
@@ -138,11 +148,18 @@ export default {
 
         app: null,
         http: null,
+        tableMaxHeight: 400,
     }},
 
     mounted(){
         // this.run()
         this.search = ''
+        this.$nextTick(() => { this.calcTableMaxHeight() })
+        window.addEventListener('resize', this.onResize)
+    },
+
+    beforeDestroy(){
+        window.removeEventListener('resize', this.onResize)
     },
 
     computed: {
@@ -349,7 +366,27 @@ export default {
             let cleaned = this.draggedServingFiles.filter( f => f.path != file.path )
             this.$store.dispatch('server/setDraggedFiles', cleaned)
             this.$root.track({ name: 'removeFileFromDraggedHandler', data: { name: 'Remove dragged File from List', value: file.name } })
-        }
+        },
+
+        calcTableMaxHeight(){
+            try {
+                const table = this.$el.querySelector('.el-table')
+                if(!table){
+                    this.tableMaxHeight = Math.max(300, window.innerHeight - 250)
+                    return
+                }
+                const rect = table.getBoundingClientRect()
+                const offsetTop = rect.top
+                this.tableMaxHeight = Math.max(300, window.innerHeight - offsetTop - 30)
+            }
+            catch(e){
+                this.tableMaxHeight = 400
+            }
+        },
+
+        onResize(){
+            this.calcTableMaxHeight()
+        },
 
     }
 }
@@ -363,12 +400,52 @@ export default {
 }
 
 .base_path_input_form {
-    width: 100%; 
-    margin-right: 10px; 
+    width: 100%;
+    margin-right: 10px;
     margin-bottom: 0px;
 }
 
 .base_path_input_form .el-form-item__content {
     line-height: 1;
+}
+
+.ServerView {
+    .sfo-title {
+        font-weight: 600;
+        font-size: 14px;
+        color: #303133;
+        line-height: 1.3;
+    }
+
+    .sfo-version-tag {
+        display: inline-block;
+        background-color: #ecf5ff;
+        color: #409eff;
+        padding: 0 4px;
+        border-radius: 3px;
+        font-size: 12px;
+        margin-right: 4px;
+    }
+
+    .sfo-subtitle {
+        margin-top: 3px;
+        font-size: 12px;
+        color: #909399;
+        line-height: 1.4;
+
+        .sfo-filename {
+            display: block;
+            word-break: break-all;
+        }
+
+        .sfo-category-tag {
+            margin-top: 2px;
+            margin-right: 4px;
+        }
+
+        .sfo-contentid-tag {
+            margin-top: 2px;
+        }
+    }
 }
 </style>

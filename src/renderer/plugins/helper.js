@@ -55,6 +55,22 @@ let helper = {
         return ''
     },
 
+    // Map SFO CATEGORY code to human-readable label and tag color
+    getSfoCategoryLabel(category=''){
+        const map = {
+            'gd':  { label: 'Game', color: 'success' },
+            'gp':  { label: 'Patch', color: 'primary' },
+            'ac':  { label: 'DLC', color: 'warning' },
+            'gda': { label: 'Extra Data', color: 'info' },
+            'la':  { label: 'App', color: 'danger' },
+        }
+
+        if(map[category])
+            return map[category]
+
+        return { label: category || '?', color: '' }
+    },
+
     getFileStatus(type=''){
         if(type == 'serving' || type == 'pause')
           return 'info'
@@ -127,6 +143,22 @@ let helper = {
         const i = Math.floor(Math.log(bytes) / Math.log(k));
 
         return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+    },
+
+    formatSpeed(sizeInBytes, percentage, restSeconds){
+        if(!sizeInBytes || !restSeconds || percentage <= 0 || percentage >= 100)
+            return ''
+
+        const remainingBytes = sizeInBytes * (100 - percentage) / 100
+        const bytesPerSecond = remainingBytes / restSeconds
+
+        if(bytesPerSecond < 1024)
+            return Math.round(bytesPerSecond) + ' B/s'
+
+        if(bytesPerSecond < 1024 * 1024)
+            return (bytesPerSecond / 1024).toFixed(1) + ' KB/s'
+
+        return (bytesPerSecond / (1024 * 1024)).toFixed(1) + ' MB/s'
     },    
 
     is(val, a=true, b=false, fb=false){

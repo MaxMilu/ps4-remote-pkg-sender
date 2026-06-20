@@ -174,6 +174,24 @@ let ps5 = {
 
         return this.send({ action: 'status', content_id: contentId })
     },
+
+    isInstalled(file){
+        const sfo = file.sfo || {}
+        const data = file.data || {}
+        const titleId = sfo.TITLE_ID || data.TITLE_ID || data.title_id || file.cusa || ''
+        const contentId = sfo.CONTENT_ID || data.CONTENT_ID || data.content_id || ''
+        const category = sfo.CATEGORY || data.CATEGORY || data.category || ''
+
+        if(!titleId || !category)
+            return Promise.reject(new Error('TITLE_ID and CATEGORY are required for installation detection'))
+
+        return this.send({
+            action: 'is_installed',
+            title_id: titleId,
+            content_id: contentId,
+            category
+        })
+    },
 }
 
 Vue.prototype.$ps5 = ps5

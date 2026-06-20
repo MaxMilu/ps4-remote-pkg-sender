@@ -11,6 +11,7 @@
             <el-dropdown-item icon="el-icon-refresh-left" command="resetAll">Reset Queue, Tasks and Installed</el-dropdown-item>
             <el-dropdown-item icon="el-icon-refresh-left" command="resetInstalled">Reset Installed</el-dropdown-item>
             <el-dropdown-item icon="el-icon-refresh-left" command="clearFinishedFiles">Remove finished files from Queue</el-dropdown-item>
+            <el-dropdown-item icon="el-icon-delete" command="clearInstalledFiles">Remove installed files from Queue</el-dropdown-item>
         </el-dropdown-menu>
         </el-dropdown>
 
@@ -41,6 +42,7 @@
     element-loading-text="Loading Server files"
     element-loading-spinner="el-icon-loading"
     element-loading-background="rgba(255, 255, 255, 0.8)"
+    :max-height="tableMaxHeight"
     style="width: 100%">
 
     <el-table-column type="expand">
@@ -90,14 +92,23 @@
         </template>
     </el-table-column>        
 
-    <el-table-column prop="name" label="Name">
+    <el-table-column prop="name" label="Name" min-width="220">
         <template slot-scope="scope">
-            {{ scope.row.name }} <small v-if="scope.row.sfo?.readSFOHeader">(v{{ scope.row.sfo.APP_VER}})</small>
-            <el-tag size="small" :type="$helper.getAppStoreType(scope.row.sfo.CATEGORY)" style="margin-left: 10px; margin-bottom: 3px;" v-if="scope.row.sfo?.readSFOHeader">{{ scope.row.sfo.CATEGORY }}</el-tag>
-            
-            <div v-if="scope.row.sfo?.readSFOHeader">                
-                <el-tag size="small" type="info"> {{ scope.row.sfo.CONTENT_ID}} </el-tag>
-            </div>
+            <template v-if="scope.row.sfo?.readSFOHeader && scope.row.sfo.TITLE">
+                <div class="sfo-title">
+                    <span class="sfo-version-tag" v-if="scope.row.sfo.VERSION">[{{ scope.row.sfo.VERSION }}]</span>
+                    {{ scope.row.sfo.TITLE }}
+                </div>
+                <div class="sfo-subtitle">
+                    <span class="sfo-filename">{{ scope.row.name }}</span>
+                    <el-tag size="small" :type="$helper.getSfoCategoryLabel(scope.row.sfo.CATEGORY).color" class="sfo-category-tag" v-if="scope.row.sfo.CATEGORY">{{ $helper.getSfoCategoryLabel(scope.row.sfo.CATEGORY).label }}</el-tag>
+                    <el-tag size="small" type="info" class="sfo-contentid-tag"> {{ scope.row.sfo.CONTENT_ID }} </el-tag>
+                </div>
+            </template>
+            <template v-else>
+                {{ scope.row.name }}
+                <small v-if="scope.row.sfo?.readSFOHeader">(v{{ scope.row.sfo.APP_VER }})</small>
+            </template>
         </template>
     </el-table-column>
 
@@ -111,11 +122,21 @@
 
     <el-table-column prop="task" label="Task" width="105" v-if="showTask && !isPS5"></el-table-column>
     <el-table-column prop="cusa" label="CUSA" width="100" v-if="showCUSA"></el-table-column>
-    <el-table-column prop="cusa" label="Version" width="100" v-if="showVersion"></el-table-column>
+    <el-table-column label="Version" width="90" v-if="showVersion">
+        <template slot-scope="scope">
+            <el-tag size="small" type="info" v-if="scope.row.sfo?.VERSION">{{ scope.row.sfo.VERSION }}</el-tag>
+            <span v-else>-</span>
+        </template>
+    </el-table-column>
 
     <el-table-column prop="rest" label="Rest" width="150" align="center" v-if="!isPS5 || isSingleDPI">
         <template slot-scope="scope">
-            <el-tag size="small" plain v-if="scope.row.rest && scope.row.rest != 0"> {{ $helper.secondsToString(scope.row.rest) }} </el-tag>
+            <template v-if="scope.row.rest && scope.row.rest != 0">
+                <div>{{ $helper.secondsToString(scope.row.rest) }}</div>
+                <div class="speed-estimate" v-if="scope.row.percentage > 0 && scope.row.sizeInBytes">
+                    ~{{ $helper.formatSpeed(scope.row.sizeInBytes, scope.row.percentage, scope.row.rest) }}
+                </div>
+            </template>
         </template>
     </el-table-column>
 
@@ -180,10 +201,17 @@ export default {
         ints: [],
         queueNextTimer: null,
         search: '',
+        tableMaxHeight: 400,
     }},
 
     mounted(){
         this.search = ''
+        this.$nextTick(() => { this.calcTableMaxHeight() })
+        window.addEventListener('resize', this.onResize)
+    },
+
+    beforeDestroy(){
+        window.removeEventListener('resize', this.onResize)
     },
 
     computed: {
@@ -266,6 +294,28 @@ export default {
         },
 
         isInstalled(file){
+            if(this.isSingleDPI){
+                return this.$ps5.isInstalled(file)
+                    .then(data => {
+                        if(!data || data.res !== 0)
+                            throw new Error(data && data.error ? data.error : 'Invalid singleDPI response')
+
+                        if(data.exists)
+                            file.status = 'installed'
+
+                        const message = data.exists
+                            ? 'Already installed on your PS5.'
+                            : 'Not detected on your PS5.'
+                        const type = data.exists ? 'warning' : 'success'
+                        this.log(message, data)
+                        this.$message({ message, type })
+                    })
+                    .catch(e => {
+                        console.log(e)
+                        this.$message({ message: e.message || String(e), type: 'error' })
+                    })
+            }
+
             if( this.isPS5 )
                 return this.$message({ message: "'Is Installed' feature is not implemented for PS5 yet", type: "info" })                
 
@@ -777,6 +827,13 @@ export default {
             this.$root.track({ name: 'clearFinishedFiles', data: { name: 'Clear finished Files' } })
         },
 
+        clearInstalledFiles(){
+            this.queueFiles
+                .filter(file => file.status && file.status.startsWith('installed'))
+                .map(file => this.removeFromQueue(file))
+            this.$root.track({ name: 'clearInstalledFiles', data: { name: 'Clear installed Files' } })
+        },
+
         removeFromQueue(file){
                 this.clearInterval(file)
                 let servingFile = this.$store.getters['server/findFile'](file)                 
@@ -918,6 +975,74 @@ export default {
             }
         },
 
+        calcTableMaxHeight(){
+            try {
+                const table = this.$el.querySelector('.el-table')
+                if(!table){
+                    this.tableMaxHeight = Math.max(300, window.innerHeight - 250)
+                    return
+                }
+                const rect = table.getBoundingClientRect()
+                const offsetTop = rect.top
+                this.tableMaxHeight = Math.max(300, window.innerHeight - offsetTop - 30)
+            }
+            catch(e){
+                this.tableMaxHeight = 400
+            }
+        },
+
+        onResize(){
+            this.calcTableMaxHeight()
+        },
+
     }
 }
 </script>
+
+<style lang="scss" scoped>
+.ProcessView {
+    .sfo-title {
+        font-weight: 600;
+        font-size: 14px;
+        color: #303133;
+        line-height: 1.3;
+    }
+
+    .sfo-version-tag {
+        display: inline-block;
+        background-color: #ecf5ff;
+        color: #409eff;
+        padding: 0 4px;
+        border-radius: 3px;
+        font-size: 12px;
+        margin-right: 4px;
+    }
+
+    .sfo-subtitle {
+        margin-top: 3px;
+        font-size: 12px;
+        color: #909399;
+        line-height: 1.4;
+
+        .sfo-filename {
+            display: block;
+            word-break: break-all;
+        }
+
+        .sfo-category-tag {
+            margin-top: 2px;
+            margin-right: 4px;
+        }
+
+        .sfo-contentid-tag {
+            margin-top: 2px;
+        }
+    }
+
+    .speed-estimate {
+        font-size: 11px;
+        color: #909399;
+        margin-top: 2px;
+    }
+}
+</style>

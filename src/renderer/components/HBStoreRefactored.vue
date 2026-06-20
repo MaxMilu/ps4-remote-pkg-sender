@@ -237,6 +237,28 @@ export default {
         },
 
         isInstalled(file){
+            if(this.$store.getters['app/isSingleDPI']){
+                return this.$ps5.isInstalled(file)
+                    .then(data => {
+                        if(!data || data.res !== 0)
+                            throw new Error(data && data.error ? data.error : 'Invalid singleDPI response')
+
+                        if(data.exists)
+                            file.status = 'installed'
+
+                        const message = data.exists
+                            ? 'Already installed on your PS5.'
+                            : 'Not detected on your PS5.'
+                        const type = data.exists ? 'warning' : 'success'
+                        this.log(message, data)
+                        this.$message({ message, type })
+                    })
+                    .catch(e => {
+                        console.log(e)
+                        this.$message({ message: e.message || String(e), type: 'error' })
+                    })
+            }
+
             if( this.$store.getters['app/isPS5'] )
                 return this.$message({ message: "'Is Installed' feature is not implemented for PS5 yet", type: "info" })                
 
