@@ -113,7 +113,7 @@
     <el-table-column prop="cusa" label="CUSA" width="100" v-if="showCUSA"></el-table-column>
     <el-table-column prop="cusa" label="Version" width="100" v-if="showVersion"></el-table-column>
 
-    <el-table-column prop="rest" label="Rest" width="150" align="center" v-if="!isPS5">
+    <el-table-column prop="rest" label="Rest" width="150" align="center" v-if="!isPS5 || isSingleDPI">
         <template slot-scope="scope">
             <el-tag size="small" plain v-if="scope.row.rest && scope.row.rest != 0"> {{ $helper.secondsToString(scope.row.rest) }} </el-tag>
         </template>
@@ -131,7 +131,7 @@
         </template>
     </el-table-column>
 
-    <el-table-column label="Progress" width="100px" v-if="showPercentage && !isPS5">
+    <el-table-column label="Progress" width="100px" v-if="showPercentage && (!isPS5 || isSingleDPI)">
         <template slot-scope="scope">
             <el-progress :stroke-width="25" :percentage="scope.row.percentage" :text-inside="true" stroke-linecap="square"></el-progress>
         </template>
@@ -178,6 +178,7 @@ export default {
         showExtension: false,
         showDebugInRow: false,
         ints: [],
+        queueNextTimer: null,
         search: '',
     }},
 
@@ -197,9 +198,12 @@ export default {
         installedFiles: sync('queue/installed'),
         ps4ip: get('app/getPS4IP'),
         updateInterval: get('app/ps4.update'),
+        singleDPIQueueMode: get('app/ps4.singleDPI_queue_mode'),
+        singleDPIQueueDelaySeconds: get('app/ps4.singleDPI_queue_delay_seconds'),
         queueScanner: get('app/server.enableQueueScanner'),
         notify: get('app/config.enableSystemNotifications'),
         isPS5: get('app/isPS5'),
+        isSingleDPI: get('app/isSingleDPI'),
         sfoEnabled: get('app/getReadSFOHeader'),
         getPS4TargetApp: get('app/getPS4TargetApp'),
         files(){ 
@@ -292,13 +296,23 @@ export default {
                         this.log(data)
 
                         // validate install response 
-                        if( data && data.res ){
-                            // set the state here 
-                            this.setStatus(file, "Sent to PS5")         
+                        if(data && Object.prototype.hasOwnProperty.call(data, 'res')){
                             let code = parseInt(data.res)                        
 
                             // success
                             if( code == 0 ){
+                                if(this.isSingleDPI){
+                                    this.setStatus(file, 'installing')
+
+                                    if(data.content_id){
+                                        this.setTask(file, data.content_id)
+                                        this.startInterval(file)
+                                    }
+                                }
+                                else {
+                                    this.setStatus(file, "Sent to PS5")
+                                }
+
                                 this.log(file.name + ' install request successfull', file.url)
                                 return this.$message({ 
                                     dangerouslyUseHTMLString: true,
@@ -474,6 +488,57 @@ export default {
         },
 
         info(file){
+            if(this.isSingleDPI){
+                // A final status response can overlap with another in-flight poll.
+                // Once a task is finalized, ignore late responses so the queue is
+                // advanced exactly once.
+                if(['finish', 'installed'].includes(file.status))
+                    return
+
+                return this.$ps5.status(file.task)
+                    .then(data => {
+                        if(!data || data.res !== 0){
+                            this.log(file.name + ' singleDPI status failed', data)
+                            return
+                        }
+
+                        const downloadProgress = Number(data.progress || 0)
+                        const promoteProgress = Number(data.promote_progress || 0)
+                        const progress = data.status == 'promoting'
+                            ? promoteProgress
+                            : downloadProgress
+
+                        file.percentage = Math.max(0, Math.min(100, Math.round(progress)))
+                        file.rest = Number(data.remain_time || 0)
+                        file.status = data.status || 'installing'
+                        file.logs.unshift(data)
+
+                        if(Number(data.error_code || 0) !== 0){
+                            this.clearInterval(file)
+                            file.status = 'error'
+                            this.log(file.name + ' singleDPI install error', data)
+                            return
+                        }
+
+                        if(['playable', 'completed', 'installed'].includes(data.status)){
+                            this.clearInterval(file)
+                            file.percentage = 100
+                            file.rest = 0
+                            this.setStatus(file, 'finish')
+                            this.fileInstalled(file, 'installed')
+                            this.log(file.name + ' finished', data)
+                            return
+                        }
+
+                        this.log(file.name + ' singleDPI status', data)
+                    })
+                    .catch(e => {
+                        this.clearInterval(file)
+                        this.log(file.name + ' singleDPI status request failed', e)
+                        console.log(e)
+                    })
+            }
+
             this.$ps4.getTask(file)
                 .then( ({ data }) => {
                     console.log(file.name + " get task info ", data)
@@ -579,6 +644,7 @@ export default {
 
         clearInterval(file){
             clearInterval(this.ints[file.patchedFilename])
+            delete this.ints[file.patchedFilename]
         },
 
         setStatus(file, status){
@@ -613,7 +679,41 @@ export default {
 
             // queue scanner hook
             if(this.queueScanner)
+                this.scheduleQueueScannerNextItem()
+        },
+
+        scheduleQueueScannerNextItem(){
+            if(this.queueNextTimer){
+                clearTimeout(this.queueNextTimer)
+                this.queueNextTimer = null
+            }
+
+            // Do not wait after the final item just to report an empty queue.
+            if(!this.queueFiles.some(file => file.status == 'in queue')){
                 this.handleQueueScannerNextItem()
+                return
+            }
+
+            const configuredDelay = this.singleDPIQueueMode == 'delay'
+                ? Number(this.singleDPIQueueDelaySeconds || 0)
+                : 0
+            const delaySeconds = Math.max(0, Math.min(3600, configuredDelay))
+
+            if(!this.isSingleDPI || delaySeconds == 0){
+                this.handleQueueScannerNextItem()
+                return
+            }
+
+            this.$message({
+                type: 'info',
+                message: `Next queue item will start in ${delaySeconds} seconds`
+            })
+
+            this.queueNextTimer = setTimeout(() => {
+                this.queueNextTimer = null
+                if(this.queueScanner)
+                    this.handleQueueScannerNextItem()
+            }, delaySeconds * 1000)
         },
 
         getRandomInt(max) {
@@ -629,6 +729,10 @@ export default {
                     center: true,
                     })
                     .then(() => {
+                        if(this.queueNextTimer){
+                            clearTimeout(this.queueNextTimer)
+                            this.queueNextTimer = null
+                        }
                         this.ints.map( i => clearInterval(i) )
                         this.servingFiles.map( file => file.status = 'serving')
                         this.draggedServingFiles.map( file => file.status = 'serving')
@@ -698,11 +802,24 @@ export default {
         },
 
         toggleQueueScanner(){
+            const wasEnabled = this.queueScanner
             this.$store.dispatch('app/toggleQueueScanner')
+
+            if(wasEnabled && this.queueNextTimer){
+                clearTimeout(this.queueNextTimer)
+                this.queueNextTimer = null
+            }
+
             this.$root.track({ name: 'QueueScanner.toggle', data: { name: 'Toggle QueueScanner', value: this.queueScanner } })
         },
 
         async handleQueueScannerNextItem(){
+            // Clicking Autostart during a configured delay means "start now".
+            if(this.queueNextTimer){
+                clearTimeout(this.queueNextTimer)
+                this.queueNextTimer = null
+            }
+
             let findNextFile = this.queueFiles.filter( f => f.status == 'in queue')
             console.log(findNextFile, findNextFile.length)
 
@@ -713,8 +830,10 @@ export default {
                     message: 'There are no items to be installed in the queue'
                 });          
 
-            // handle ps5 bulk action
-            if( this.isPS5 )
+            // Legacy etaHEN has no task progress API, so retain its bulk mode.
+            // singleDPI reports completion and must advance strictly one item at
+            // a time through fileInstalled(). Mixing both paths duplicates jobs.
+            if(this.isPS5 && !this.isSingleDPI)
                 return await this.handleQueueScannerNextItemPS5(findNextFile)
 
             // we have a file in the queue

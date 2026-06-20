@@ -9,6 +9,7 @@
     "build": "electron-webpack && electron-builder --dir",
     "build:mac": "electron-webpack && electron-builder --mac",
     "build:win": "electron-webpack && electron-builder --win",
+    "build:win:x64": "electron-webpack && electron-builder --win zip portable --x64",
     "build:linux": "electron-webpack && electron-builder --linux",
     "build:all": "electron-webpack && electron-builder -mwl",
     "dist": "electron-webpack && electron-builder --dir",

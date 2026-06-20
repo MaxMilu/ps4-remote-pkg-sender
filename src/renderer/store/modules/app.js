@@ -39,7 +39,10 @@ export const state = {
         port_rpiOOP: 12800,
         port_ftp: 2121,
         port_etaHEN: 9090,
+        port_singleDPI: 9090,
         port_goldhen: 9090,
+        singleDPI_queue_mode: 'immediate',
+        singleDPI_queue_delay_seconds: 5,
         timeout: 2500,
         update: 2200,
     },
@@ -80,6 +83,11 @@ export const mutations = {
             port_rpi: 12800,
             port_rpiOOP: 12800,
             port_ftp: 2121,
+            port_etaHEN: 9090,
+            port_singleDPI: 9090,
+            port_goldhen: 9090,
+            singleDPI_queue_mode: 'immediate',
+            singleDPI_queue_delay_seconds: 5,
             timeout: 2500,
             update: 2200,
         }
@@ -147,7 +155,11 @@ export const getters = {
     ...make.getters(state),
 
     isPS5(state){
-            return state.ps4.app == 'etaHEN'
+            return ['etaHEN', 'singleDPI'].includes(state.ps4.app)
+    },
+
+    isSingleDPI(state){
+            return state.ps4.app == 'singleDPI'
     },
 
     getPS4TargetApp(state){

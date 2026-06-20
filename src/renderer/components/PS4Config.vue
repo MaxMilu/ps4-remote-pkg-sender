@@ -56,6 +56,25 @@
           </el-col>
       </el-row>
 
+      <el-row :gutter="20" v-if="ps4.app == 'singleDPI'">
+          <el-col :span="10">
+              <el-form-item label="Next Queue Item">
+                  <el-radio-group v-model="ps4.singleDPI_queue_mode" size="mini">
+                      <el-radio-button label="immediate">Immediately</el-radio-button>
+                      <el-radio-button label="delay">Delay</el-radio-button>
+                  </el-radio-group>
+              </el-form-item>
+          </el-col>
+
+          <el-col :span="10" v-if="ps4.singleDPI_queue_mode == 'delay'">
+              <el-form-item label="Queue Delay">
+                  <el-input-number v-model="ps4.singleDPI_queue_delay_seconds"
+                                   :min="1" :max="3600" :step="1" />
+                  <span style="margin-left: 8px">seconds</span>
+              </el-form-item>
+          </el-col>
+      </el-row>
+
       <el-row :gutter="20">
           <el-col :span="10">
               <p style="font-style: italic; font-size: 13px; color: #888">
@@ -87,12 +106,23 @@ export default {
         ps4Apps: [
             { value: 'PS4 RPI (flatZ)', key: 'rpi', disabled: false },
             { value: 'PS4 RPI (OOP)', key: 'rpiOOP', disabled: false },
+            { value: 'PS5 singleDPI', key: 'singleDPI', disabled: false },
             { value: 'PS4 GoldHEN', key: 'goldhen', disabled: false },
             { value: 'PS5 etaHEN', key: 'etaHEN', disabled: false },
             { value: 'PS4 IPI', key: 'ipi', disabled: true },
             { value: 'PS4 HB-Store', key: 'hbstore', disabled: true },
         ]
     }},
+
+    mounted(){
+        if(this.ps4.app == 'singleDPI'){
+            if(!['immediate', 'delay'].includes(this.ps4.singleDPI_queue_mode))
+                this.ps4.singleDPI_queue_mode = 'immediate'
+
+            if(!Number(this.ps4.singleDPI_queue_delay_seconds))
+                this.ps4.singleDPI_queue_delay_seconds = 5
+        }
+    },
 
     computed: {
         ps4: sync('app/ps4'),
@@ -113,6 +143,17 @@ export default {
                 this.server.enableQueueScanner = false
             }
 
+            if(val == 'singleDPI'){
+                this.ps4.port = this.ps4.port_singleDPI ?? 9090
+                this.server.readSFOHeader = true
+
+                if(!['immediate', 'delay'].includes(this.ps4.singleDPI_queue_mode))
+                    this.ps4.singleDPI_queue_mode = 'immediate'
+
+                if(!Number(this.ps4.singleDPI_queue_delay_seconds))
+                    this.ps4.singleDPI_queue_delay_seconds = 5
+            }
+
             if(val == 'goldhen'){
                 this.ps4.port = this.ps4.port_goldhen ?? 9090
                 this.server.enableQueueScanner = false     
@@ -125,10 +166,15 @@ export default {
             if(this.ps4.app == 'rpiOOP')
               this.ps4.port_rpiOOP = this.ps4.port
 
+            if(this.ps4.app == 'singleDPI')
+              this.ps4.port_singleDPI = this.ps4.port
+
             this.save()
         },
         'ps4.timeout'(){ this.save() },
         'ps4.updateInterval'(){ this.save() },
+        'ps4.singleDPI_queue_mode'(){ this.save() },
+        'ps4.singleDPI_queue_delay_seconds'(){ this.save() },
     },
 
     methods: {

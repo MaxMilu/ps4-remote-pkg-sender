@@ -1,4 +1,23 @@
 # PS4 Remote PKG Sender v2  
+
+## 本 Fork 当前修改
+
+本分支在原项目的 PS5 etaHEN 支持基础上增加了以下功能：
+
+- 增加 PS5 `singleDPI` 目标，通过 TCP 9090 API 连接独立的 Direct Package Installer payload。
+- 发送 PKG 时同时传递标题、Content ID 和图标地址，并轮询显示下载、安装与 Promote 进度。
+- 修复 singleDPI 队列完成后仍弹窗确认并导致条目重复安装的问题；队列现在严格逐项执行。
+- 队列可选择上一项完成后立即安装下一项，或等待自定义秒数后继续。
+- 保留原有 PS5 etaHEN 和 PS4 安装模式，不改变其既有发送方式。
+- 增加仅构建 Windows x64 版本的命令，避免旧依赖在 ia32 构建阶段要求 Python：
+
+```powershell
+npm run build:win:x64
+```
+
+使用 singleDPI 前，需要先在 PS5 上加载与系统版本匹配的 kstuff 或 kstuff-lite，
+然后加载 `singleDPI.elf`，并在应用配置中选择 `PS5 singleDPI`。
+
 [![ko-fi](https://img.shields.io/badge/Buy%20me%20a%20Shisha%20on-Ko--fi-red)](https://ko-fi.com/M4M082WK8)
 [![os](https://img.shields.io/badge/platform-windows%20%7C%20macos%20%7C%20linux-lightgrey)](https://github.com/Gkiokan/ps4-remote-pkg-sender)
 [![commits_since_release](https://img.shields.io/github/commits-since/gkiokan/ps4-remote-pkg-sender/v2.10.4)](https://github.com/Gkiokan/ps4-remote-pkg-sender/releases)
