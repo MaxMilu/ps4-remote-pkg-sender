@@ -71,7 +71,54 @@ let helper = {
         return { label: category || '?', color: '' }
     },
 
+    matchesFileSearch(file={}, query=''){
+        const terms = String(query).trim().toLowerCase().split(/\s+/).filter(Boolean)
+        if(!terms.length)
+          return true
+
+        const sfo = file.sfo || {}
+        const data = file.data || {}
+        const category = String(sfo.CATEGORY || data.CATEGORY || data.category || '').toLowerCase()
+        const categoryAliases = {
+            gd: ['game', 'base game'],
+            gp: ['patch', 'update'],
+            ac: ['dlc', 'add-on', 'addon'],
+            gda: ['extra data'],
+            la: ['app', 'application'],
+        }
+        const categoryLabel = this.getSfoCategoryLabel(category).label
+        const fields = [
+            file.name,
+            file.patchedFilename,
+            file.title,
+            sfo.TITLE,
+            data.TITLE,
+            data.title,
+            file.cusa,
+            sfo.TITLE_ID,
+            sfo.CONTENT_ID,
+            data.TITLE_ID,
+            data.title_id,
+            data.CONTENT_ID,
+            data.content_id,
+            category,
+            categoryLabel,
+            ...(categoryAliases[category] || []),
+            file.status,
+            file.type,
+        ]
+        const searchableText = fields
+            .filter(value => value !== undefined && value !== null)
+            .map(value => String(value).toLowerCase())
+            .join('\n')
+
+        return terms.every(term => searchableText.includes(term))
+    },
+
     getFileStatus(type=''){
+        if(type == 'error')
+          return 'danger'
+
         if(type.startsWith('installed'))
           return 'success'
 

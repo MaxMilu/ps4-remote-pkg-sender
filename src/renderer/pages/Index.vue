@@ -27,8 +27,20 @@
         <el-button size="small" icon="el-icon-link" @click="openAddFileDialog" v-if="app.config.enableExternalLinks"> Add URL</el-button>
 
         <el-button size="small" icon="el-icon-sync" :type="queueScanner ? 'success active' : ' active'" @click="toggleQueueScanner"> Queue Scanner</el-button>
-        <el-button size="small" icon="fa fa-play" @click="handleQueueScannerNextItem" v-if="queueScanner"> Autostart</el-button>
+        <el-button size="small"
+            :type="queueAutoRunning ? 'danger' : ''"
+            :icon="queueAutoRunning ? 'fa fa-stop' : 'fa fa-play'"
+            @click="toggleQueueAutostart"
+            v-if="queueScanner">
+          {{ queueAutoRunning ? 'Stop' : 'Autostart' }}
+        </el-button>
         <el-checkbox v-model="skipInstalledQueueItems" v-if="queueScanner" style="margin-left: 10px"> Skip Installed</el-checkbox>
+
+        <span class="queue_stats">
+          <el-tag size="small" type="info">Total {{ queueStats.total }}</el-tag>
+          <el-tag size="small" type="success">Installed {{ queueStats.installed }}</el-tag>
+          <el-tag size="small" type="danger">Failed {{ queueStats.failed }}</el-tag>
+        </span>
 
         <el-button size="small" @click="test" v-if="false">Test</el-button>
       </el-col>
@@ -43,7 +55,9 @@
         element-loading-spinner="el-icon-loading"
         element-loading-background="rgba(255, 255, 255, 0.8)"
         :max-height="tableMaxHeight"
-        style="width: 100%">
+    style="width: 100%">
+
+      <el-table-column type="index" label="#" width="55" align="center"></el-table-column>
 
       <el-table-column type="expand">
         <template slot-scope="scope">
@@ -187,9 +201,13 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="status" label="Status" width="120" align="center">
+      <el-table-column prop="status" label="Status" width="140" align="center">
         <template slot-scope="scope">
-          <el-tag size="small" plain :type="$helper.getFileStatus(scope.row.status)">
+          <span class="status-tags" v-if="scope.row.status == 'installed + skipped'">
+            <el-tag size="mini" plain type="success">Installed</el-tag>
+            <el-tag size="mini" plain type="info">Skipped</el-tag>
+          </span>
+          <el-tag v-else size="small" plain :type="$helper.getFileStatus(scope.row.status)">
             <i class="el-icon-loading" v-if="scope.row.status == 'installing'"/> {{ scope.row.status }}
           </el-tag>
         </template>
@@ -203,7 +221,10 @@
 
       <el-table-column label="Progress" width="140" align="center" v-if="showPercentage">
         <template slot-scope="scope">
-          <el-progress :stroke-width="25" :percentage="scope.row.percentage" :text-inside="true" stroke-linecap="square"></el-progress>
+          <div class="progress-display">
+            <el-progress :stroke-width="25" :percentage="scope.row.percentage" :show-text="false" stroke-linecap="square"></el-progress>
+            <span class="progress-percentage">{{ scope.row.percentage }}%</span>
+          </div>
           <div class="progress-meta" v-if="scope.row.rest && scope.row.rest != 0">
             <span>{{ $helper.secondsToString(scope.row.rest) }}</span>
             <span v-if="scope.row.percentage > 0 && scope.row.sizeInBytes">
@@ -219,7 +240,11 @@
 
           <el-button circle size="small" icon="fa fa-info" @click="info(scope.row)" v-if="false"></el-button>
           <el-button circle size="small" icon="fa fa-stop" @click="stop(scope.row)" v-if="false"></el-button>
-          <el-button circle size="small" icon="fa fa-play" v-if="scope.row.status != 'installing'" @click="start(scope.row)"></el-button>
+          <el-button circle size="small" icon="fa fa-play" v-if="scope.row.status != 'installing' && !(isSingleDPI && scope.row.status == 'error')" @click="start(scope.row)"></el-button>
+          <el-button circle size="small" type="danger" icon="el-icon-refresh-right"
+              title="Retry failed installation"
+              v-if="isSingleDPI && scope.row.status == 'error'"
+              @click="retryFailedInstall(scope.row)"></el-button>
           <el-button circle size="small" icon="fa fa-pause" v-if="scope.row.status == 'installing'" @click="pause(scope.row)"></el-button>
 
           <el-button circle size="small" icon="fab fa-playstation" @click="isInstalled(scope.row)"/>
@@ -255,6 +280,8 @@ export default {
       showExtension: false,
       showDebugInRow: false,
       ints: [],
+      queueAutoRunning: false,
+      queueSkippedInstalledCount: 0,
       queueNextTimer: null,
       search: '',
       tableMaxHeight: 400,
@@ -296,16 +323,22 @@ export default {
     sfoEnabled: get('app/getReadSFOHeader'),
     getPS4TargetApp: get('app/getPS4TargetApp'),
     files() {
-      let search = this.search.toLowerCase()
+      return this.queueFiles.filter(file => this.$helper.matchesFileSearch(file, this.search))
+    },
+    queueStats() {
+      const installedKeys = new Set(this.installedFiles.map(file => file.path || file.name))
+      const installed = this.queueFiles.filter(file => {
+        const status = String(file.status || '')
+        return installedKeys.has(file.path || file.name) ||
+            status == 'finish' || status.startsWith('installed')
+      }).length
+      const failed = this.queueFiles.filter(file => file.status == 'error').length
 
-      if (search.length != 0)
-        return this.queueFiles.filter(file =>
-            file.name.toLowerCase().includes(search) ||
-            file.cusa.toLowerCase().includes(search) ||
-            file.status.toLowerCase().includes(search)
-        )
-
-      return this.queueFiles
+      return {
+        total: this.queueFiles.length,
+        installed,
+        failed,
+      }
     },
     finishedFiles() {
       return this.queueFiles.filter(file => ['finish', 'Sent to PS5'].includes(file.status))
@@ -449,6 +482,11 @@ export default {
                   })
                 }
 
+                if (this.isSingleDPI) {
+                  this.clearInterval(file)
+                  this.setStatus(file, 'error')
+                }
+
                 if (code == -2135809020) {
                   this.log(file.name + ' file at URL not found', file.url)
                   return this.$message({
@@ -465,13 +503,19 @@ export default {
                   type: "info"
                 })
               } else {
+                if (this.isSingleDPI) {
+                  this.clearInterval(file)
+                  this.setStatus(file, 'error')
+                }
                 this.$message({message: `Unknown Response. Please check Logs.`, type: "warning"})
               }
             })
             .catch(e => {
               console.log(e)
               this.log(e)
-              this.$message({message: e, type: 'error'})
+              this.clearInterval(file)
+              this.setStatus(file, 'error')
+              this.$message({message: e.message || String(e), type: 'error'})
             })
       }
 
@@ -487,6 +531,9 @@ export default {
             .catch(e => {
               console.error("GoldHEN Error")
               console.log(e)
+              this.setStatus(file, 'error')
+              this.log(file.name + ' GoldHEN install failed', e, 'error')
+              this.$message({message: e.message || String(e), type: 'error'})
             })
       }
 
@@ -525,6 +572,8 @@ export default {
             } else {
               console.log(file.name + " error on install", data)
               this.log(file.name + " error on install", data)
+              this.setStatus(file, 'error')
+              this.$message({message: file.name + ' installation failed.', type: 'error'})
               this.$root.track({name: 'install.error', data: {name: 'Install Request failed', value: file.name}})
               // 2157510677 error on double install?
               // 2157510663 already installed?
@@ -537,9 +586,22 @@ export default {
             console.log(e)
             this.log("Install error", e, 'error')
 
-            if (e.status == 'fail' && e.error_code)
-              this.handleStartInstallError(file, e)
+            if (e.status == 'fail' && e.error_code && this.handleStartInstallError(file, e))
+              return
+
+            this.setStatus(file, 'error')
+            this.$message({message: e.message || String(e), type: 'error'})
           })
+    },
+
+    async retryFailedInstall(file) {
+      this.clearInterval(file)
+      this.setTask(file, '')
+      file.percentage = 0
+      file.rest = 0
+      this.setStatus(file, 'in queue')
+      this.log(file.name + ' retry failed singleDPI installation')
+      await this.start(file)
     },
 
     stop(file) {
@@ -802,11 +864,14 @@ export default {
 
 
       // queue scanner hook
-      if (this.queueScanner)
+      if (this.queueScanner && this.queueAutoRunning)
         this.scheduleQueueScannerNextItem()
     },
 
     scheduleQueueScannerNextItem() {
+      if (!this.queueAutoRunning)
+        return
+
       if (this.queueNextTimer) {
         clearTimeout(this.queueNextTimer)
         this.queueNextTimer = null
@@ -835,7 +900,7 @@ export default {
 
       this.queueNextTimer = setTimeout(() => {
         this.queueNextTimer = null
-        if (this.queueScanner)
+        if (this.queueScanner && this.queueAutoRunning)
           this.handleQueueScannerNextItem()
       }, delaySeconds * 1000)
     },
@@ -877,10 +942,7 @@ export default {
             center: true,
           })
           .then(() => {
-            if (this.queueNextTimer) {
-              clearTimeout(this.queueNextTimer)
-              this.queueNextTimer = null
-            }
+            this.stopQueueAutostart(false)
             this.ints.map(i => clearInterval(i))
             this.servingFiles.map(file => file.status = 'serving')
             this.draggedServingFiles.map(file => file.status = 'serving')
@@ -902,22 +964,38 @@ export default {
     },
 
     resetInstalled() {
-      console.log(this.servingFiles)
+      const getFileKey = file => file.path || file.name
+      const installedKeys = new Set(this.installedFiles.map(getFileKey))
+      const isInstalledFile = file => {
+        const status = String(file.status || '')
+        return installedKeys.has(getFileKey(file)) ||
+            status == 'finish' || status == 'Sent to PS5' || status.startsWith('installed')
+      }
+      const filesToReset = this.queueFiles.filter(isInstalledFile)
+      const resetKeys = new Set(filesToReset.map(getFileKey))
 
-      this.queueFiles
-          .filter(file => ['installed', 'Sent to PS5'].includes(file.status))
-          .map(file => file.status = 'in queue')
+      filesToReset.forEach(file => {
+        this.clearInterval(file)
+        file.status = 'in queue'
+        file.task = ''
+        file.percentage = 0
+        file.rest = 0
+      })
 
       this.servingFiles
-          .filter(file => ['installed', 'Sent to PS5'].includes(file.status))
-          .map(file => file.status = 'serving')
+          .filter(file => resetKeys.has(getFileKey(file)))
+          .forEach(file => file.status = 'in queue')
 
       this.draggedServingFiles
-          .filter(file => ['installed', 'Sent to PS5'].includes(file.status))
-          .map(file => file.status = 'serving')
+          .filter(file => resetKeys.has(getFileKey(file)))
+          .forEach(file => file.status = 'in queue')
 
       this.$store.dispatch('queue/setInstalled', [])
       this.$root.track({name: 'resetInstalled', data: {name: 'Reset installed Files'}})
+      this.$message({
+        type: 'success',
+        message: `Reset ${filesToReset.length} installed item(s) to the queue.`
+      })
     },
 
     clearFinishedFiles() {
@@ -960,15 +1038,38 @@ export default {
       const wasEnabled = this.queueScanner
       this.$store.dispatch('app/toggleQueueScanner')
 
-      if (wasEnabled && this.queueNextTimer) {
-        clearTimeout(this.queueNextTimer)
-        this.queueNextTimer = null
-      }
+      if (wasEnabled)
+        this.stopQueueAutostart(false)
 
       this.$root.track({name: 'QueueScanner.toggle', data: {name: 'Toggle QueueScanner', value: this.queueScanner}})
     },
 
+    toggleQueueAutostart() {
+      if (this.queueAutoRunning) {
+        this.stopQueueAutostart()
+        return
+      }
+
+      this.queueAutoRunning = true
+      this.queueSkippedInstalledCount = 0
+      this.handleQueueScannerNextItem()
+    },
+
+    stopQueueAutostart(notify = true) {
+      this.queueAutoRunning = false
+      if (this.queueNextTimer) {
+        clearTimeout(this.queueNextTimer)
+        this.queueNextTimer = null
+      }
+
+      if (notify)
+        this.$message({type: 'error', message: 'Queue Autostart stopped.'})
+    },
+
     async handleQueueScannerNextItem() {
+      if (!this.queueAutoRunning)
+        return
+
       // Clicking Autostart during a configured delay means "start now".
       if (this.queueNextTimer) {
         clearTimeout(this.queueNextTimer)
@@ -979,11 +1080,16 @@ export default {
       console.log(findNextFile, findNextFile.length)
 
       // no items
-      if (findNextFile.length == 0)
+      if (findNextFile.length == 0) {
+        this.queueAutoRunning = false
+        const skippedCount = this.queueSkippedInstalledCount
         return this.$message({
           type: 'success',
-          message: 'There are no items to be installed in the queue'
+          message: skippedCount > 0
+              ? `Queue completed. Skipped ${skippedCount} installed item(s).`
+              : 'There are no items to be installed in the queue'
         });
+      }
 
       // Legacy etaHEN has no task progress API, so retain its bulk mode.
       // singleDPI reports completion and must advance strictly one item at
@@ -991,19 +1097,17 @@ export default {
       if (this.isPS5 && !this.isSingleDPI)
         return await this.handleQueueScannerNextItemPS5(findNextFile)
 
-      let skippedInstalledCount = 0
       while (findNextFile.length > 0) {
         const file = findNextFile[0]
 
         if (this.skipInstalledQueueItems) {
           const installed = await this.isInstalled(file, {silent: true})
+          if (!this.queueAutoRunning)
+            return
+
           if (installed) {
             this.markQueueItemInstalledAndSkipped(file)
-            skippedInstalledCount++
-            this.$message({
-              type: 'info',
-              message: file.name + ' is already installed and was skipped.'
-            })
+            this.queueSkippedInstalledCount++
             findNextFile = this.queueFiles.filter(item => this.isQueueInstallCandidate(item))
             continue
           }
@@ -1022,10 +1126,11 @@ export default {
         return
       }
 
-      if (skippedInstalledCount > 0)
+      this.queueAutoRunning = false
+      if (this.queueSkippedInstalledCount > 0)
         this.$message({
           type: 'success',
-          message: `Skipped ${skippedInstalledCount} installed item(s). There are no items left to install.`
+          message: `Queue completed. Skipped ${this.queueSkippedInstalledCount} installed item(s).`
         })
     },
 
@@ -1076,9 +1181,14 @@ export default {
             // bulk request handling
             let total = files.length
             for (let i = 0; i < files.length; i++) {
+              if (!this.queueAutoRunning)
+                break
               await this.start(files[i])
               await new Promise(resolve => setTimeout(resolve, 2000))
             }
+
+            if (!this.queueAutoRunning)
+              return
 
             this.$message({message: "Queue Scanner finished. Check your PS5 download/installation", type: 'success'})
 
@@ -1086,6 +1196,9 @@ export default {
               this.$root.notify({title: "Queue Scanner", body: "Bulk Requests finished for " + total + " files."})
           })
           .catch(() => {
+          })
+          .finally(() => {
+            this.queueAutoRunning = false
           })
     },
 
@@ -1095,19 +1208,22 @@ export default {
       if (code == 2157510677) {
         file.status = 'exists'
         this.handleQueueScannerNextItem()
+        return true
       }
+
+      return false
     },
 
     calcTableMaxHeight() {
       try {
         const table = this.$el.querySelector('.el-table')
         if (!table) {
-          this.tableMaxHeight = Math.max(300, window.innerHeight - 250)
+          this.tableMaxHeight = Math.max(180, window.innerHeight - 250)
           return
         }
-        const rect = table.getBoundingClientRect()
-        const offsetTop = rect.top
-        this.tableMaxHeight = Math.max(300, window.innerHeight - offsetTop - 30)
+        const tableRect = table.getBoundingClientRect()
+        const processRect = this.$el.getBoundingClientRect()
+        this.tableMaxHeight = Math.max(180, processRect.bottom - tableRect.top - 20)
       } catch (e) {
         this.tableMaxHeight = 400
       }
@@ -1123,6 +1239,27 @@ export default {
 
 <style lang="scss" scoped>
 .ProcessView {
+  height: calc(100vh - 130px);
+  overflow: hidden;
+
+  .queue_stats {
+    display: inline-flex;
+    margin-left: 10px;
+    vertical-align: middle;
+
+    .el-tag + .el-tag {
+      margin-left: 5px;
+    }
+  }
+
+  .status-tags {
+    display: inline-flex;
+
+    .el-tag + .el-tag {
+      margin-left: 4px;
+    }
+  }
+
   .sfo-title {
     font-weight: 600;
     font-size: 14px;
@@ -1180,6 +1317,27 @@ export default {
     margin-top: 4px;
     line-height: 1.2;
     white-space: nowrap;
+  }
+
+  .progress-display {
+    position: relative;
+
+    .progress-percentage {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 600;
+      line-height: 25px;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.95), 0 0 2px rgba(0, 0, 0, 0.8);
+      pointer-events: none;
+    }
   }
 
   /* 展开区域样式 */

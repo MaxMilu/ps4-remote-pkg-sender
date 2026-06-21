@@ -29,6 +29,23 @@
               </el-submenu>
 
               <el-menu-item index="settings">Settings</el-menu-item>
+              <el-menu-item index="">
+                <div class="connection_indicators">
+                  <el-tooltip :content="'Local Server: ' + (serverOnline ? 'Online' : 'Offline')" placement="bottom">
+                      <span class="connection_indicator connection_indicator_server" :class="{ online: serverOnline }">
+                          <i class="fa fa-server" />
+                          <span class="connection_dot" :class="{ online: serverOnline }" />
+                      </span>
+                  </el-tooltip>
+                  <el-tooltip :content="'PlayStation: ' + (playstationOnline ? 'Online' : 'Offline')" placement="bottom">
+                      <span class="connection_indicator connection_indicator_playstation" :class="{ online: playstationOnline }">
+                          <i class="fab fa-playstation" />
+                          <span class="connection_dot" :class="{ online: playstationOnline }" />
+                      </span>
+                  </el-tooltip>
+                </div>
+              </el-menu-item>
+
 
               <div class='top_right_header'>
                   <el-button size="mini" icon="el-icon-user" round @click="move({ name: 'user' })"> Support for more upcoming Features </el-button>
@@ -56,14 +73,14 @@
           </el-menu>
       </el-header>
 
-      <el-main class="main_view" ref="main">
+      <el-main class="main_view" :class="{ fixed_table_view: $route.name == 'home' || $route.name == 'server' }" ref="main">
           <div class="main_content_offset" />
 
           <DragAndDrop :files="draggedFiles" @close="showDragAndDropOverlay = false" v-if="showDragAndDropOverlay" />
 
           <router-view />
 
-          <div style="margin-top: 100px; display:block;">
+          <div style="margin-top: 100px; display:block;" v-if="$route.name != 'home' && $route.name != 'server'">
               <transition name="el-zoom-in-bottom">
                 <el-button round icon="el-icon-arrow-up" class="scrollToTop" @click="scrollToTop" v-show="scrollOffset < scrollPosition"> Back to Top </el-button>
               </transition>
@@ -91,15 +108,24 @@ export default {
       newVersionAvailable: true,
       showDragAndDropOverlay: false,
       draggedFiles: [],
+      connectionHeartbeatTimer: null,
+      connectionHeartbeatRunning: false,
+      serverOnline: false,
+      playstationOnline: false,
   }},
 
   computed: {
-      config: get('app/config'),      
+      config: get('app/config'),
+      serverConfig: get('app/server'),
+      ps4Config: get('app/ps4'),
+      isPS5: get('app/isPS5'),
+      getPS4TargetApp: get('app/getPS4TargetApp'),
   },
 
   mounted(){
       this.registerChannel()
       this.autoCheckUpdate()
+      this.startConnectionHeartbeat()
 
       window.addEventListener('scroll', this.scroll)
       window.addEventListener('dragover', this.dragover)
@@ -110,9 +136,70 @@ export default {
       window.removeEventListener('scroll', this.scroll)
       window.removeEventListener('dragover', this.dragover)
       window.removeEventListener('drop', this.drop)
+      if (this.connectionHeartbeatTimer)
+          clearInterval(this.connectionHeartbeatTimer)
   },
 
   methods: {
+      startConnectionHeartbeat(){
+          this.checkConnectionHeartbeat()
+          this.connectionHeartbeatTimer = setInterval(() => {
+              this.checkConnectionHeartbeat()
+          }, 5000)
+      },
+
+      async checkConnectionHeartbeat(){
+          if (this.connectionHeartbeatRunning)
+              return
+
+          this.connectionHeartbeatRunning = true
+          try {
+              await Promise.all([
+                  this.checkLocalServerHeartbeat(),
+                  this.checkPlaystationHeartbeat(),
+              ])
+          }
+          finally {
+              this.connectionHeartbeatRunning = false
+          }
+      },
+
+      async checkLocalServerHeartbeat(){
+          if (!this.serverConfig.ip || !this.serverConfig.port) {
+              this.serverOnline = false
+              return
+          }
+
+          try {
+              await this.$ps4.checkServer()
+              this.serverOnline = true
+          }
+          catch (e) {
+              this.serverOnline = false
+          }
+      },
+
+      async checkPlaystationHeartbeat(){
+          if (!this.ps4Config.ip) {
+              this.playstationOnline = false
+              return
+          }
+
+          try {
+              if (this.isPS5)
+                  await this.$ps5.checkPS5()
+              else if (this.getPS4TargetApp == 'goldhen')
+                  await this.$ps4_goldhen.checkPS4()
+              else
+                  await this.$ps4.checkPS4()
+
+              this.playstationOnline = true
+          }
+          catch (e) {
+              this.playstationOnline = false
+          }
+      },
+
       registerChannel(){
           ipcRenderer.on('main-route', (event, data) => {
               this.move(data)
@@ -195,23 +282,23 @@ export default {
           }
           else {
               this.newVersionAvailable = false
-          }                    
+          }
       },
 
       dragover(e){
         e.preventDefault();
-        e.stopPropagation();        
-        
+        e.stopPropagation();
+
         this.showDragAndDropOverlay = true
         this.draggedFiles = []
       },
 
       drop(e){
         e.preventDefault();
-        e.stopPropagation();        
+        e.stopPropagation();
 
         let files = [];
-        for (const f of event.dataTransfer.files) {            
+        for (const f of event.dataTransfer.files) {
             // console.log('File Object of dragged files: ', f)
 
             if( f.path.includes('.pkg') ){
@@ -223,16 +310,16 @@ export default {
                 files.push(...filesInFolder)
             }
         }
-        
+
         if( files.length == 0 ){
-            this.showDragAndDropOverlay = false    
+            this.showDragAndDropOverlay = false
             this.draggedFiles = []
             this.$root.sendMain("No PKG Files found in the Drag and Drop")
-            return    
+            return
         }
-        
+
         this.showDragAndDropOverlay = true
-        this.draggedFiles = files    
+        this.draggedFiles = files
       },
 
   }
@@ -240,5 +327,53 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+
+.main_view.fixed_table_view {
+    height: 100vh;
+    overflow: hidden;
+}
+
+.connection_indicators {
+    float: left;
+    display: flex;
+    align-items: center;
+    height: 60px;
+    margin-left: 18px;
+}
+
+.fa-server {
+  font-size: 14px;
+}
+.connection_indicator + .connection_indicator {
+    margin-left: 14px;
+}
+
+.connection_indicator {
+    display: inline-flex;
+    align-items: center;
+    font-size: 16px !important;
+
+    i {
+        color: #f56c6c !important;
+    }
+
+    &.online i {
+        color: #67c23a !important;
+    }
+}
+
+.connection_dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #f56c6c;
+    box-shadow: 0 0 0 2px rgba(245, 108, 108, 0.16);
+    margin-left: 6px;
+
+    &.online {
+        background: #67c23a;
+        box-shadow: 0 0 0 2px rgba(103, 194, 58, 0.16);
+    }
+}
 
 </style>

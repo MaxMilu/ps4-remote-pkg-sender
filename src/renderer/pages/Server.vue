@@ -36,6 +36,8 @@
         element-loading-background="rgba(255, 255, 255, 0.8)"
         :max-height="tableMaxHeight"
         style="width: 100%">
+      <el-table-column type="index" label="#" width="55" align="center"></el-table-column>
+
       <el-table-column type="expand">
         <template slot-scope="scope">
           <div class="expand-section">
@@ -224,21 +226,12 @@ export default {
     loading: get('server/loading'),
     sfoEnabled: get('app/getReadSFOHeader'),
     files() {
-      let search = this.search.toLowerCase()
       let finalFiles = this.servingFiles
 
       if (this.tab == 'dragged')
         finalFiles = this.draggedServingFiles
 
-      if (search.length != 0)
-        return finalFiles.filter(file =>
-            file.name.toLowerCase().includes(search) ||
-            file.cusa.toLowerCase().includes(search) ||
-            file.status.toLowerCase().includes(search)
-        )
-
-      // legacy
-      return finalFiles
+      return finalFiles.filter(file => this.$helper.matchesFileSearch(file, this.search))
     },
     tab() {
       return this.$root.serverTab
@@ -425,12 +418,12 @@ export default {
       try {
         const table = this.$el.querySelector('.el-table')
         if (!table) {
-          this.tableMaxHeight = Math.max(300, window.innerHeight - 250)
+          this.tableMaxHeight = Math.max(180, window.innerHeight - 250)
           return
         }
-        const rect = table.getBoundingClientRect()
-        const offsetTop = rect.top
-        this.tableMaxHeight = Math.max(300, window.innerHeight - offsetTop - 30)
+        const tableRect = table.getBoundingClientRect()
+        const serverRect = this.$el.getBoundingClientRect()
+        this.tableMaxHeight = Math.max(180, serverRect.bottom - tableRect.top - 20)
       } catch (e) {
         this.tableMaxHeight = 400
       }
@@ -462,6 +455,9 @@ export default {
 }
 
 .ServerView {
+  height: calc(100vh - 130px);
+  overflow: hidden;
+
   .sfo-title {
     font-weight: 600;
     font-size: 14px;
