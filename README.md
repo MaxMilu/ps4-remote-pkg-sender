@@ -6,8 +6,13 @@
 
 - 增加 PS5 `singleDPI` 目标，通过 TCP 9090 API 连接独立的 Direct Package Installer payload。
 - 发送 PKG 时同时传递标题、Content ID 和图标地址，并轮询显示下载、安装与 Promote 进度。
+- 通过 SFO 的 CATEGORY、Title ID 和 Content ID 检测 Base、Patch 与 DLC 是否已有安装记录。
 - 修复 singleDPI 队列完成后仍弹窗确认并导致条目重复安装的问题；队列现在严格逐项执行。
 - 队列可选择上一项完成后立即安装下一项，或等待自定义秒数后继续。
+- Queue Scanner 可选择跳过已经检测为 `installed` 的条目，或仍将其加入自动安装候选。
+- Processing Center 显示 SFO 标题、版本、分类、Content ID、剩余时间和估算传输速度。
+- 列表高度随窗口自动调整，长队列可在表格内部滚动。
+- Reset Options 可单独重置已安装状态、移除完成条目或移除 `installed` 类型条目。
 - 保留原有 PS5 etaHEN 和 PS4 安装模式，不改变其既有发送方式。
 - 增加仅构建 Windows x64 版本的命令，避免旧依赖在 ia32 构建阶段要求 Python：
 

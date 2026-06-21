@@ -29,6 +29,7 @@
 
         <el-button size="small" icon="el-icon-sync" :type="queueScanner ? 'success active' : ' active'" @click="toggleQueueScanner"> Queue Scanner </el-button>
         <el-button size="small" icon="fa fa-play" @click="handleQueueScannerNextItem" v-if="queueScanner"> Autostart </el-button>
+        <el-checkbox v-model="skipInstalledQueueItems" v-if="queueScanner" style="margin-left: 10px"> Skip Installed </el-checkbox>
 
         <el-button size="small" @click="test" v-if="false">Test </el-button>
     </el-col>
@@ -129,7 +130,7 @@
         </template>
     </el-table-column>
 
-    <el-table-column prop="rest" label="Rest" width="150" align="center" v-if="!isPS5 || isSingleDPI">
+    <el-table-column prop="rest" label="Rest" width="150" align="center">
         <template slot-scope="scope">
             <template v-if="scope.row.rest && scope.row.rest != 0">
                 <div>{{ $helper.secondsToString(scope.row.rest) }}</div>
@@ -152,7 +153,7 @@
         </template>
     </el-table-column>
 
-    <el-table-column label="Progress" width="100px" v-if="showPercentage && (!isPS5 || isSingleDPI)">
+    <el-table-column label="Progress" width="100px" v-if="showPercentage">
         <template slot-scope="scope">
             <el-progress :stroke-width="25" :percentage="scope.row.percentage" :text-inside="true" stroke-linecap="square"></el-progress>
         </template>
@@ -202,10 +203,13 @@ export default {
         queueNextTimer: null,
         search: '',
         tableMaxHeight: 400,
+        skipInstalledQueueItems:true,
     }},
 
     mounted(){
         this.search = ''
+        if(typeof this.skipInstalledQueueItems !== 'boolean')
+            this.skipInstalledQueueItems = true
         this.$nextTick(() => { this.calcTableMaxHeight() })
         window.addEventListener('resize', this.onResize)
     },
@@ -229,6 +233,7 @@ export default {
         singleDPIQueueMode: get('app/ps4.singleDPI_queue_mode'),
         singleDPIQueueDelaySeconds: get('app/ps4.singleDPI_queue_delay_seconds'),
         queueScanner: get('app/server.enableQueueScanner'),
+        skipInstalledQueueItems: sync('app/server.skipInstalledQueueItems'),
         notify: get('app/config.enableSystemNotifications'),
         isPS5: get('app/isPS5'),
         isSingleDPI: get('app/isSingleDPI'),
@@ -739,7 +744,7 @@ export default {
             }
 
             // Do not wait after the final item just to report an empty queue.
-            if(!this.queueFiles.some(file => file.status == 'in queue')){
+            if(!this.queueFiles.some(file => this.isQueueInstallCandidate(file))){
                 this.handleQueueScannerNextItem()
                 return
             }
@@ -768,6 +773,14 @@ export default {
 
         getRandomInt(max) {
             return Math.floor(Math.random() * max);
+        },
+
+        isQueueInstallCandidate(file){
+            if(file.status == 'in queue')
+                return true
+
+            return !this.skipInstalledQueueItems &&
+                file.status && file.status.startsWith('installed')
         },
 
         resetAll(){
@@ -877,7 +890,7 @@ export default {
                 this.queueNextTimer = null
             }
 
-            let findNextFile = this.queueFiles.filter( f => f.status == 'in queue')
+            let findNextFile = this.queueFiles.filter(file => this.isQueueInstallCandidate(file))
             console.log(findNextFile, findNextFile.length)
 
             // no items
@@ -911,8 +924,7 @@ export default {
                 `Queue Scanner can currently only Bulk Request` +
                 `all files because there is no Process Handling` +
                 `Response yet to track the progress. <br><br>`+ 
-                `Means the Queue handler will send all files in `+ 
-                `the Queue with the status of 'in queue' ` + 
+                `The Queue handler will send all eligible files ` +
                 `automatically to the PS5 with a delay in ` + 
                 `between. ${files.length} files to be send.`, 
                 'Bulk Install Request to PS5',

@@ -27,6 +27,7 @@ export const state = {
         scan_subdir: false,
         prependFullPath: false,
         enableQueueScanner: false,
+        skipInstalledQueueItems: true,
         readSFOHeader: false,
     },
 
@@ -72,6 +73,7 @@ export const mutations = {
             scan_subdir: false,
             prependFullPath: false,
             enableQueueScanner: false,
+            skipInstalledQueueItems: true,
             readSFOHeader: false,
         }
 
