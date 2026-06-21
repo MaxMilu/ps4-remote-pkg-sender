@@ -205,8 +205,14 @@ export default {
       },
 
       track(data={}){
+            // Disable route tracking to avoid preflight CORS errors with keepalive
+            // This was causing: "Preflight request for request with keepalive specified is currently not supported"
+            return
+            /*
+            // Original tracking code (commented out due to CORS issues with keepalive)
             if( window.umami )
-                window.umami.track( props => ({ ...props, ...data }) )
+                window.umami.track( props => ({ ...props, ...data }) )
+            */
       },
 
       move(params){
