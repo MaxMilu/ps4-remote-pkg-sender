@@ -70,6 +70,8 @@
     "supportFeatures": "Support for more upcoming Features",
     "openLocalServer": "Open Local Server",
     "openPsApiLogs": "Open Playstation API Logs",
+    "localServer": "Local Server",
+    "playstation": "PlayStation",
     "info": "Info",
     "closeConfirm": "Do you really want to close the Application? This stops the server and all child processes.",
     "closeTitle": "Warning"
@@ -466,6 +468,7 @@
     "filesFound": "{count} files found",
     "filesServing": "{count} files serving",
     "serverIs": "Server is",
-    "on": "on"
+    "on": "on",
+    "heartbeatSuccess": "Congrats. Heartbeat is working"
   }
 }

@@ -70,6 +70,8 @@
     "supportFeatures": "Unterstützung für weitere kommende Funktionen",
     "openLocalServer": "Lokalen Server öffnen",
     "openPsApiLogs": "Playstation API Logs öffnen",
+    "localServer": "Lokaler Server",
+    "playstation": "PlayStation",
     "info": "Info",
     "closeConfirm": "Möchten Sie die Anwendung wirklich schließen? Dies stoppt den Server und alle untergeordneten Prozesse.",
     "closeTitle": "Warnung"
@@ -463,6 +465,7 @@
     "filesFound": "{count} Dateien gefunden",
     "filesServing": "{count} Dateien werden bereitgestellt",
     "serverIs": "Server ist",
-    "on": "auf"
+    "on": "auf",
+    "heartbeatSuccess": "Glückwunsch. Heartbeat funktioniert"
   }
 }

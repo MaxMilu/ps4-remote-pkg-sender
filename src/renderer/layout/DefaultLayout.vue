@@ -32,13 +32,13 @@
               <el-menu-item index="settings">{{ $t('menu.settings') }}</el-menu-item>
               <el-menu-item index="">
                 <div class="connection_indicators">
-                  <el-tooltip :content="'Local Server: ' + (serverOnline ? $t('common.status.enabled') : $t('common.status.disabled'))" placement="bottom">
+                  <el-tooltip :content="$t('menu.localServer') + ': ' + (serverOnline ? $t('common.status.enabled') : $t('common.status.disabled'))" placement="bottom">
                       <span class="connection_indicator connection_indicator_server" :class="{ online: serverOnline }">
                           <i class="fa fa-server" />
                           <span class="connection_dot" :class="{ online: serverOnline }" />
                       </span>
                   </el-tooltip>
-                  <el-tooltip :content="'PlayStation: ' + (playstationOnline ? $t('common.status.enabled') : $t('common.status.disabled'))" placement="bottom">
+                  <el-tooltip :content="$t('menu.playstation') + ': ' + (playstationOnline ? $t('common.status.enabled') : $t('common.status.disabled'))" placement="bottom">
                       <span class="connection_indicator connection_indicator_playstation" :class="{ online: playstationOnline }">
                           <i class="fab fa-playstation" />
                           <span class="connection_dot" :class="{ online: playstationOnline }" />

@@ -70,6 +70,8 @@
     "supportFeatures": "支持更多即将推出的功能",
     "openLocalServer": "打开本地服务器",
     "openPsApiLogs": "打开 PlayStation API 日志",
+    "localServer": "本地服务器",
+    "playstation": "PlayStation",
     "info": "信息",
     "closeConfirm": "确定要关闭应用程序吗？这将停止服务器和所有子进程。",
     "closeTitle": "警告"
@@ -466,6 +468,7 @@
     "filesFound": "找到 {count} 个文件",
     "filesServing": "正在服务 {count} 个文件",
     "serverIs": "服务器状态",
-    "on": "于"
+    "on": "于",
+    "heartbeatSuccess": "恭喜。心跳正常工作"
   }
 }
