@@ -38,10 +38,57 @@
         style="width: 100%">
         <el-table-column type="expand">
           <template slot-scope="scope">
-              <el-tag size="small" type="info" style="margin-bottom: 3px;"> Path: {{ scope.row.path }} </el-tag> <br>
-              <el-tag size="small" type="info" style="margin-bottom: 3px;"> PKG URL: {{ scope.row.url }} </el-tag> <br>
-              <el-tag size="small" type="info" style="margin-bottom: 3px;"> Icon0 URL: {{ scope.row.image }} </el-tag> <br>
-              <el-tag size="small" type="info" style="white-space:pre; height: auto; line-height: 1.1;" v-if="debugItemInRow">{{ scope.row }}</el-tag>
+              <div class="expand-section">
+                  <div class="expand-section-title">File Paths</div>
+                  <div class="expand-paths">
+                      <div class="expand-path-item">
+                          <span class="expand-label">File Name</span>
+                          <span class="expand-value expand-text">{{ scope.row.name }}</span>
+                      </div>
+                      <div class="expand-path-item">
+                          <span class="expand-label">Patched Name</span>
+                          <span class="expand-value expand-text">{{ scope.row.patchedFilename }}</span>
+                      </div>
+                      <div class="expand-path-item">
+                          <span class="expand-label">Path</span>
+                          <span class="expand-value expand-text">{{ scope.row.path }}</span>
+                      </div>
+                      <div class="expand-path-item">
+                          <span class="expand-label">PKG URL</span>
+                          <span class="expand-value expand-text">{{ scope.row.url }}</span>
+                      </div>
+                      <div class="expand-path-item">
+                          <span class="expand-label">Icon0 URL</span>
+                          <span class="expand-value expand-text">{{ scope.row.image }}</span>
+                      </div>
+                  </div>
+              </div>
+
+              <div class="expand-section" v-if="scope.row.sfo?.readSFOHeader">
+                  <div class="expand-section-title">SFO Information</div>
+                  <div class="expand-grid">
+                      <div class="expand-item" v-if="scope.row.sfo.TITLE">
+                          <span class="expand-label">Title</span>
+                          <span class="expand-value">{{ scope.row.sfo.TITLE }}</span>
+                      </div>
+                      <div class="expand-item" v-if="scope.row.sfo.VERSION">
+                          <span class="expand-label">Version</span>
+                          <el-tag size="small" type="success">{{ scope.row.sfo.VERSION }}</el-tag>
+                      </div>
+                      <div class="expand-item" v-if="scope.row.sfo.CATEGORY">
+                          <span class="expand-label">Category</span>
+                          <el-tag size="small" :type="$helper.getSfoCategoryLabel(scope.row.sfo.CATEGORY).color">
+                              {{ $helper.getSfoCategoryLabel(scope.row.sfo.CATEGORY).label }}
+                          </el-tag>
+                      </div>
+                      <div class="expand-item" v-if="scope.row.sfo.CONTENT_ID">
+                          <span class="expand-label">Content ID</span>
+                          <el-tag size="small" type="info">{{ scope.row.sfo.CONTENT_ID }}</el-tag>
+                      </div>
+                  </div>
+              </div>
+
+              <pre v-if="debugItemInRow" class="expand-debug">{{ scope.row }}</pre>
           </template>
         </el-table-column>
 
@@ -446,6 +493,85 @@ export default {
         .sfo-contentid-tag {
             margin-top: 2px;
         }
+    }
+
+    /* 展开区域样式 */
+    .expand-section {
+        margin-bottom: 15px;
+        padding: 10px 15px;
+        background: #f5f7fa;
+        border-radius: 4px;
+
+        .expand-section-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: #606266;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+    }
+
+    .expand-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+    .expand-item {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        min-width: 120px;
+
+        .expand-label {
+            font-size: 12px;
+            color: #909399;
+            white-space: nowrap;
+        }
+
+        .expand-value {
+            font-size: 12px;
+            color: #303133;
+            word-break: break-all;
+        }
+    }
+
+    .expand-paths {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .expand-path-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+
+        .expand-label {
+            font-size: 12px;
+            color: #909399;
+            min-width: 90px;
+            flex-shrink: 0;
+        }
+
+        .expand-text {
+            font-size: 12px;
+            color: #606266;
+            word-break: break-all;
+            line-height: 1.4;
+        }
+    }
+
+    .expand-debug {
+        margin-top: 10px;
+        padding: 10px;
+        background: #2d2d2d;
+        color: #abb2bf;
+        border-radius: 4px;
+        font-size: 11px;
+        max-height: 300px;
+        overflow: auto;
     }
 }
 </style>
