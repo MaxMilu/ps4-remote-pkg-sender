@@ -117,10 +117,10 @@ export default {
     mounted(){
         if(this.ps4.app == 'singleDPI'){
             if(!['immediate', 'delay'].includes(this.ps4.singleDPI_queue_mode))
-                this.ps4.singleDPI_queue_mode = 'immediate'
+                this.ps4.singleDPI_queue_mode = 'delay'
 
             if(!Number(this.ps4.singleDPI_queue_delay_seconds))
-                this.ps4.singleDPI_queue_delay_seconds = 5
+                this.ps4.singleDPI_queue_delay_seconds = 2
         }
     },
 
@@ -147,11 +147,8 @@ export default {
                 this.ps4.port = this.ps4.port_singleDPI ?? 9090
                 this.server.readSFOHeader = true
 
-                if(!['immediate', 'delay'].includes(this.ps4.singleDPI_queue_mode))
-                    this.ps4.singleDPI_queue_mode = 'immediate'
-
-                if(!Number(this.ps4.singleDPI_queue_delay_seconds))
-                    this.ps4.singleDPI_queue_delay_seconds = 5
+                this.ps4.singleDPI_queue_mode = 'delay'
+                this.ps4.singleDPI_queue_delay_seconds = 2
             }
 
             if(val == 'goldhen'){
