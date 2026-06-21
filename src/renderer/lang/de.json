@@ -130,6 +130,7 @@
         "running": "Läuft",
         "error": "Fehler",
         "offline": "Offline",
+        "stopped": "Gestoppt",
         "": "Offline"
       },
       "apps": {

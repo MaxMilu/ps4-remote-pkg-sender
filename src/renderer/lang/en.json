@@ -133,6 +133,7 @@
         "running": "Running",
         "error": "Error",
         "offline": "Offline",
+        "stopped": "Stopped",
         "": "Offline"
       },
       "apps": {

@@ -133,6 +133,7 @@
         "running": "运行中",
         "error": "错误",
         "offline": "离线",
+        "stopped": "已停止",
         "": "离线"
       },
       "apps": {
