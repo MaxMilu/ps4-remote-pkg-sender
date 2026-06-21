@@ -1,21 +1,21 @@
 <template>
 <div>
-    <h2>Server Application </h2>
+    <h2>{{ $t('server.pageTitle') }}</h2>
 
     <el-tabs v-model="tab">
-      <el-tab-pane label="Log" name="logs">
+      <el-tab-pane :label="$t('server.tabs.log')" name="logs">
           <Logs />
       </el-tab-pane>
-      <el-tab-pane label="Serving Files" name="serverFiles">
+      <el-tab-pane :label="$t('server.tabs.servingFiles')" name="serverFiles">
           <Files type="server" />
       </el-tab-pane>
-      <el-tab-pane label="Dragged Files" name="draggedFiles">
+      <el-tab-pane :label="$t('server.tabs.draggedFiles')" name="draggedFiles">
           <Files type="dragged" />
-      </el-tab-pane>      
-      <el-tab-pane label="Routes" name="routes">
+      </el-tab-pane>
+      <el-tab-pane :label="$t('server.tabs.routes')" name="routes">
           <Routes />
       </el-tab-pane>
-      <el-tab-pane label="Debug" name="debug">
+      <el-tab-pane :label="$t('server.tabs.debug')" name="debug">
           <Debug @startServer="startServer" @stopServer="stopServer" @restartServer="restartServer" @hearthbeat="checkHeathbeat" />
       </el-tab-pane>
     </el-tabs>
@@ -227,14 +227,14 @@ export default {
         },
 
         addHearthbeatEndpoint(){
-            this.$store.dispatch('server/addLog', "Create Hearthbeat endpoint")
+            this.$store.dispatch('server/addLog', this.$t('server.createHeartbeatEndpoint'))
             this.host.router.get('/hb', function(request, response){
                 response.status(200).json({
                     remoteAddress: request.connection.remoteAddress,
                     remotePort: request.connection.remotePort,
                     localAddress: request.connection.localAddress,
                     localPort: request.connection.localPort,
-                    message: "Congratz. Hearthbeat is working"
+                    message: this.$t('server.heartbeatSuccess')
                 })
             })
         },

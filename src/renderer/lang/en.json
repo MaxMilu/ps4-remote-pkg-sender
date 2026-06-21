@@ -291,6 +291,14 @@
   },
 
   "server": {
+    "pageTitle": "Server Application",
+    "tabs": {
+      "log": "Log",
+      "servingFiles": "Serving Files",
+      "draggedFiles": "Dragged Files",
+      "routes": "Routes",
+      "debug": "Debug"
+    },
     "messages": {
       "noBasePath": "No server base path given. Please Configure first.",
       "filesReloaded": "Files has been reloaded",
@@ -305,7 +313,9 @@
       "notServingRemoved": "Not serving Files has been removed",
       "pleaseInputBasePath": "Please input base path",
       "basePathTitle": "Base Path for the Server",
-      "loadingFiles": "Loading Server files"
+      "loadingFiles": "Loading Server files",
+      "createHeartbeatEndpoint": "Create Heartbeat endpoint",
+      "heartbeatSuccess": "Congrats. Heartbeat is working"
     }
   },
 

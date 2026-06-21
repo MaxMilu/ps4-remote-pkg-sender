@@ -288,6 +288,14 @@
   },
 
   "server": {
+    "pageTitle": "Server-Anwendung",
+    "tabs": {
+      "log": "Protokoll",
+      "servingFiles": "Bereitgestellte Dateien",
+      "draggedFiles": "Hingezogene Dateien",
+      "routes": "Routen",
+      "debug": "Debug"
+    },
     "messages": {
       "noBasePath": "Kein Server-Basispfad angegeben. Bitte zuerst konfigurieren.",
       "filesReloaded": "Dateien neu geladen",
@@ -302,7 +310,9 @@
       "notServingRemoved": "Nicht dienende Dateien wurden entfernt",
       "pleaseInputBasePath": "Bitte geben Sie den Basispfad ein",
       "basePathTitle": "Basispfad für den Server",
-      "loadingFiles": "Serverdateien werden geladen"
+      "loadingFiles": "Serverdateien werden geladen",
+      "createHeartbeatEndpoint": "Heartbeat-Endpunkt erstellen",
+      "heartbeatSuccess": "Glückwunsch. Heartbeat funktioniert"
     }
   },
 

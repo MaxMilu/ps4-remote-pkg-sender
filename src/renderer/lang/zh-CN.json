@@ -291,6 +291,14 @@
   },
 
   "server": {
+    "pageTitle": "服务器应用",
+    "tabs": {
+      "log": "日志",
+      "servingFiles": "服务文件",
+      "draggedFiles": "拖拽文件",
+      "routes": "路由",
+      "debug": "调试"
+    },
     "messages": {
       "noBasePath": "未设置服务器基础路径。请先配置。",
       "filesReloaded": "文件已刷新",
@@ -305,7 +313,9 @@
       "notServingRemoved": "非服务文件已移除",
       "pleaseInputBasePath": "请输入基础路径",
       "basePathTitle": "服务器的基路径",
-      "loadingFiles": "正在加载服务器文件"
+      "loadingFiles": "正在加载服务器文件",
+      "createHeartbeatEndpoint": "创建心跳端点",
+      "heartbeatSuccess": "恭喜。心跳正常工作"
     }
   },
 
