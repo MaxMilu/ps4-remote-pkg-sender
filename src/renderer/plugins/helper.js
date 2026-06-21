@@ -72,6 +72,9 @@ let helper = {
     },
 
     getFileStatus(type=''){
+        if(type.startsWith('installed'))
+          return 'success'
+
         if(type == 'serving' || type == 'pause')
           return 'info'
 
