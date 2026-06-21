@@ -4,93 +4,93 @@
 
   <el-row style="margin-bottom: 20px;" class="top">
     <el-col :span="16">
-        <h2 style="margin:0; line-height: 32px;" v-if="false">HB-Store R2 (refactored)</h2>
+        <h2 style="margin:0; line-height: 32px;" v-if="false">{{ $t('hbstore.refactored.title') }}</h2>
 
         <el-button-group style="margin-right: auto; margin-left: 10px;">
-            <el-button size="small" :type="isCategory('all')" @click="setCategory('all')"> All </el-button>
-            <el-button size="small" :type="isCategory('media')" @click="setCategory('media')"> Multimedia </el-button>
-            <el-button size="small" :type="isCategory('game')" @click="setCategory('game')"> HB Game </el-button>
-            <el-button size="small" :type="isCategory('utility')" @click="setCategory('utility')"> Utility </el-button>
-            <el-button size="small" :type="isCategory('emulator')" @click="setCategory('emulator')"> Emulator </el-button>
+            <el-button size="small" :type="isCategory('all')" @click="setCategory('all')"> {{ $t('hbstore.categories.all') }} </el-button>
+            <el-button size="small" :type="isCategory('media')" @click="setCategory('media')"> {{ $t('hbstore.categories.media') }} </el-button>
+            <el-button size="small" :type="isCategory('game')" @click="setCategory('game')"> {{ $t('hbstore.categories.game') }} </el-button>
+            <el-button size="small" :type="isCategory('utility')" @click="setCategory('utility')"> {{ $t('hbstore.categories.utility') }} </el-button>
+            <el-button size="small" :type="isCategory('emulator')" @click="setCategory('emulator')"> {{ $t('hbstore.categories.emulator') }} </el-button>
         </el-button-group>
     </el-col>
     <el-col :span="8">
         <div style="display: flex; ">
             <el-button-group style="margin-right: 10px; margin-left: auto;">
-                <el-button size="small" :type="isOrder('')" @click="setOrder('')"> A-Z </el-button>
-                <el-button size="small" :type="isOrder('created_at')" @click="setOrder('created_at')"> Latest </el-button>
-                <el-button size="small" :type="isOrder('downloads')" @click="setOrder('downloads')"> Popular </el-button>
+                <el-button size="small" :type="isOrder('')" @click="setOrder('')"> {{ $t('hbstore.order.az') }} </el-button>
+                <el-button size="small" :type="isOrder('created_at')" @click="setOrder('created_at')"> {{ $t('hbstore.order.latest') }} </el-button>
+                <el-button size="small" :type="isOrder('downloads')" @click="setOrder('downloads')"> {{ $t('hbstore.order.popular') }} </el-button>
             </el-button-group>
 
-            <el-input v-model="search" size="small" placeholder="Search" prefix-icon="fas fa-search" style="width: 200px"/>
+            <el-input v-model="search" size="small" :placeholder="$t('common.placeholder.search')" prefix-icon="fas fa-search" style="width: 200px"/>
         </div>
     </el-col>
   </el-row>
 
 
   <div v-if="view == 'table'">
-      <el-table :data="packages" class="file">
+      <el-table :data="packages" class="file" :empty-text="$t('hbstore.noData')">
           <el-table-column type="expand">
               <template slot-scope="scope">
-                  <el-tag size="small" type="info" style="margin-bottom: 5px"> Review Stars: {{ scope.row.data.average_rating }} </el-tag>
-                  <el-tag size="small" type="info" style="margin-bottom: 5px"> Author: {{ scope.row.data.author }} </el-tag>
-                  <el-tag size="small" type="info" style="margin-bottom: 5px" :type="$helper.getAppStoreType(scope.row.data.type)"> Type: {{ scope.row.data.type }} </el-tag>
-                  <el-tag size="small" type="info" style="margin-bottom: 5px"> PV: {{ scope.row.data.pv.join(', ') }} </el-tag>
-                  <el-tag size="small" type="info" style="margin-bottom: 5px"> Release Date: {{ scope.row.data.released_at }} </el-tag>
+                  <el-tag size="small" type="info" style="margin-bottom: 5px"> {{ $t('hbstore.expand.reviewStars') }}: {{ scope.row.data.average_rating }} </el-tag>
+                  <el-tag size="small" type="info" style="margin-bottom: 5px"> {{ $t('hbstore.expand.author') }}: {{ scope.row.data.author }} </el-tag>
+                  <el-tag size="small" type="info" style="margin-bottom: 5px" :type="$helper.getAppStoreType(scope.row.data.type)"> {{ $t('hbstore.expand.type') }}: {{ scope.row.data.type }} </el-tag>
+                  <el-tag size="small" type="info" style="margin-bottom: 5px"> {{ $t('hbstore.expand.pv') }}: {{ scope.row.data.pv.join(', ') }} </el-tag>
+                  <el-tag size="small" type="info" style="margin-bottom: 5px"> {{ $t('hbstore.expand.releaseDate') }}: {{ scope.row.data.released_at }} </el-tag>
                   <br>
 
-                  <el-tag size="small" type="info" style="margin-bottom: 5px"> Name: {{ scope.row.data.name }} </el-tag> <br>
+                  <el-tag size="small" type="info" style="margin-bottom: 5px"> {{ $t('hbstore.expand.name') }}: {{ scope.row.data.name }} </el-tag> <br>
                   <div class="el-tag el-tag--info el-tag--small" style="height: auto; margin-bottom: 5px;">
                       <div style='display: flex;'>
-                          <div style="margin-right: 10px; ">Description: </div>
+                          <div style="margin-right: 10px; ">{{ $t('hbstore.expand.description') }}: </div>
                           <div>
-                              <div v-for="(desc,i) in scope.row.data.description" :key="'desc_' + i">{{ desc }}</div>
+                              <div v-for="(desc,i) in scope.row.data.description" :key="'desc_' + i">{{ desc }}</div>
                           </div>
                       </div>
                   </div>
                   <br>
 
-                  <el-tag size="small" type="info" style="margin-bottom: 5px"> URL: {{ scope.row.url }} </el-tag> <br>
-                  <pre v-if="debug">{{ scope.row }}</pre>
+                  <el-tag size="small" type="info" style="margin-bottom: 5px"> {{ $t('hbstore.expand.url') }}: {{ scope.row.url }} </el-tag> <br>
+                  <pre v-if="debug">{{ scope.row }}</pre>
               </template>
           </el-table-column>
 
-          <el-table-column label="Cover" width="100">
+          <el-table-column :label="$t('common.table.cover')" width="100">
               <template slot-scope="scope">
                   <div class='image' :style="{ backgroundImage: 'url('+scope.row.data.image+')' }" />
               </template>
           </el-table-column>
 
-          <el-table-column prop="name" label="Name">
+          <el-table-column prop="name" :label="$t('common.table.name')">
               <template slot-scope="scope">
-                  {{ scope.row.name }} <small>(v{{ scope.row.data.version}})</small>
-                  <el-tag size="small" :type="$helper.getAppStoreType(scope.row.data.type)" style="margin-left: 10px; margin-bottom: 3px;">{{ scope.row.data.type }}</el-tag>
-                  <el-tag size="small" style="margin-left: 10px; margin-bottom: 3px; cursor: pointer;" v-if="scope.row.data.file_ps5" @click="check(scope.row.data.file_ps5)"> Download PS5 Version </el-tag>
+                  {{ scope.row.name }} <small>(v{{ scope.row.data.version}})</small>
+                  <el-tag size="small" :type="$helper.getAppStoreType(scope.row.data.type)" style="margin-left: 10px; margin-bottom: 3px;">{{ scope.row.data.type }}</el-tag>
+                  <el-tag size="small" style="margin-left: 10px; margin-bottom: 3px; cursor: pointer;" v-if="scope.row.data.file_ps5" @click="check(scope.row.data.file_ps5)"> {{ $t('hbstore.download') }} </el-tag>
                   <br>
                   <el-divider style="margin: 3px 0px" v-if="false" />
-                  <div v-for="(desc,i) in scope.row.data.description" :key="'desc_' + i" class="text-darken">{{ desc }}</div>
+                  <div v-for="(desc,i) in scope.row.data.description" :key="'desc_' + i" class="text-darken">{{ desc }}</div>
               </template>
           </el-table-column>
 
-          <el-table-column prop="cusa" label="Title ID" width="110" align="center">
+          <el-table-column prop="cusa" :label="$t('common.table.titleId')" width="110" align="center">
               <template slot-scope="scope">
                   <small style="font-size:12px">{{ scope.row.cusa }}</small>
               </template>
           </el-table-column>
 
-          <el-table-column prop="status" label="Type" width="120" align="center">
+          <el-table-column prop="status" :label="$t('common.table.type')" width="120" align="center">
             <template slot-scope="scope">
-                <el-tag size="small" plain :type="$helper.getFileStatus(scope.row.status)">{{ scope.row.status }}</el-tag>
+                <el-tag size="small" plain :type="$helper.getFileStatus(scope.row.status)">{{ $t('queue.status.' + scope.row.status) || scope.row.status }}</el-tag>
             </template>
           </el-table-column>
 
-          <el-table-column prop="size" label="Size" width="120" align="right">
+          <el-table-column prop="size" :label="$t('common.table.size')" width="120" align="right">
             <template slot-scope="scope">
                 <el-tag size="small" plain :type="$helper.getFileSizeType(scope.row.size)">{{ scope.row.size }}</el-tag>
             </template>
           </el-table-column>
 
-          <el-table-column label="Operation" width="150" align="right">
+          <el-table-column :label="$t('common.table.operation')" width="150" align="right">
               <template slot-scope="scope">
                   <el-button circle size="small" icon="fa fa-minus" @click="removeFromQueue(scope.row)" v-if="scope.row.status == 'in queue'" />
                   <el-button circle size="small" icon="el-icon-plus" @click="addToQueue(scope.row)" v-if="scope.row.status != 'in queue'" />
@@ -108,7 +108,7 @@
   <el-row :gutter="20" v-if="view == 'box'">
       <el-col :span="4" v-for="(file,i) in packages" :key="'_package_'+i">
         <div class='file border'>
-            <div class='title'>{{ file.name }} </div>
+            <div class='title'>{{ file.name }} </div>
             <div class='image' :style="{ backgroundImage: 'url('+file.data.image+')' }" />
         </div>
       </el-col>
@@ -118,9 +118,9 @@
   <DownloadItem ref="DownloadItem" />
 
   <template v-if="debug">
-      <pre>{{ packages }}</pre>
+      <pre>{{ packages }}</pre>
       <pre>{{ data }}</pre>
-      <pre>{{ config }}</pre>
+      <pre>{{ config }}</pre>
   </template>
 
 </div>
@@ -218,7 +218,7 @@ export default {
                   file.status = 'in queue'
 
                 this.$message({
-                    message: file.name + ' is already in Queue',
+                    message: this.$t('hbstore.messages.alreadyInQueue', { filename: file.name }),
                     type: 'warning'
                 })
             }
@@ -230,7 +230,7 @@ export default {
             }
             else {
                 this.$message({
-                    message: "Can't remove " + file.name + " from queue because it's in another state",
+                    message: this.$t('hbstore.messages.cannotRemove', { filename: file.name }),
                     type: 'warning'
                 })
             }
@@ -241,14 +241,14 @@ export default {
                 return this.$ps5.isInstalled(file)
                     .then(data => {
                         if(!data || data.res !== 0)
-                            throw new Error(data && data.error ? data.error : 'Invalid singleDPI response')
+                            throw new Error(data && data.error ? data.error : this.$t('errors.invalidSingleDpiResponse'))
 
                         if(data.exists)
                             file.status = 'installed'
 
                         const message = data.exists
-                            ? 'Already installed on your PS5.'
-                            : 'Not detected on your PS5.'
+                            ? this.$t('hbstore.messages.installed')
+                            : this.$t('hbstore.messages.notInstalled')
                         const type = data.exists ? 'warning' : 'success'
                         this.log(message, data)
                         this.$message({ message, type })
@@ -260,16 +260,16 @@ export default {
             }
 
             if( this.$store.getters['app/isPS5'] )
-                return this.$message({ message: "'Is Installed' feature is not implemented for PS5 yet", type: "info" })                
+                return this.$message({ message: this.$t('messages.install.notImplementedPs5'), type: "info" })
 
             this.$ps4.isInstalled(file)
                     .then( ({ data }) => {
                         if(data.exists == true)
                           file.status = 'installed'
 
-                        let { exists, size, type } = data
-                        this.log(data.message, { exists, size, type })
-                        this.$message({ message: data.message, type: data.type })
+                        let { exists, size, type } = data
+                        this.log(data.message, { exists, size, type })
+                        this.$message({ message: data.message, type: data.type })
                     })
                     .catch( e => {
                         console.log(e)

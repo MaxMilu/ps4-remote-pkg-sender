@@ -4,40 +4,41 @@
           <TitleBar />
 
           <el-menu :default-active="'home'" :router="true" mode="horizontal" ref="menu" @select="handleSelect">
-              <el-menu-item index="home" ref="home">Processing Center</el-menu-item>
+              <el-menu-item index="home" ref="home">{{ $t('menu.processingCenter') }}</el-menu-item>
 
-              <el-menu-item index="server" ref="server">Server</el-menu-item>
+              <el-menu-item index="server" ref="server">{{ $t('menu.server') }}</el-menu-item>
 
-              <el-menu-item index="hb-store" ref="server" v-if="config.useHB">HB-Store</el-menu-item>
+              <el-menu-item index="hb-store" ref="server" v-if="config.useHB">{{ $t('menu.hbStore') }}</el-menu-item>
 
-              <el-menu-item index="config">Config</el-menu-item>
+              <el-menu-item index="config">{{ $t('menu.config') }}</el-menu-item>
 
               <el-submenu index="miscs">
-                  <template slot="title">Miscs</template>
+                  <template slot="title">{{ $t('menu.miscs') }}</template>
 
-                  <el-menu-item index="downloads">Downloads</el-menu-item>
-                  <el-menu-item index="changelog">Changelog</el-menu-item>
-
-                  <div style="background: #ddd; height: 1px; margin: 5px 0px" />
-
-                  <el-menu-item @click="$root.open(links.troubleshoot)">Troubleshooting Guide</el-menu-item>
+                  <el-menu-item index="downloads">{{ $t('menu.downloads') }}</el-menu-item>
+                  <el-menu-item index="changelog">{{ $t('menu.changelog') }}</el-menu-item>
 
                   <div style="background: #ddd; height: 1px; margin: 5px 0px" />
 
-                  <el-menu-item @click="$root.open(links.github_repo)">GitHub Repo</el-menu-item>
-                  <el-menu-item @click="$root.open(links.report_issue)">Report a Issue</el-menu-item>
+                  <el-menu-item @click="$root.open(links.troubleshoot)">{{ $t('menu.troubleshootingGuide') }}</el-menu-item>
+
+                  <div style="background: #ddd; height: 1px; margin: 5px 0px" />
+
+                  <el-menu-item @click="$root.open(links.github_repo)">{{ $t('menu.githubRepo') }}</el-menu-item>
+                  <el-menu-item @click="$root.open(links.github_repo_singleDPI)">{{ $t('menu.githubRepoSingleDPI') }}</el-menu-item>
+                  <el-menu-item @click="$root.open(links.report_issue)">{{ $t('menu.reportIssue') }}</el-menu-item>
               </el-submenu>
 
-              <el-menu-item index="settings">Settings</el-menu-item>
+              <el-menu-item index="settings">{{ $t('menu.settings') }}</el-menu-item>
               <el-menu-item index="">
                 <div class="connection_indicators">
-                  <el-tooltip :content="'Local Server: ' + (serverOnline ? 'Online' : 'Offline')" placement="bottom">
+                  <el-tooltip :content="'Local Server: ' + (serverOnline ? $t('common.status.enabled') : $t('common.status.disabled'))" placement="bottom">
                       <span class="connection_indicator connection_indicator_server" :class="{ online: serverOnline }">
                           <i class="fa fa-server" />
                           <span class="connection_dot" :class="{ online: serverOnline }" />
                       </span>
                   </el-tooltip>
-                  <el-tooltip :content="'PlayStation: ' + (playstationOnline ? 'Online' : 'Offline')" placement="bottom">
+                  <el-tooltip :content="'PlayStation: ' + (playstationOnline ? $t('common.status.enabled') : $t('common.status.disabled'))" placement="bottom">
                       <span class="connection_indicator connection_indicator_playstation" :class="{ online: playstationOnline }">
                           <i class="fab fa-playstation" />
                           <span class="connection_dot" :class="{ online: playstationOnline }" />
@@ -48,7 +49,7 @@
 
 
               <div class='top_right_header'>
-                  <el-button size="mini" icon="el-icon-user" round @click="move({ name: 'user' })"> Support for more upcoming Features </el-button>
+                  <el-button size="mini" icon="el-icon-user" round @click="move({ name: 'user' })"> {{ $t('menu.supportFeatures') }} </el-button>
 
                   <el-badge :is-dot="true" value="new" :hidden="!newVersionAvailable" class="sync_icon">
                       <div class="" @click="checkUpdate">
@@ -59,9 +60,9 @@
                   <el-dropdown class="window_dropdown" @command="handleViewCallback">
                     <i class="el-icon-files" />
                     <el-dropdown-menu slot="dropdown">
-                      <el-dropdown-item command="server"> Open Local Server </el-dropdown-item>
-                      <el-dropdown-item command="ps4"> Open Playstation API Logs </el-dropdown-item>
-                      <el-dropdown-item command="info"> Info </el-dropdown-item>
+                      <el-dropdown-item command="server"> {{ $t('menu.openLocalServer') }} </el-dropdown-item>
+                      <el-dropdown-item command="ps4"> {{ $t('menu.openPsApiLogs') }} </el-dropdown-item>
+                      <el-dropdown-item command="info"> {{ $t('menu.info') }} </el-dropdown-item>
                     </el-dropdown-menu>
                   </el-dropdown>
 
@@ -228,9 +229,9 @@ export default {
       },
 
       closeApplicationRequest(){
-          this.$confirm('Do you really want to close the Application? \nThis stops the server and all child processes.', 'Warning', {
-            confirmButtonText: 'OK',
-            cancelButtonText: 'Cancel',
+          this.$confirm(this.$t('menu.closeConfirm'), this.$t('menu.closeTitle'), {
+            confirmButtonText: this.$t('common.buttons.ok'),
+            cancelButtonText: this.$t('common.buttons.cancel'),
             type: 'warning',
             center: true
           }).then(() => {

@@ -1,3 +1,471 @@
 {
-  "title": "The Dash"
+  "app": {
+    "title": "Remote Package Sender"
+  },
+
+  "common": {
+    "buttons": {
+      "test": "Test connection",
+      "search": "Search",
+      "reload": "Reload",
+      "save": "Save",
+      "cancel": "Cancel",
+      "ok": "OK",
+      "confirm": "Confirm",
+      "delete": "Delete",
+      "remove": "Remove",
+      "add": "Add",
+      "addAll": "Add all",
+      "reset": "Reset",
+      "refresh": "Refresh",
+      "close": "Close",
+      "continue": "Continue"
+    },
+    "status": {
+      "enabled": "Enabled",
+      "disabled": "Disabled",
+      "loading": "Loading...",
+      "success": "Success",
+      "error": "Error",
+      "warning": "Warning",
+      "info": "Info",
+      "online": "Online",
+      "offline": "Offline"
+    },
+    "placeholder": {
+      "search": "Search",
+      "selectPath": "Select path",
+      "inputManually": "Enter manually"
+    },
+    "table": {
+      "cover": "Cover",
+      "name": "Name",
+      "status": "Status",
+      "size": "Size",
+      "version": "Version",
+      "operation": "Operation",
+      "ext": "Ext",
+      "task": "Task",
+      "progress": "Progress",
+      "cusa": "CUSA",
+      "titleId": "Title ID",
+      "type": "Type",
+      "noData": "No Data"
+    }
+  },
+
+  "menu": {
+    "processingCenter": "Processing Center",
+    "server": "Server",
+    "hbStore": "HB-Store",
+    "config": "Config",
+    "miscs": "Miscs",
+    "downloads": "Downloads",
+    "changelog": "Changelog",
+    "troubleshootingGuide": "Troubleshooting Guide",
+    "githubRepo": "GitHub Repo",
+    "githubRepoSingleDPI": "GitHub Repo (singleDPI)",
+    "reportIssue": "Report a Issue",
+    "settings": "Settings",
+    "supportFeatures": "Support for more upcoming Features",
+    "openLocalServer": "Open Local Server",
+    "openPsApiLogs": "Open Playstation API Logs",
+    "info": "Info",
+    "closeConfirm": "Do you really want to close the Application? This stops the server and all child processes.",
+    "closeTitle": "Warning"
+  },
+
+  "tabs": {
+    "server": {
+      "baseFiles": "Base Files",
+      "draggedFiles": "Dragged Files",
+      "upcomingFeature": "Upcoming Feature Files from Hosts!"
+    },
+    "processing": "Processing Center",
+    "hbstore": "HB-Store",
+    "download": "Downloads",
+    "settings": "Settings",
+    "changelog": "Changelog"
+  },
+
+  "config": {
+    "server": {
+      "parameters": "Parameters"
+    },
+    "ps4": {
+      "title": "Playstation Configuration",
+      "ip": "Playstation IP",
+      "app": "Playstation App",
+      "port": "App Port",
+      "searchButton": "Search for PlayStation in Network",
+      "apps": {
+        "rpi": "PS4 RPI (flatZ)",
+        "rpiOOP": "PS4 RPI (OOP)",
+        "singleDPI": "PS5 singleDPI",
+        "goldhen": "PS4 GoldHEN",
+        "etaHEN": "PS5 etaHEN",
+        "ipi": "PS4 IPI",
+        "hbstore": "PS4 HB-Store"
+      },
+      "timeout": "Request Timeout",
+      "timeoutTip": "Set a higher Request Timeout if you get timeout errors and you are sure that everything else is setup correctly.",
+      "updateInterval": "Update Interval",
+      "updateIntervalTip": "Update Interval affects the interval to update the progress on a task. Higher value means more delay between updates.",
+      "queueMode": "Next Queue Item",
+      "queueModeImmediate": "Immediately",
+      "queueModeDelay": "Delay",
+      "queueDelay": "Queue Delay",
+      "queueDelaySeconds": "seconds",
+      "parameters": "Parameters"
+    },
+    "server": {
+      "title": "Local Server Configuration",
+      "ip": "Server IP",
+      "port": "Port",
+      "serverButton": "Server",
+      "networkInterface": "Networkinterface",
+      "application": "Application",
+      "app": "Server App",
+      "status": "Status",
+      "statusValues": {
+        "running": "Running",
+        "error": "Error",
+        "offline": "Offline",
+        "": "Offline"
+      },
+      "apps": {
+        "express": "Express",
+        "apache": "Apache",
+        "nginx": "Nginx",
+        "proxy": "Proxy",
+        "remote": "Remote",
+        "custom": "Custom"
+      },
+      "location": "Location",
+      "pkgBasePath": "PKG Base Path",
+      "pkgBasePathPlaceholder": "Select your base path of your PKG's",
+      "pkgBasePathEnter": "Enter manually",
+      "pkgBasePathChoose": "Choose the Path",
+      "features": "Features",
+      "autoScan": "Auto scan",
+      "autoScanOnStartup": "Auto scan base path on Startup",
+      "deepscan": "Deepscan",
+      "scanSubdir": "Scan sub directories for pkg files",
+      "urlPrefix": "URL Prefix",
+      "urlPrefixTip": "Prefix Serving File URL with full file path, makes each file unique",
+      "queueScanner": "Queue Scanner",
+      "queueScannerTip": "Enable Queue Scanner to automatically start the next install process on the Queue",
+      "readSfoHeader": "Read SFO Header",
+      "readSfoHeaderTip": "Read SFO Header of each PKG and show PKG Information"
+    },
+    "app": {
+      "title": "Application Settings",
+      "language": "Language",
+      "languageTip": "*Preparation only. If anyone want to contribute, just open a new Issue with [feature/language].",
+      "languages": {
+        "en": "English",
+        "de": "German",
+        "fr": "French",
+        "sp": "Spain",
+        "tr": "Turkish",
+        "gr": "Greek",
+        "zhCN": "Chinese (Simplified)"
+      },
+      "style": "Style",
+      "styleTip": "Want to have a specific coloring Schema? Create a new Issue with [feature/style]",
+      "titleBar": "Title Bar",
+      "titleBarTip": "Set TitleBar Appereance",
+      "styles": {
+        "light": "Light Mode",
+        "dark": "Dark Mode",
+        "pureblack": "Pure Black"
+      },
+      "titleBars": {
+        "default": "System Default",
+        "mac": "Mac",
+        "macChromatic": "Mac chromatic",
+        "win": "Windows / Linux",
+        "none": "None"
+      },
+      "features": "Feature List",
+      "notifications": "Notifications",
+      "notificationsTip": "Sends System Notifications when Installation starts and finishes",
+      "enableNotifications": "Enable System Notifications",
+      "externalLinks": "External Links",
+      "externalLinksTip": "Add PKG's to your Processing Center from a external URL (experimental)",
+      "enableExternalLinks": "Enable adding external Links",
+      "hbStore": "HB-Store",
+      "hbStoreTip": "Access to the official HB-Store from pkg-zone.com directly",
+      "enableHB": "Enable HB-Store Tab",
+      "hbStoreMode": "HB-Store Mode",
+      "hbModes": {
+        "refactored": "Refactored",
+        "refactoredTip": "Allows you to connect to the new HB-Store API",
+        "pkgZone": "PKG-Zone",
+        "pkgZoneTip": "Connects to the official HB-Store API from pkg-zone.com",
+        "custom": "Custom CDN",
+        "customTip": "Allows you to connect to your own HB-Store CDN Server"
+      },
+      "hbStoreCdn": "HB-Store CDN",
+      "hbStoreCdnTip": "Must end with slash (e.g. domain.com/)",
+      "showConfigObject": "Show Configuration Object",
+      "showConfigObjectTip": "Show my full Settings Object",
+      "resetAppSettings": "Reset App Settings",
+      "currentSettings": "Your current settings object"
+    }
+  },
+
+  "queue": {
+    "title": "Files in Queue",
+    "stats": {
+      "total": "Total",
+      "installed": "Installed",
+      "failed": "Failed"
+    },
+    "actions": {
+      "resetOptions": "Reset Options",
+      "checkOptions": "Check Options",
+      "addUrl": "Add URL",
+      "queueScanner": "Queue Scanner",
+      "autostart": "Autostart",
+      "stop": "Stop",
+      "skipInstalled": "Skip Installed"
+    },
+    "dropdown": {
+      "resetAll": "Reset Queue, Tasks and Installed",
+      "resetInstalled": "Reset Installed",
+      "clearFinished": "Remove finished files from Queue",
+      "clearInstalled": "Remove installed files from Queue",
+      "checkHb": "Check Local Server",
+      "checkPs4": "Check Playstation"
+    },
+    "expand": {
+      "statusInfo": "Status Information",
+      "sfoInfo": "SFO Information",
+      "filePaths": "File Paths",
+      "percent": "Percent",
+      "type": "Type",
+      "task": "Task",
+      "cusa": "CUSA",
+      "logs": "Logs",
+      "title": "Title",
+      "version": "Version",
+      "category": "Category",
+      "contentId": "Content ID",
+      "fileName": "File Name",
+      "patchedName": "Patched Name",
+      "path": "Path",
+      "pkgUrl": "PKG URL",
+      "icon0Url": "Icon0 URL"
+    },
+    "status": {
+      "inQueue": "in queue",
+      "installing": "installing",
+      "installed": "Installed",
+      "installedSkipped": "Installed",
+      "skipped": "Skipped",
+      "finish": "finished",
+      "serving": "serving",
+      "error": "error",
+      "pause": "pause",
+      "stop": "stop",
+      "exists": "exists",
+      "remote": "remote",
+      "sentToPs5": "Sent to PS5"
+    },
+    "messages": {
+      "nextQueueDelay": "Next queue item will start in {seconds} seconds",
+      "queueCompletedSkipped": "Queue completed. Skipped {count} installed item(s).",
+      "queueNoItems": "There are no items to be installed in the queue",
+      "foundNextFile": "Found next File in the Queue. <br>{filename}",
+      "resetAllConfirm": "This will clear your Queue, Tasks and Installed states.",
+      "resetAllSuccess": "Queue, Tasks and Installed state has been resetted",
+      "resetInstalledSuccess": "Reset {count} installed item(s) to the queue.",
+      "autostartStopped": "Queue Autostart stopped."
+    },
+    "operation": {
+      "retryFailed": "Retry failed installation"
+    }
+  },
+
+  "server": {
+    "messages": {
+      "noBasePath": "No server base path given. Please Configure first.",
+      "filesReloaded": "Files has been reloaded",
+      "allAddedToQueue": "All Files has been added to the Queue",
+      "alreadyInQueue": "{filename} is already in Queue",
+      "cannotRemove": "Can't remove {filename} from queue because it's in another state",
+      "basePathSet": "Your base_path has been set to: {path}",
+      "inputCanceled": "Input canceled",
+      "removeFromList": "Remove File from List",
+      "isInQueue": "is in the Queue",
+      "confirmRemove": "Are you sure to remove the file?",
+      "notServingRemoved": "Not serving Files has been removed",
+      "pleaseInputBasePath": "Please input base path",
+      "basePathTitle": "Base Path for the Server",
+      "loadingFiles": "Loading Server files"
+    }
+  },
+
+  "hbstore": {
+    "categories": {
+      "all": "All",
+      "media": "Multimedia",
+      "game": "HB Game",
+      "utility": "Utility",
+      "emulator": "Emulator"
+    },
+    "order": {
+      "az": "A-Z",
+      "latest": "Latest",
+      "popular": "Popular"
+    },
+    "expand": {
+      "reviewStars": "Review Stars",
+      "author": "Author",
+      "type": "Type",
+      "pv": "PV",
+      "releaseDate": "Release Date",
+      "name": "Name",
+      "description": "Description",
+      "url": "URL"
+    },
+    "download": "Download PS5 Version",
+    "messages": {
+      "alreadyInQueue": "{filename} is already in Queue",
+      "cannotRemove": "Can't remove {filename} from queue because it's in another state",
+      "installed": "Already installed on your PS5.",
+      "notInstalled": "Not detected on your PS5."
+    },
+    "legacy": {
+      "title": "HB-Store R2 (legacy)"
+    },
+    "refactored": {
+      "title": "HB-Store R2 (refactored)"
+    },
+    "noData": "No packages found"
+  },
+
+  "settings": {
+    "welcome": "Thank you for using my <b>Remote Package Sender v2</b>!",
+    "welcomeDetail": "Hope you like it so far what I've build and I would really appreciate any feedback and support.",
+    "support": "If you want to Support me and my development, you can do this on Ko-Fi.",
+    "supportDetail": "That high quality application development is done in my free time and takes much effort.",
+    "todo": "There are so many nice features that are on my todo (black)-list that are not done yet.",
+    "future": "I'd like to invest more time into this Tool and provide you one of the best Tools ever."
+  },
+
+  "download": {
+    "title": "Downloads",
+    "rpi": {
+      "name": "Remote Package Installer",
+      "author": "by flatZ",
+      "desc": "The first Remote Package Installer of the scene made by flatZ. It has been build in 2019 and have no latest updates yet. It is known as the legacy default way to install PKG's through Network.",
+      "troubleshoot": "Any troubles are addressed in the Troubleshooting Guide.",
+      "download": "Download",
+      "github": "GitHub"
+    },
+    "rpiOop": {
+      "name": "Remote Package Installer [Open Orbis Port]",
+      "author": "by njzydark",
+      "desc": "Fork of the RPI OOP by Njzydark with latest updates. Check GitHub repositories to compare the updates. If flatZ RPI doesn't work for you, you should test this one out."
+    },
+    "rpiOopBackporter": {
+      "name": "Remote Package Installer [Open Orbis Port]",
+      "author": "by backporter",
+      "desc": "Backporter is working on a new version of the Remote Package Installer porting it from flatZ version to a new one with the Open Orbis SDK.",
+      "version": "Below you can find the direct version 1.0 and the GitHub repo."
+    },
+    "hbStore": {
+      "name": "HB-Store R2",
+      "author": "by LightningMods",
+      "desc": "The official Homebrew App Store build by Darksoftware LLC.",
+      "permission": "Thanks to LightningMods I am permitted to use the API in the app. This means, you can Download and Install HB-Store Apps directly.",
+      "visit": "Visit PKG-Zone.com"
+    },
+    "cdnServer": {
+      "name": "HB-Store CDN Server",
+      "author": "by Gkiokan",
+      "desc": "With the CDN Server you can host all your local PKG files with an ease to the HB-Store. It supports name fixing and sub directory scans based on a base Path, and is also cross plattform available.",
+      "cli": "There is also a CLI-Version that is even supported officially by <b>RetroNAS</b>!",
+      "cdnServerLink": "CDN Server",
+      "cdnServerCliLink": "CDN Server CLI Version"
+    },
+    "yourApp": {
+      "name": "Your App here?",
+      "desc": "If you would like to add your Homebrew App to the Downloads Area message me on Discord at"
+    }
+  },
+
+  "messages": {
+    "connection": {
+      "ps4Accessible": "PS4 is accessible",
+      "ps4NotAccessible": "PS4 is not accessible.",
+      "ps5Accessible": "PS5 is accessible",
+      "ps5NotAccessible": "PS5 is not accessible.",
+      "ps4CheckAccessible": "Check Playstation: PS4 is accessible",
+      "ps4CheckNotAccessible": "Check Playstation: PS4 is not accessible",
+      "ps5CheckAccessible": "PS5 Connection available",
+      "ps5CheckNotAccessible": "PS5 Connection failed",
+      "serverNotWorking": "No Heartbeat. Server is not working, please check the Server Logs.",
+      "playstationAccessible": "Playstation check. PS4 is accessible",
+      "ps5ConnectionReady": "PS5 Connection is Ready for Bulk Requests",
+      "ps5ConnectionFailed": "PS5 Connection failed. Bulk Request can't proceed."
+    },
+    "install": {
+      "requestSuccess": "Install Request Success for <br>{filename}",
+      "requestFailed": "{filename} installation failed.",
+      "pkgNotFound": "Error {code} | PKG file response 404. Check Server heartbeat. <br>{filename}",
+      "unknownResponse": "Unknown Response. Please check Logs.",
+      "inQueue": "{filename} is in the queue",
+      "alreadyInstalled": "Already installed on your PS5.",
+      "notInstalled": "Not detected on your PS5.",
+      "notImplementedPs5": "'Is Installed' feature is not implemented for PS5 yet",
+      "notImplementedFind": "'Find file' is not implemented for PS5 yet",
+      "unknownResponseForPs5": "Response Code {code} for <br>{filename}",
+      "goldhenFailed": "{filename} GoldHEN install failed"
+    },
+    "queue": {
+      "bulkInstallTitle": "Bulk Install Request to PS5",
+      "bulkInstallWarning": "Queue Scanner can currently only Bulk Request all files because there is no Process Handling Response yet to track the progress. <br><br>The Queue handler will send all eligible files automatically to the PS5 with a delay in between. {count} files to be send.",
+      "bulkInstallContinue": "OK, Continue",
+      "bulkFoundFiles": "Found {count} files to be send as Bulk Requests to the PS5. <br>Attention: Files will be send with a delay in between",
+      "bulkFinished": "Queue Scanner finished. Check your PS5 download/installation",
+      "bulkRequestsFinished": "Bulk Requests finished for {count} files."
+    },
+    "notifications": {
+      "installing": "Installing",
+      "installingBody": "{filename} is installing",
+      "finished": "Finished",
+      "finishedBody": "{filename} is finished installing",
+      "queueScanner": "Queue Scanner",
+      "test": "Test",
+      "testBody": "This test is for Systemwide Notifications"
+    },
+    "validation": {
+      "noBasePath": "No server base path given. Please Configure first."
+    }
+  },
+
+  "errors": {
+    "singleDpiStatusFailed": "{filename} singleDPI status failed",
+    "singleDpiInstallError": "{filename} singleDPI install error",
+    "singleDpiStatusRequestFailed": "{filename} singleDPI status request failed",
+    "detectionFailed": "{filename} installation detection failed",
+    "statusInfoFail": "Task Info Fail",
+    "infoFail": "{filename} Info fail",
+    "invalidSingleDpiResponse": "Invalid singleDPI response",
+    "ps5ConnectionFailed": "PS5 Connection failed"
+  },
+
+  "debug": {
+    "checkHeartbeat": "Check Heartbeat",
+    "startServer": "Start Server",
+    "stopServer": "Stop Server",
+    "restartServer": "Restart Server",
+    "filesFound": "{count} files found",
+    "filesServing": "{count} files serving",
+    "serverIs": "Server is",
+    "on": "on"
+  }
 }

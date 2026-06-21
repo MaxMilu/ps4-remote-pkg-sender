@@ -3,7 +3,7 @@
 
   <el-row style="margin-bottom: 10px;">
     <el-col :span="20" style="display: flex">
-        <h2 style="margin:0; line-height: 32px;">HB-Store R2 (legacy)</h2>
+        <h2 style="margin:0; line-height: 32px;">{{ $t('hbstore.legacy.title') }}</h2>
     </el-col>
     <el-col :span="4">
 
@@ -12,68 +12,68 @@
 
 
   <div v-if="view == 'table'">
-      <el-table :data="packages" class="file">
+      <el-table :data="packages" class="file" :empty-text="$t('hbstore.noData')">
           <el-table-column type="expand">
               <template slot-scope="scope">
-                  <el-tag size="small" type="info" style="margin-bottom: 5px"> Review Stars: {{ scope.row.data.ReviewStars }} </el-tag>
-                  <el-tag size="small" type="info" style="margin-bottom: 5px"> Author: {{ scope.row.data.Author }} </el-tag>
-                  <el-tag size="small" type="info" style="margin-bottom: 5px" :type="$helper.getAppStoreType(scope.row.data.apptype)"> Type: {{ scope.row.data.apptype }} </el-tag>
-                  <el-tag size="small" type="info" style="margin-bottom: 5px"> PV: {{ scope.row.data.pv }} </el-tag>
-                  <el-tag size="small" type="info" style="margin-bottom: 5px"> Release Date: {{ scope.row.data.releaseddate }} </el-tag>
+                  <el-tag size="small" type="info" style="margin-bottom: 5px"> {{ $t('hbstore.expand.reviewStars') }}: {{ scope.row.data.ReviewStars }} </el-tag>
+                  <el-tag size="small" type="info" style="margin-bottom: 5px"> {{ $t('hbstore.expand.author') }}: {{ scope.row.data.Author }} </el-tag>
+                  <el-tag size="small" type="info" style="margin-bottom: 5px" :type="$helper.getAppStoreType(scope.row.data.apptype)"> {{ $t('hbstore.expand.type') }}: {{ scope.row.data.apptype }} </el-tag>
+                  <el-tag size="small" type="info" style="margin-bottom: 5px"> {{ $t('hbstore.expand.pv') }}: {{ scope.row.data.pv }} </el-tag>
+                  <el-tag size="small" type="info" style="margin-bottom: 5px"> {{ $t('hbstore.expand.releaseDate') }}: {{ scope.row.data.releaseddate }} </el-tag>
                   <br>
 
-                  <el-tag size="small" type="info" style="margin-bottom: 5px"> Name: {{ scope.row.data.name }} </el-tag> <br>
+                  <el-tag size="small" type="info" style="margin-bottom: 5px"> {{ $t('hbstore.expand.name') }}: {{ scope.row.data.name }} </el-tag> <br>
                   <div class="el-tag el-tag--info el-tag--small" style="height: auto; margin-bottom: 3px;">
                       <div style='display: flex;'>
-                          <div style="margin-right: 5px; ">Description: </div>
+                          <div style="margin-right: 5px; "> {{ $t('hbstore.expand.description') }}: </div>
                           <div>
-                            <div v-if="scope.row.data.desc_1">{{ scope.row.data.desc_1 }} </div>
-                            <div v-if="scope.row.data.desc_2">{{ scope.row.data.desc_2 }} </div>
+                            <div v-if="scope.row.data.desc_1">{{ scope.row.data.desc_1 }} </div>
+                            <div v-if="scope.row.data.desc_2">{{ scope.row.data.desc_2 }} </div>
                           </div>
                       </div>
                   </div>
                   <br>
 
-                  <el-tag size="small" type="info" style="margin-bottom: 5px"> URL: {{ scope.row.url }} </el-tag> <br>
-                  <pre v-if="debug">{{ scope.row }}</pre>
+                  <el-tag size="small" type="info" style="margin-bottom: 5px"> {{ $t('hbstore.expand.url') }}: {{ scope.row.url }} </el-tag> <br>
+                  <pre v-if="debug">{{ scope.row }}</pre>
               </template>
           </el-table-column>
 
-          <el-table-column label="Cover" width="100">
+          <el-table-column :label="$t('common.table.cover')" width="100">
               <template slot-scope="scope">
                   <div class='image' :style="{ backgroundImage: 'url('+scope.row.data.image+')' }" />
               </template>
           </el-table-column>
 
-          <el-table-column prop="name" label="Name">
+          <el-table-column prop="name" :label="$t('common.table.name')">
               <template slot-scope="scope">
-                  {{ scope.row.name }} <small>(v{{ scope.row.data.version}})</small>
-                  <el-tag size="small" :type="$helper.getAppStoreType(scope.row.data.apptype)" style="margin-bottom: 3px;">{{ scope.row.data.apptype }}</el-tag>
+                  {{ scope.row.name }} <small>(v{{ scope.row.data.version}})</small>
+                  <el-tag size="small" :type="$helper.getAppStoreType(scope.row.data.apptype)" style="margin-bottom: 3px;">{{ scope.row.data.apptype }}</el-tag>
                   <br>
                   <el-divider style="margin: 3px 0px" v-if="false" />
-                  {{ scope.row.data.desc }} <br>
+                  {{ scope.row.data.desc }} <br>
               </template>
           </el-table-column>
 
-          <el-table-column prop="cusa" label="CUSA" width="110" align="center">
+          <el-table-column prop="cusa" :label="$t('common.table.cusa')" width="110" align="center">
               <template slot-scope="scope">
                   <small style="font-size:12px">{{ scope.row.cusa }}</small>
               </template>
           </el-table-column>
 
-          <el-table-column prop="status" label="Type" width="120" align="center">
+          <el-table-column prop="status" :label="$t('common.table.type')" width="120" align="center">
             <template slot-scope="scope">
-                <el-tag size="small" plain :type="$helper.getFileStatus(scope.row.status)">{{ scope.row.status }}</el-tag>
+                <el-tag size="small" plain :type="$helper.getFileStatus(scope.row.status)">{{ $t('queue.status.' + scope.row.status) || scope.row.status }}</el-tag>
             </template>
           </el-table-column>
 
-          <el-table-column prop="size" label="Size" width="120" align="right">
+          <el-table-column prop="size" :label="$t('common.table.size')" width="120" align="right">
             <template slot-scope="scope">
                 <el-tag size="small" plain :type="$helper.getFileSizeType(scope.row.size)">{{ scope.row.size }}</el-tag>
             </template>
           </el-table-column>
 
-          <el-table-column label="Operation" width="150" align="right">
+          <el-table-column :label="$t('common.table.operation')" width="150" align="right">
               <template slot-scope="scope">
                   <el-button circle size="small" icon="fa fa-minus" @click="removeFromQueue(scope.row)" v-if="scope.row.status == 'in queue'" />
                   <el-button circle size="small" icon="el-icon-plus" @click="addToQueue(scope.row)" v-if="scope.row.status != 'in queue'" />
@@ -91,7 +91,7 @@
   <el-row :gutter="20" v-if="view == 'box'">
       <el-col :span="4" v-for="(file,i) in packages" :key="'_package_'+i">
         <div class='file border'>
-            <div class='title'>{{ file.name }} </div>
+            <div class='title'>{{ file.name }} </div>
             <div class='image' :style="{ backgroundImage: 'url('+file.data.image+')' }" />
         </div>
       </el-col>
@@ -99,9 +99,9 @@
 
 
   <template v-if="debug">
-      <pre>{{ packages }}</pre>
+      <pre>{{ packages }}</pre>
       <pre>{{ data }}</pre>
-      <pre>{{ config }}</pre>
+      <pre>{{ config }}</pre>
   </template>
 
 </div>
@@ -187,7 +187,7 @@ export default {
                   file.status = 'in queue'
 
                 this.$message({
-                    message: file.name + ' is already in Queue',
+                    message: this.$t('hbstore.messages.alreadyInQueue', { filename: file.name }),
                     type: 'warning'
                 })
             }
@@ -199,7 +199,7 @@ export default {
             }
             else {
                 this.$message({
-                    message: "Can't remove " + file.name + " from queue because it's in another state",
+                    message: this.$t('hbstore.messages.cannotRemove', { filename: file.name }),
                     type: 'warning'
                 })
             }
@@ -211,9 +211,9 @@ export default {
                         if(data.exists == true)
                           file.status = 'installed'
 
-                        let { exists, size, type } = data
-                        this.log(data.message, { exists, size, type })
-                        this.$message({ message: data.message, type: data.type })
+                        let { exists, size, type } = data
+                        this.log(data.message, { exists, size, type })
+                        this.$message({ message: data.message, type: data.type })
                     })
                     .catch( e => {
                         console.log(e)
@@ -222,7 +222,6 @@ export default {
 
         check(url){
             this.$root.openWithAutoclose(url)
-            // window.open(url)
         },
 
     },

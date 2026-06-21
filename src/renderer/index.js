@@ -3,6 +3,7 @@ import App from './App.vue'
 
 import router from './router'
 import store from './store'
+import i18n from './plugins/i18n'
 
 import './plugins'
 import './components'
@@ -29,9 +30,14 @@ Vue.config.errorHandler = (error, vm, info) => {
   alert("Application global errorHandler:\n" + error)
 }
 
+// Load saved locale on startup
+const savedLocale = store?.getters?.['lang/locale'] || 'en'
+i18n.loadMessages(savedLocale).catch(e => console.warn('Failed to load locale:', e))
+
 new Vue({
   router,
   store,
+  i18n,
   ...App,
 }).$mount('#app')
 
@@ -44,7 +50,7 @@ window.onerror = function(message=null, source=null, lineno=null, colno=null, er
           '\nSource ' + source +
           '\nLine ' + lineno +
           '\nColNo'  + colno +
-          '\nError ' + error)    
+          '\nError ' + error)
 };
 
 window.addEventListener('unhandledrejection', function(event) {

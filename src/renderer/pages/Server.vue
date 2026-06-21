@@ -2,38 +2,39 @@
   <div class="ServerView">
 
     <el-row style="margin-bottom: 20px">
-      <el-button :type="$helper.is(tab == 'server', 'success active', '')" data-umami-event="tab.server" @click="$root.serverTab = 'server'"> Base Files</el-button>
-      <el-button :type="$helper.is(tab == 'dragged', 'success active', '')" data-umami-event="tab.dragged" @click="$root.serverTab = 'dragged'"> Dragged Files</el-button>
-      <el-button disabled> Upcoming Feature Files from Hosts!</el-button>
+      <el-button :type="$helper.is(tab == 'server', 'success active', '')" data-umami-event="tab.server" @click="$root.serverTab = 'server'"> {{ $t('tabs.server.baseFiles') }}</el-button>
+      <el-button :type="$helper.is(tab == 'dragged', 'success active', '')" data-umami-event="tab.dragged" @click="$root.serverTab = 'dragged'"> {{ $t('tabs.server.draggedFiles') }}</el-button>
+      <el-button disabled> {{ $t('tabs.server.upcomingFeature') }}</el-button>
     </el-row>
 
     <el-row style="margin-bottom: 20px;">
       <el-col :span="20" style="display: flex">
-        <el-button @click="reload" size="small" icon="el-icon-refresh-left" style="margin-right: 10px; height: 32px;" v-if="tab == 'server'"> Reload</el-button>
+        <el-button @click="reload" size="small" icon="el-icon-refresh-left" style="margin-right: 10px; height: 32px;" v-if="tab == 'server'"> {{ $t('common.buttons.reload') }}</el-button>
 
         <el-form class="base_path_input_form" v-if="$root.serverTab == 'server'">
           <el-form-item style="margin: 0px; width: 100%;">
-            <el-input size="small" placeholder="Select your base path of your PKG's" v-model="server.base_path" disabled>
+            <el-input size="small" :placeholder="$t('config.server.pkgBasePathPlaceholder')" v-model="server.base_path" disabled>
               <el-button size="mini" slot="append" icon="el-icon-edit" @click.native="enterManuallyBasePath"></el-button>
               <el-button size="mini" slot="append" icon="el-icon-folder" @click.native="selectBasePath"></el-button>
-              <el-button size="mini" slot="append" icon="el-icon-plus" @click.native="addAllFilesToQueue"> Add all to Queue</el-button>
+              <el-button size="mini" slot="append" icon="el-icon-plus" @click.native="addAllFilesToQueue"> {{ $t('common.buttons.addAll') }}</el-button>
             </el-input>
           </el-form-item>
         </el-form>
 
-        <el-button size="small" icon="el-icon-delete" @click.native="removeFilesFromDragged" v-if="tab == 'dragged'"> Remove all files</el-button>
-        <el-button size="small" icon="el-icon-plus" @click.native="addAllFilesToQueue" v-if="tab == 'dragged'"> Add all to Queue</el-button>
+        <el-button size="small" icon="el-icon-delete" @click.native="removeFilesFromDragged" v-if="tab == 'dragged'"> {{ $t('common.buttons.remove') }}</el-button>
+        <el-button size="small" icon="el-icon-plus" @click.native="addAllFilesToQueue" v-if="tab == 'dragged'"> {{ $t('common.buttons.addAll') }}</el-button>
       </el-col>
       <el-col :span="4">
-        <el-input v-model="search" size="small" placeholder="Search" prefix-icon="fas fa-search"/>
+        <el-input v-model="search" size="small" :placeholder="$t('common.placeholder.search')" prefix-icon="fas fa-search"/>
       </el-col>
     </el-row>
 
 
     <el-table :data="files" v-loading="loading" class="file"
-        element-loading-text="Loading Server files"
+        :element-loading-text="$t('server.messages.loadingFiles')"
         element-loading-spinner="el-icon-loading"
         element-loading-background="rgba(255, 255, 255, 0.8)"
+        :empty-text="$t('common.table.noData')"
         :max-height="tableMaxHeight"
         style="width: 100%">
       <el-table-column type="index" label="#" width="55" align="center"></el-table-column>
@@ -41,50 +42,50 @@
       <el-table-column type="expand">
         <template slot-scope="scope">
           <div class="expand-section">
-            <div class="expand-section-title">File Paths</div>
+            <div class="expand-section-title">{{ $t('queue.expand.filePaths') }}</div>
             <div class="expand-paths">
               <div class="expand-path-item">
-                <span class="expand-label">File Name</span>
+                <span class="expand-label">{{ $t('queue.expand.fileName') }}</span>
                 <span class="expand-value expand-text">{{ scope.row.name }}</span>
               </div>
               <div class="expand-path-item">
-                <span class="expand-label">Patched Name</span>
+                <span class="expand-label">{{ $t('queue.expand.patchedName') }}</span>
                 <span class="expand-value expand-text">{{ scope.row.patchedFilename }}</span>
               </div>
               <div class="expand-path-item">
-                <span class="expand-label">Path</span>
+                <span class="expand-label">{{ $t('queue.expand.path') }}</span>
                 <span class="expand-value expand-text">{{ scope.row.path }}</span>
               </div>
               <div class="expand-path-item">
-                <span class="expand-label">PKG URL</span>
+                <span class="expand-label">{{ $t('queue.expand.pkgUrl') }}</span>
                 <span class="expand-value expand-text">{{ scope.row.url }}</span>
               </div>
               <div class="expand-path-item">
-                <span class="expand-label">Icon0 URL</span>
+                <span class="expand-label">{{ $t('queue.expand.icon0Url') }}</span>
                 <span class="expand-value expand-text">{{ scope.row.image }}</span>
               </div>
             </div>
           </div>
 
           <div class="expand-section expand-section-sfo" v-if="scope.row.sfo?.readSFOHeader">
-            <div class="expand-section-title">SFO Information</div>
+            <div class="expand-section-title">{{ $t('queue.expand.sfoInfo') }}</div>
             <div class="expand-grid">
               <div class="expand-item" v-if="scope.row.sfo.TITLE">
-                <span class="expand-label">Title</span>
+                <span class="expand-label">{{ $t('queue.expand.title') }}</span>
                 <span class="expand-value">{{ scope.row.sfo.TITLE }}</span>
               </div>
               <div class="expand-item" v-if="scope.row.sfo.VERSION">
-                <span class="expand-label">Version</span>
+                <span class="expand-label">{{ $t('queue.expand.version') }}</span>
                 <el-tag size="mini" type="success">{{ scope.row.sfo.VERSION }}</el-tag>
               </div>
               <div class="expand-item" v-if="scope.row.sfo.CATEGORY">
-                <span class="expand-label">Category</span>
+                <span class="expand-label">{{ $t('queue.expand.category') }}</span>
                 <el-tag size="mini" :type="$helper.getSfoCategoryLabel(scope.row.sfo.CATEGORY).color">
                   {{ $helper.getSfoCategoryLabel(scope.row.sfo.CATEGORY).label }}
                 </el-tag>
               </div>
               <div class="expand-item" v-if="scope.row.sfo.CONTENT_ID">
-                <span class="expand-label">Content ID</span>
+                <span class="expand-label">{{ $t('queue.expand.contentId') }}</span>
                 <el-tag size="mini" type="info">{{ scope.row.sfo.CONTENT_ID }}</el-tag>
               </div>
             </div>
@@ -94,13 +95,13 @@
         </template>
       </el-table-column>
 
-      <el-table-column label="Cover" width="100" v-if="sfoEnabled">
+      <el-table-column :label="$t('common.table.cover')" width="100" v-if="sfoEnabled">
         <template slot-scope="scope">
           <div class='image' :style="{ backgroundImage: 'url('+scope.row.image+')' }"/>
         </template>
       </el-table-column>
 
-      <el-table-column prop="name" label="Name" min-width="220">
+      <el-table-column prop="name" :label="$t('common.table.name')" min-width="220">
         <template slot-scope="scope">
           <template v-if="scope.row.sfo?.readSFOHeader && scope.row.sfo.TITLE">
             <div class="sfo-title">
@@ -125,7 +126,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column label="Ext" width="100" v-if="showExtension">
+      <el-table-column :label="$t('common.table.ext')" width="100" v-if="showExtension">
         <template slot-scope="scope">
           <el-tag size="mini"
               :type="scope.row.ext === '.pkg' ? 'primary' : 'success'"
@@ -134,26 +135,26 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="status" label="Status" width="120" align="center">
+      <el-table-column prop="status" :label="$t('common.table.status')" width="120" align="center">
         <template slot-scope="scope">
-          <el-tag size="small" plain :type="$helper.getFileStatus(scope.row.status)">{{ scope.row.status }}</el-tag>
+          <el-tag size="small" plain :type="$helper.getFileStatus(scope.row.status)">{{ $t('queue.status.' + scope.row.status) || scope.row.status }}</el-tag>
         </template>
       </el-table-column>
 
-      <el-table-column prop="size" label="Size" width="120" align="right">
+      <el-table-column prop="size" :label="$t('common.table.size')" width="120" align="right">
         <template slot-scope="scope">
           <el-tag size="small" plain :type="$helper.getFileSizeType(scope.row.size)">{{ scope.row.size }}</el-tag>
         </template>
       </el-table-column>
 
-      <el-table-column label="Progress" width="100px" v-if="showPercentage">
+      <el-table-column :label="$t('common.table.progress')" width="100px" v-if="showPercentage">
         <template slot-scope="scope">
           <el-tag size="mini" v-if="0">n/a</el-tag>
           <el-progress :stroke-width="15" :percentage="scope.row.percentage" :text-inside="true" stroke-linecap="square"></el-progress>
         </template>
       </el-table-column>
 
-      <el-table-column label="Operation" width="100" align="right">
+      <el-table-column :label="$t('common.table.operation')" width="100" align="right">
         <template slot-scope="scope">
           <el-button circle size="small" icon="fa fa-minus" @click="removeFromQueue(scope.row)" v-if="scope.row.status == 'in queue'"/>
           <el-button circle size="small" icon="el-icon-plus" @click="addToQueue(scope.row)" v-if="scope.row.status != 'in queue'"/>
@@ -243,19 +244,13 @@ export default {
       if (!this.server.base_path) {
         this.$message({
           type: 'warning',
-          message: 'No server base path given. Please Configure first.'
+          message: this.$t('server.messages.noBasePath')
         });
         return
       }
 
       console.log("Reload files at base path. Triggered though Server-List")
-      // this.$store.dispatch('server/startLoading')
-      // this.$store.dispatch('server/loadFiles', this.server.base_path)
       this.loadFiles()
-
-      // this.$store.dispatch('server/stopLoading')
-      // setTimeout( () => this.$store.dispatch('server/stopLoading'), 2000)
-      // console.log(this.routes)
     },
 
     check(url) {
@@ -286,7 +281,7 @@ export default {
           file.status = 'in queue'
 
         this.$message({
-          message: file.name + ' is already in Queue',
+          message: this.$t('server.messages.alreadyInQueue', { filename: file.name }),
           type: 'warning'
         })
       }
@@ -302,7 +297,7 @@ export default {
       } else {
         if (notify)
           this.$message({
-            message: "Can't remove " + file.name + " from queue because it's in another state",
+            message: this.$t('server.messages.cannotRemove', { filename: file.name }),
             type: 'warning'
           })
       }
@@ -316,30 +311,28 @@ export default {
 
       this.$message({
         type: 'success',
-        message: 'All Files has been added to the Queue'
+        message: this.$t('server.messages.allAddedToQueue')
       });
       this.$root.track({name: 'addAllFilesToQueue', data: {name: 'Add all files to the Queue'}})
     },
 
     enterManuallyBasePath() {
-      this.$prompt('Please input base path', 'Base Path for the Server', {
-        confirmButtonText: 'OK',
-        cancelButtonText: 'Cancel',
-        // inputPattern: /[\w!#$%&'*+/=?^_`{|}~-]+(?:\.[\w!#$%&'*+/=?^_`{|}~-]+)*@(?:[\w](?:[\w-]*[\w])?\.)+[\w](?:[\w-]*[\w])?/,
-        // inputErrorMessage: 'Invalid Email'
+      this.$prompt(this.$t('server.messages.pleaseInputBasePath'), this.$t('server.messages.basePathTitle'), {
+        confirmButtonText: this.$t('common.buttons.ok'),
+        cancelButtonText: this.$t('common.buttons.cancel'),
       }).then(({value}) => {
         if (value) {
           this.server.base_path = value
           this.$message({
             type: 'success',
-            message: 'Your base_path has been set to:' + value
+            message: this.$t('server.messages.basePathSet', { path: value })
           });
           this.loadFiles()
         }
       }).catch(() => {
         this.$message({
           type: 'info',
-          message: 'Input canceled'
+          message: this.$t('server.messages.inputCanceled')
         });
       });
     },
@@ -360,7 +353,7 @@ export default {
 
       this.$message({
         type: 'success',
-        message: 'Files has been reloaded'
+        message: this.$t('server.messages.filesReloaded')
       });
       this.$root.track({name: 'reload', data: {name: 'Reload Server files from base Path'}})
     },
@@ -371,7 +364,7 @@ export default {
 
       this.$message({
         type: 'success',
-        message: 'Not serving Files has been removed'
+        message: this.$t('server.messages.notServingRemoved')
       });
       this.$root.track({name: 'removeFilesFromDragged', data: {name: 'Remove all dragged Items'}})
     },
@@ -382,15 +375,15 @@ export default {
       if (fileInQueue) {
         const h = this.$createElement
         return this.$msgbox({
-          title: "Remove File from List",
+          title: this.$t('server.messages.removeFromList'),
           message: h('div', null, [
             h('span', null, " "),
             h('br', null),
             h('b', null, file.name),
             h('br', null),
-            h('span', null, 'is in the Queue'),
+            h('span', null, this.$t('server.messages.isInQueue')),
             h('br', null),
-            h('span', null, 'Are you sure to remove the file?')
+            h('span', null, this.$t('server.messages.confirmRemove'))
           ]),
           showCancelButton: true,
         })

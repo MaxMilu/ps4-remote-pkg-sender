@@ -2,54 +2,60 @@
 <div id='server_config'>
 
 
-  <el-divider content-position="left">Playstation Configuration</el-divider>
+  <el-divider content-position="left">{{ $t('config.ps4.title') }}</el-divider>
 
   <div class="q-pl-md">
   <el-form :inline="true" label-width="150px" size="mini" label-position="left" @submit.native.prevent>
       <el-row :gutter="20">
           <el-col :span="10">
-              <el-form-item label="Playstation IP">
+              <el-form-item :label="$t('config.ps4.ip')">
                 <el-input v-model="ps4.ip"></el-input>
               </el-form-item>
           </el-col>
 
           <el-col :span="10">
-              <el-button size="mini" icon="el-icon-search" :disabled="true">Search for PlayStation in Network</el-button>
+              <el-button size="mini" icon="el-icon-search" :disabled="true">{{ $t('config.ps4.searchButton') }}</el-button>
           </el-col>
       </el-row>
 
       <el-row :gutter="20">
           <el-col :span="10">
-              <el-form-item label="Playstation App">
-                  <el-select v-model="ps4.app" placeholder="Target App" default-first-option>
-                      <el-option :label="app.value" :value="app.key" :disabled="app.disabled" v-for="app in ps4Apps" :key="app.key" />
+              <el-form-item :label="$t('config.ps4.app')">
+                  <el-select v-model="ps4.app" :placeholder="$t('config.ps4.app')" default-first-option>
+                      <el-option :label="$t('config.ps4.apps.rpi')" :value="'rpi'" :disabled="false" />
+                      <el-option :label="$t('config.ps4.apps.rpiOOP')" :value="'rpiOOP'" :disabled="false" />
+                      <el-option :label="$t('config.ps4.apps.singleDPI')" :value="'singleDPI'" :disabled="false" />
+                      <el-option :label="$t('config.ps4.apps.goldhen')" :value="'goldhen'" :disabled="false" />
+                      <el-option :label="$t('config.ps4.apps.etaHEN')" :value="'etaHEN'" :disabled="false" />
+                      <el-option :label="$t('config.ps4.apps.ipi')" :value="'ipi'" :disabled="true" />
+                      <el-option :label="$t('config.ps4.apps.hbstore')" :value="'hbstore'" :disabled="true" />
                   </el-select>
               </el-form-item>
           </el-col>
 
           <el-col :span="9">
-              <el-form-item label="App Port">
+              <el-form-item :label="$t('config.ps4.port')">
                   <el-input v-model="ps4.port" :disabled="ps4.app != 'rpiOOP'" style="width: 150px"></el-input>
               </el-form-item>
           </el-col>
 
           <el-col :span="5">
-              <el-button size="small" @click="checkPS4" style="width: 100%"> <i class="el-icon-loading" v-if="testingConnection" />  Test connection</el-button>
+              <el-button size="small" @click="checkPS4" style="width: 100%"> <i class="el-icon-loading" v-if="testingConnection" />  {{ $t('common.buttons.test') }}</el-button>
           </el-col>
       </el-row>
 
 
-      <el-divider content-position="right">Parameters</el-divider>
+      <el-divider content-position="left">{{ $t('config.ps4.parameters') }}</el-divider>
       <el-row :gutter="20">
           <el-col :span="10">
-              <el-form-item label="Request Timeout" style="margin-bottom: 0px;">
+              <el-form-item :label="$t('config.ps4.timeout')" style="margin-bottom: 0px;">
                   <el-slider v-model="ps4.timeout" :format-tooltip="(val) => val + 'ms'"
                             :step="100" :min="2000" :max="8000" style="width:160px; display: inline-block"></el-slider> <br>
               </el-form-item>
           </el-col>
 
           <el-col :span="10">
-              <el-form-item label="Update Interval" style="margin-bottom: 0px;">
+              <el-form-item :label="$t('config.ps4.updateInterval')" style="margin-bottom: 0px;">
                   <el-slider v-model="ps4.update" :format-tooltip="(val) => val + 'ms'"
                             :step="100" :min="1000" :max="5000" style="width:160px; display: inline-block"></el-slider>
               </el-form-item>
@@ -58,19 +64,19 @@
 
       <el-row :gutter="20" v-if="ps4.app == 'singleDPI'">
           <el-col :span="10">
-              <el-form-item label="Next Queue Item">
+              <el-form-item :label="$t('config.ps4.queueMode')">
                   <el-radio-group v-model="ps4.singleDPI_queue_mode" size="mini">
-                      <el-radio-button label="immediate">Immediately</el-radio-button>
-                      <el-radio-button label="delay">Delay</el-radio-button>
+                      <el-radio-button label="immediate">{{ $t('config.ps4.queueModeImmediate') }}</el-radio-button>
+                      <el-radio-button label="delay">{{ $t('config.ps4.queueModeDelay') }}</el-radio-button>
                   </el-radio-group>
               </el-form-item>
           </el-col>
 
           <el-col :span="10" v-if="ps4.singleDPI_queue_mode == 'delay'">
-              <el-form-item label="Queue Delay">
+              <el-form-item :label="$t('config.ps4.queueDelay')">
                   <el-input-number v-model="ps4.singleDPI_queue_delay_seconds"
                                    :min="1" :max="3600" :step="1" />
-                  <span style="margin-left: 8px">seconds</span>
+                  <span style="margin-left: 8px">{{ $t('config.ps4.queueDelaySeconds') }}</span>
               </el-form-item>
           </el-col>
       </el-row>
@@ -78,13 +84,13 @@
       <el-row :gutter="20">
           <el-col :span="10">
               <p style="font-style: italic; font-size: 13px; color: #888">
-                Set a higher Request Timeout if you get timeout errors and you are sure that everything else is setup correctly.
+                {{ $t('config.ps4.timeoutTip') }}
               </p>
           </el-col>
 
           <el-col :span="12">
               <p style="font-style: italic; font-size: 13px; color: #888">
-                Update Interval affects the interval to update the progress on a task. Higher value means more delay between updates. <br>
+                {{ $t('config.ps4.updateIntervalTip') }}
               </p>
           </el-col>
       </el-row>
@@ -103,15 +109,6 @@ export default {
 
     data(){ return {
         testingConnection: false,
-        ps4Apps: [
-            { value: 'PS4 RPI (flatZ)', key: 'rpi', disabled: false },
-            { value: 'PS4 RPI (OOP)', key: 'rpiOOP', disabled: false },
-            { value: 'PS5 singleDPI', key: 'singleDPI', disabled: false },
-            { value: 'PS4 GoldHEN', key: 'goldhen', disabled: false },
-            { value: 'PS5 etaHEN', key: 'etaHEN', disabled: false },
-            { value: 'PS4 IPI', key: 'ipi', disabled: true },
-            { value: 'PS4 HB-Store', key: 'hbstore', disabled: true },
-        ]
     }},
 
     mounted(){
@@ -187,26 +184,26 @@ export default {
                 return await this.$ps5.checkPS5()
                     .then( () => {
                         this.testingConnection = false
-                        this.$root.log("PS5 is accessible", null)
-                        this.$message({ message: "PS5 is accessible", type: 'success' })
+                        this.$root.log(this.$t('messages.connection.ps5Accessible'), null)
+                        this.$message({ message: this.$t('messages.connection.ps5Accessible'), type: 'success' })
                     })
                     .catch( e => {
                         this.testingConnection = false
                         console.log(e)
-                        this.$root.log("Check Playstation: PS5 is not accessible", e)
-                        this.$message({ message: "PS5 is not accessible", type: 'error' })                    
+                        this.$root.log(this.$t('messages.connection.ps5CheckNotAccessible'), e)
+                        this.$message({ message: this.$t('messages.connection.ps5NotAccessible'), type: 'error' })
                     })
-            
+
             this.$ps4.checkPS4()
                 .then( (res) => {
                     this.testingConnection = false
-                    this.$root.log("PS4 is accessible", { status: res.status, statusText: res.statusText })
-                    this.$message({ message: "Playstation check. PS4 is accessible", type: 'success' })
+                    this.$root.log(this.$t('messages.connection.ps4Accessible'), { status: res.status, statusText: res.statusText })
+                    this.$message({ message: this.$t('messages.connection.playstationAccessible'), type: 'success' })
                 })
                 .catch( e => {
                     this.testingConnection = false
-                    this.$root.log("Check Playstation: PS4 is not accessible", e)
-                    this.$message({ message: "PS4 is not accessible.", type: 'error' })
+                    this.$root.log(this.$t('messages.connection.ps4CheckNotAccessible'), e)
+                    this.$message({ message: this.$t('messages.connection.ps4NotAccessible'), type: 'error' })
                 })
         },
 

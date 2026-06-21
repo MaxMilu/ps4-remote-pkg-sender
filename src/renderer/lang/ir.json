@@ -1,3 +1,426 @@
 {
-  "title": "The Dash"
+  "app": {
+    "title": "Remote Package Sender"
+  },
+
+  "common": {
+    "buttons": {
+      "test": "Verbindung testen",
+      "search": "Suchen",
+      "reload": "Neu laden",
+      "save": "Speichern",
+      "cancel": "Abbrechen",
+      "ok": "OK",
+      "confirm": "Bestätigen",
+      "delete": "Löschen",
+      "remove": "Entfernen",
+      "add": "Hinzufügen",
+      "addAll": "Alle hinzufügen",
+      "reset": "Zurücksetzen",
+      "refresh": "Aktualisieren",
+      "close": "Schließen",
+      "continue": "Fortfahren"
+    },
+    "status": {
+      "enabled": "Aktiviert",
+      "disabled": "Deaktiviert",
+      "loading": "Laden...",
+      "success": "Erfolg",
+      "error": "Fehler",
+      "warning": "Warnung",
+      "info": "Info"
+    },
+    "table": {
+      "cover": "Cover",
+      "name": "Name",
+      "status": "Status",
+      "size": "Größe",
+      "version": "Version",
+      "operation": "Aktion",
+      "ext": "Erw.",
+      "task": "Aufgabe",
+      "progress": "Fortschritt",
+      "cusa": "CUSA",
+      "titleId": "Titel-ID",
+      "type": "Typ"
+    },
+    "placeholder": {
+      "search": "Suchen",
+      "selectPath": "Pfad auswählen",
+      "inputManually": "Manuell eingeben"
+    }
+  },
+
+  "tabs": {
+    "server": {
+      "baseFiles": "Basisdateien",
+      "draggedFiles": "Hingezogene Dateien",
+      "upcomingFeature": "Bald verfügbare Host-Dateien!"
+    },
+    "processing": "Verarbeitungszentrum",
+    "hbstore": "HB-Store",
+    "download": "Downloads",
+    "settings": "Einstellungen",
+    "changelog": "Änderungsprotokoll"
+  },
+
+  "config": {
+    "server": {
+      "parameters": "Parameter"
+    },
+    "ps4": {
+      "title": "Playstation-Konfiguration",
+      "ip": "Playstation-IP",
+      "app": "Playstation-App",
+      "port": "App-Port",
+      "searchButton": "PlayStation im Netzwerk suchen",
+      "apps": {
+        "rpi": "PS4 RPI (flatZ)",
+        "rpiOOP": "PS4 RPI (OOP)",
+        "singleDPI": "PS5 singleDPI",
+        "goldhen": "PS4 GoldHEN",
+        "etaHEN": "PS5 etaHEN",
+        "ipi": "PS4 IPI",
+        "hbstore": "PS4 HB-Store"
+      },
+      "timeout": "Anfrage-Timeout",
+      "timeoutTip": "Setzen Sie einen höheren Anfrage-Timeout, wenn Sie Timeout-Fehler erhalten und Sie sicher sind, dass alles andere korrekt eingerichtet ist.",
+      "updateInterval": "Aktualisierungsintervall",
+      "updateIntervalTip": "Das Aktualisierungsintervall beeinflusst das Intervall zur Aktualisierung des Fortschritts einer Aufgabe. Ein höherer Wert bedeutet mehr Verzögerung zwischen den Aktualisierungen.",
+      "queueMode": "Nächstes Warteschlangenelement",
+      "queueModeImmediate": "Sofort",
+      "queueModeDelay": "Verzögert",
+      "queueDelay": "Warteschlangenverzögerung",
+      "queueDelaySeconds": "Sekunden"
+    },
+    "server": {
+      "title": "Lokale Serverkonfiguration",
+      "ip": "Server-IP",
+      "port": "Port",
+      "serverButton": "Server",
+      "networkInterface": "Netzwerkschnittstelle",
+      "application": "Anwendung",
+      "app": "Server-App",
+      "apps": {
+        "express": "Express",
+        "apache": "Apache",
+        "nginx": "Nginx",
+        "proxy": "Proxy",
+        "remote": "Remote",
+        "custom": "Benutzerdefiniert"
+      },
+      "location": "Speicherort",
+      "pkgBasePath": "PKG-Basispfad",
+      "pkgBasePathPlaceholder": "Wählen Sie Ihren Basispfad für PKGs",
+      "pkgBasePathEnter": "Manuell eingeben",
+      "pkgBasePathChoose": "Pfad wählen",
+      "features": "Funktionen",
+      "autoScan": "Auto-Scan",
+      "autoScanOnStartup": "Basispfad beim Start automatisch scannen",
+      "deepscan": "Tiefenscan",
+      "scanSubdir": "Unterverzeichnisse nach PKG-Dateien durchsuchen",
+      "urlPrefix": "URL-Präfix",
+      "urlPrefixTip": "Serving-Dateien-URL mit vollständigem Dateipfad präfixieren, macht jede Datei eindeutig",
+      "queueScanner": "Warteschlangen-Scanner",
+      "queueScannerTip": "Warteschlangen-Scanner aktivieren, um automatisch den nächsten Installationsprozess in der Warteschlange zu starten",
+      "readSfoHeader": "SFO-Header lesen",
+      "readSfoHeaderTip": "SFO-Header jeder PKG lesen und PKG-Informationen anzeigen"
+    },
+    "app": {
+      "title": "Anwendungseinstellungen",
+      "language": "Sprache",
+      "languageTip": "*Nur Vorbereitung. Wenn jemand beitragen möchte, öffnen Sie einfach ein neues Issue mit [feature/language].",
+      "languages": {
+        "en": "English",
+        "de": "Deutsch",
+        "fr": "Français",
+        "sp": "Español",
+        "tr": "Türkçe",
+        "gr": "Ελληνικά",
+        "zhCN": "简体中文"
+      },
+      "style": "Stil",
+      "styleTip": "Möchten Sie ein bestimmtes Farbschema? Erstellen Sie ein neues Issue mit [feature/style]",
+      "titleBar": "Titelleiste",
+      "titleBarTip": "Titelleisten-Erscheinungsbild einstellen",
+      "styles": {
+        "light": "Heller Modus",
+        "dark": "Dunkler Modus",
+        "pureblack": "Reines Schwarz"
+      },
+      "titleBars": {
+        "default": "Systemstandard",
+        "mac": "Mac",
+        "macChromatic": "Mac chromatisch",
+        "win": "Windows / Linux",
+        "none": "Keine"
+      },
+      "features": "Funktionsliste",
+      "notifications": "Benachrichtigungen",
+      "notificationsTip": "Sendet Systembenachrichtigungen, wenn die Installation beginnt und endet",
+      "enableNotifications": "Systembenachrichtigungen aktivieren",
+      "externalLinks": "Externe Links",
+      "externalLinksTip": "PKGs aus einer externen URL zu Ihrem Verarbeitungszentrum hinzufügen (experimentell)",
+      "enableExternalLinks": "Hinzufügen externer Links aktivieren",
+      "hbStore": "HB-Store",
+      "hbStoreTip": "Zugang zum offiziellen HB-Store von pkg-zone.com direkt",
+      "enableHB": "HB-Store-Tab aktivieren",
+      "hbStoreMode": "HB-Store-Modus",
+      "hbModes": {
+        "refactored": "Überarbeitet",
+        "refactoredTip": "Erlaubt Ihnen, sich mit der neuen HB-Store-API zu verbinden",
+        "pkgZone": "PKG-Zone",
+        "pkgZoneTip": "Verbindet zur offiziellen HB-Store-API von pkg-zone.com",
+        "custom": "Benutzerdefinierter CDN",
+        "customTip": "Erlaubt Ihnen, sich mit Ihrem eigenen HB-Store-CDN-Server zu verbinden"
+      },
+      "hbStoreCdn": "HB-Store CDN",
+      "hbStoreCdnTip": "Muss mit Schrägstrich enden (z.B. domain.com/)",
+      "showConfigObject": "Konfigurationsobjekt anzeigen",
+      "showConfigObjectTip": "Mein vollständiges Einstellungsobjekt anzeigen",
+      "resetAppSettings": "App-Einstellungen zurücksetzen",
+      "currentSettings": "Ihre aktuellen Einstellungen"
+    }
+  },
+
+  "queue": {
+    "title": "Dateien in Warteschlange",
+    "stats": {
+      "total": "Gesamt",
+      "installed": "Installiert",
+      "failed": "Fehlgeschlagen"
+    },
+    "actions": {
+      "resetOptions": "Optionen zurücksetzen",
+      "checkOptions": "Optionen prüfen",
+      "addUrl": "URL hinzufügen",
+      "queueScanner": "Warteschlangen-Scanner",
+      "autostart": "Autostart",
+      "stop": "Stopp",
+      "skipInstalled": "Installierte überspringen"
+    },
+    "dropdown": {
+      "resetAll": "Warteschlange, Aufgaben und Installierte zurücksetzen",
+      "resetInstalled": "Installierte zurücksetzen",
+      "clearFinished": "Abgeschlossene Dateien aus Warteschlange entfernen",
+      "clearInstalled": "Installierte Dateien aus Warteschlange entfernen",
+      "checkHb": "Lokalen Server prüfen",
+      "checkPs4": "Playstation prüfen"
+    },
+    "expand": {
+      "statusInfo": "Statusinformationen",
+      "sfoInfo": "SFO-Informationen",
+      "filePaths": "Dateipfade",
+      "percent": "Prozent",
+      "type": "Typ",
+      "task": "Aufgabe",
+      "cusa": "CUSA",
+      "logs": "Protokolle",
+      "title": "Titel",
+      "version": "Version",
+      "category": "Kategorie",
+      "contentId": "Inhalts-ID",
+      "fileName": "Dateiname",
+      "patchedName": "Geänderter Name",
+      "path": "Pfad",
+      "pkgUrl": "PKG-URL",
+      "icon0Url": "Icon0-URL"
+    },
+    "status": {
+      "inQueue": "in Warteschlange",
+      "installing": "installiert",
+      "installed": "Installiert",
+      "installedSkipped": "Installiert",
+      "skipped": "Übersprungen",
+      "finish": "abgeschlossen",
+      "serving": "bedient",
+      "error": "Fehler",
+      "pause": "Pause",
+      "stop": "Stopp",
+      "exists": "vorhanden",
+      "sentToPs5": "An PS5 gesendet"
+    },
+    "messages": {
+      "nextQueueDelay": "Nächstes Warteschlangenelement startet in {seconds} Sekunden",
+      "queueCompletedSkipped": "Warteschlange abgeschlossen. {count} installierte(s) Element(e) übersprungen.",
+      "queueNoItems": "Es gibt keine Elemente in der Warteschlange zum Installieren",
+      "foundNextFile": "Nächste Datei in der Warteschlange gefunden.<br>{filename}",
+      "resetAllConfirm": "Dies wird Ihre Warteschlange, Aufgaben und installierten Elemente löschen.",
+      "resetAllSuccess": "Warteschlange, Aufgaben und installierte Elemente wurden zurückgesetzt",
+      "resetInstalledSuccess": "{count} installierte(s) Element(e) zurück in die Warteschlange gesetzt.",
+      "autostartStopped": "Warteschlangen-Autostart gestoppt."
+    },
+    "operation": {
+      "retryFailed": "Fehlgeschlagene Installation wiederholen"
+    }
+  },
+
+  "server": {
+    "messages": {
+      "noBasePath": "Kein Server-Basispfad angegeben. Bitte zuerst konfigurieren.",
+      "filesReloaded": "Dateien neu geladen",
+      "allAddedToQueue": "Alle Dateien zur Warteschlange hinzugefügt",
+      "alreadyInQueue": "{filename} ist bereits in der Warteschlange",
+      "cannotRemove": "{filename} kann nicht aus der Warteschlange entfernt werden, da es sich in einem anderen Status befindet",
+      "basePathSet": "Ihr base_path wurde gesetzt auf: {path}",
+      "inputCanceled": "Eingabe abgebrochen",
+      "removeFromList": "Datei aus Liste entfernen",
+      "isInQueue": "ist in der Warteschlange",
+      "confirmRemove": "Sind Sie sicher, dass Sie die Datei entfernen möchten?",
+      "notServingRemoved": "Nicht dienende Dateien wurden entfernt",
+      "pleaseInputBasePath": "Bitte geben Sie den Basispfad ein",
+      "basePathTitle": "Basispfad für den Server",
+      "loadingFiles": "Serverdateien werden geladen"
+    }
+  },
+
+  "hbstore": {
+    "categories": {
+      "all": "Alle",
+      "media": "Multimedia",
+      "game": "HB-Spiel",
+      "utility": "Werkzeug",
+      "emulator": "Emulator"
+    },
+    "order": {
+      "az": "A-Z",
+      "latest": "Neueste",
+      "popular": "Beliebt"
+    },
+    "expand": {
+      "reviewStars": "Bewertungssterne",
+      "author": "Autor",
+      "type": "Typ",
+      "pv": "Aufrufe",
+      "releaseDate": "Erscheinungsdatum",
+      "name": "Name",
+      "description": "Beschreibung",
+      "url": "URL"
+    },
+    "download": "PS5-Version herunterladen",
+    "messages": {
+      "alreadyInQueue": "{filename} ist bereits in der Warteschlange",
+      "cannotRemove": "{filename} kann nicht entfernt werden, da es sich in einem anderen Status befindet",
+      "installed": "Bereits auf Ihrer PS5 installiert.",
+      "notInstalled": "Nicht auf Ihrer PS5 erkannt."
+    },
+    "legacy": {
+      "title": "HB-Store R2 (Legacy)"
+    },
+    "refactored": {
+      "title": "HB-Store R2 (Überarbeitet)"
+    }
+  },
+
+  "settings": {
+    "welcome": "Danke für die Nutzung meines <b>Remote Package Sender v2</b>!",
+    "welcomeDetail": "Ich hoffe, es gefällt Ihnen bisher, was ich gebaut habe, und ich würde mich sehr über Feedback und Unterstützung freuen.",
+    "support": "Wenn Sie mich und meine Entwicklung unterstützen möchten, können Sie dies auf Ko-Fi tun.",
+    "supportDetail": "Die Entwicklung hochwertiger Anwendungen passiert in meiner Freizeit und erfordert viel Aufwand.",
+    "todo": "Es gibt so viele tolle Funktionen auf meiner Todo-(Schwarz)-Liste, die noch nicht fertig sind.",
+    "future": "Ich möchte mehr Zeit in dieses Tool investieren und Ihnen eines der besten Tools überhaupt bieten."
+  },
+
+  "download": {
+    "title": "Downloads",
+    "rpi": {
+      "name": "Remote Package Installer",
+      "author": "von flatZ",
+      "desc": "Der erste Remote Package Installer der Szene, erstellt von flatZ. Er wurde 2019 entwickelt und hat keine neuesten Updates. Er gilt als der legacy-Standardweg, um PKGs über das Netzwerk zu installieren.",
+      "troubleshoot": "Alle Probleme werden im Fehlerbehebungsleitfaden behandelt.",
+      "download": "Herunterladen",
+      "github": "GitHub"
+    },
+    "rpiOop": {
+      "name": "Remote Package Installer [Open Orbis Port]",
+      "author": "von njzydark",
+      "desc": "Fork des RPI OOP von Njzydark mit neuesten Updates. Überprüfen Sie GitHub-Repositories, um die Updates zu vergleichen. Wenn flatZ RPI nicht für Sie funktioniert, sollten Sie dies hier ausprobieren."
+    },
+    "rpiOopBackporter": {
+      "name": "Remote Package Installer [Open Orbis Port]",
+      "author": "von backporter",
+      "desc": "Backporter arbeitet an einer neuen Version des Remote Package Installers und portiert ihn von der flatZ-Version zu einer neuen mit dem Open Orbis SDK.",
+      "version": "Unten finden Sie die direkte Version 1.0 und das GitHub-Repo."
+    },
+    "hbStore": {
+      "name": "HB-Store R2",
+      "author": "von LightningMods",
+      "desc": "Der offizielle Homebrew App Store, entwickelt von Darksoftware LLC.",
+      "permission": "Dank LightningMods darf ich die API in der App verwenden. Das bedeutet, Sie können HB-Store-Apps direkt herunterladen und installieren.",
+      "visit": "PKG-Zone.com besuchen"
+    },
+    "cdnServer": {
+      "name": "HB-Store CDN Server",
+      "author": "von Gkiokan",
+      "desc": "Mit dem CDN Server können Sie alle Ihre lokalen PKG-Dateien einfach mit dem HB-Store hosten. Es unterstützt Namenskorrektur und Unterverzeichnis-Scans basierend auf einem Basispfad und ist auch plattformübergreifend verfügbar.",
+      "cli": "Es gibt auch eine CLI-Version, die sogar offiziell von <b>RetroNAS</b> unterstützt wird!",
+      "cdnServerLink": "CDN Server",
+      "cdnServerCliLink": "CDN Server CLI-Version"
+    },
+    "yourApp": {
+      "name": "Ihre App hier?",
+      "desc": "Wenn Sie Ihre Homebrew-App zum Download-Bereich hinzufügen möchten, kontaktieren Sie mich auf Discord unter"
+    }
+  },
+
+  "messages": {
+    "connection": {
+      "ps4Accessible": "PS4 ist erreichbar",
+      "ps4NotAccessible": "PS4 ist nicht erreichbar.",
+      "ps5Accessible": "PS5 ist erreichbar",
+      "ps5NotAccessible": "PS5 ist nicht erreichbar.",
+      "ps4CheckAccessible": "Playstation-Prüfung: PS4 ist erreichbar",
+      "ps4CheckNotAccessible": "Playstation-Prüfung: PS4 ist nicht erreichbar",
+      "ps5CheckAccessible": "PS5-Verbindung verfügbar",
+      "ps5CheckNotAccessible": "PS5-Verbindung fehlgeschlagen",
+      "serverNotWorking": "Kein Heartbeat. Server funktioniert nicht, bitte Serverprotokolle prüfen.",
+      "playstationAccessible": "Playstation-Prüfung: PS4 ist erreichbar",
+      "ps5ConnectionReady": "PS5-Verbindung bereit für Bulk-Anfragen",
+      "ps5ConnectionFailed": "PS5-Verbindung fehlgeschlagen. Bulk-Anfrage kann nicht fortgesetzt werden."
+    },
+    "install": {
+      "requestSuccess": "Installationsanfrage erfolgreich für<br>{filename}",
+      "requestFailed": "{filename} Installation fehlgeschlagen.",
+      "pkgNotFound": "Fehler {code} | PKG-Datei-Antwort 404. Server-Heartbeat prüfen.<br>{filename}",
+      "unknownResponse": "Unbekannte Antwort. Bitte Protokolle prüfen.",
+      "inQueue": "{filename} ist in der Warteschlange",
+      "alreadyInstalled": "Bereits auf Ihrer PS5 installiert.",
+      "notInstalled": "Nicht auf Ihrer PS5 erkannt.",
+      "notImplementedPs5": "'Ist installiert'-Funktion für PS5 noch nicht implementiert",
+      "notImplementedFind": "'Datei finden'-Funktion für PS5 noch nicht implementiert",
+      "unknownResponseForPs5": "Antwortcode {code} für<br>{filename}",
+      "goldhenFailed": "{filename} GoldHEN-Installation fehlgeschlagen"
+    },
+    "queue": {
+      "bulkInstallTitle": "Bulk-Installationsanfrage an PS5",
+      "bulkInstallWarning": "Warteschlangen-Scanner kann derzeit nur alle Dateien als Bulk-Anfrage senden, da es noch keine Prozesshandhabungs-Antwort gibt, um den Fortschritt zu verfolgen.<br><br>Der Warteschlangen-Handler sendet alle berechtigten Dateien automatisch mit einer Verzögerung dazwischen an die PS5. {count} Dateien werden gesendet.",
+      "bulkInstallContinue": "OK, fortfahren",
+      "bulkFoundFiles": "{count} Dateien als Bulk-Anfragen an PS5 gefunden.<br>Achtung: Dateien werden mit Verzögerung gesendet",
+      "bulkFinished": "Warteschlangen-Scanner beendet. Bitte PS5-Download/Installation prüfen",
+      "bulkRequestsFinished": "Bulk-Anfragen für {count} Dateien beendet."
+    },
+    "notifications": {
+      "installing": "Installiert",
+      "installingBody": "{filename} wird installiert",
+      "finished": "Abgeschlossen",
+      "finishedBody": "{filename} Installation abgeschlossen",
+      "queueScanner": "Warteschlangen-Scanner",
+      "test": "Test",
+      "testBody": "Dies ist ein Test für Systembenachrichtigungen"
+    },
+    "validation": {
+      "noBasePath": "Kein Server-Basispfad angegeben. Bitte zuerst konfigurieren."
+    }
+  },
+
+  "errors": {
+    "singleDpiStatusFailed": "{filename} singleDPI-Status fehlgeschlagen",
+    "singleDpiInstallError": "{filename} singleDPI-Installationsfehler",
+    "singleDpiStatusRequestFailed": "{filename} singleDPI-Statusanfrage fehlgeschlagen",
+    "detectionFailed": "{filename} Installationserkennung fehlgeschlagen",
+    "statusInfoFail": "Aufgabeninfo fehlgeschlagen",
+    "infoFail": "{filename} Info fehlgeschlagen",
+    "invalidSingleDpiResponse": "Ungültige singleDPI-Antwort",
+    "ps5ConnectionFailed": "PS5-Verbindung fehlgeschlagen"
+  }
 }

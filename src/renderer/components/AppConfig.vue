@@ -1,56 +1,62 @@
 <template>
 <div id='server_config'>
 
-  <el-divider content-position="left">Application Settings</el-divider>
+  <el-divider content-position="left">{{ $t('config.app.title') }}</el-divider>
   <div class="q-pl-md">
   <el-form :inline="true" label-width="150px" size="mini" label-position="left" @submit.native.prevent>
       <el-row>
         <el-col :span="8">
-            <el-form-item label="Language">
-              <el-select v-model="config.lang" placeholder="Language" default-first-option>
-                  <el-option :label="lang.value" :value="lang.key" :disabled="lang.disabled" v-for="lang in languages" :key="lang.key" />
+            <el-form-item :label="$t('config.app.language')">
+              <el-select v-model="config.lang" :placeholder="$t('config.app.language')" default-first-option>
+                  <el-option :label="$t('config.app.languages.zhCN')" :value="'zh-CN'" />
+                  <el-option :label="$t('config.app.languages.en')" :value="'en'" />
+                  <el-option :label="$t('config.app.languages.de')" :value="'de'" />
+                  <el-option :label="$t('config.app.languages.fr')" :value="'fr'" :disabled="true" />
+                  <el-option :label="$t('config.app.languages.sp')" :value="'sp'" :disabled="true" />
+                  <el-option :label="$t('config.app.languages.tr')" :value="'tr'" :disabled="true" />
+                  <el-option :label="$t('config.app.languages.gr')" :value="'gr'" :disabled="true" />
               </el-select>
             </el-form-item>
         </el-col>
         <el-col :span="16">
             <p style="font-style: italic; font-size: 13px; color: #888; padding-top: 5px">
-              *Preparation only. If anyone want to contribute, just open a new Issue with [feature/language].
+              {{ $t('config.app.languageTip') }}
             </p>
         </el-col>
       </el-row>
 
       <el-row>
         <el-col :span="8">
-            <el-form-item label="Style">
-              <el-select v-model="config.style" placeholder="Style" default-first-option>
-                  <el-option label="Light Mode" value="light" />
-                  <el-option label="Dark Mode" value="dark" />
-                  <el-option label="Pure Black" value="pureblack" />
+            <el-form-item :label="$t('config.app.style')">
+              <el-select v-model="config.style" :placeholder="$t('config.app.style')" default-first-option>
+                  <el-option :label="$t('config.app.styles.light')" :value="'light'" />
+                  <el-option :label="$t('config.app.styles.dark')" :value="'dark'" />
+                  <el-option :label="$t('config.app.styles.pureblack')" :value="'pureblack'" />
               </el-select>
             </el-form-item>
         </el-col>
         <el-col :span="16">
             <p style="font-style: italic; font-size: 13px; color: #888; padding-top: 5px">
-              Want to have a specific coloring Schema? Create a new Issue with [feature/style]
+              {{ $t('config.app.styleTip') }}
             </p>
         </el-col>
       </el-row>
 
       <el-row>
         <el-col :span="8">
-            <el-form-item label="Style">
-              <el-select v-model="config.titleBar" placeholder="Title Bar" default-first-option>
-                  <el-option label="System Default" value="default" />
-                  <el-option label="Mac" value="mac" />
-                  <el-option label="Mac chromatic" value="mac-chromatic" />
-                  <el-option label="Windows / Linux" value="win" />
-                  <el-option label="None" value="none" />
+            <el-form-item :label="$t('config.app.titleBar')">
+              <el-select v-model="config.titleBar" :placeholder="$t('config.app.titleBar')" default-first-option>
+                  <el-option :label="$t('config.app.titleBars.default')" :value="'default'" />
+                  <el-option :label="$t('config.app.titleBars.mac')" :value="'mac'" />
+                  <el-option :label="$t('config.app.titleBars.macChromatic')" :value="'mac-chromatic'" />
+                  <el-option :label="$t('config.app.titleBars.win')" :value="'win'" />
+                  <el-option :label="$t('config.app.titleBars.none')" :value="'none'" />
               </el-select>
             </el-form-item>
         </el-col>
         <el-col :span="16">
             <p style="font-style: italic; font-size: 13px; color: #888; padding-top: 5px">
-              Set TitleBar Appereance
+              {{ $t('config.app.titleBarTip') }}
             </p>
         </el-col>
       </el-row>
@@ -63,76 +69,75 @@
     Features
     ***************************
   -->
-  <el-divider content-position="left">Feature List</el-divider>
+  <el-divider content-position="left">{{ $t('config.app.features') }}</el-divider>
   <div class="q-pl-md">
   <el-form :inline="true" label-width="150px" size="mini" label-position="left" @submit.native.prevent>
       <el-row>
         <el-col :span="8">
-            <el-form-item label="Notifications">
-                <el-checkbox v-model="config.enableSystemNotifications"> Enable System Notifications </el-checkbox>
+            <el-form-item :label="$t('config.app.notifications')">
+                <el-checkbox v-model="config.enableSystemNotifications"> {{ $t('config.app.enableNotifications') }} </el-checkbox>
             </el-form-item>
         </el-col>
         <el-col :span="16">
             <p style="font-style: italic; font-size: 13px; color: #888; padding-top: 5px">
-              Sends System Notifications when Installation starts and finishes
+              {{ $t('config.app.notificationsTip') }}
             </p>
         </el-col>
       </el-row>
 
       <el-row>
         <el-col :span="8">
-            <el-form-item label="External Links">
-                <el-checkbox v-model="config.enableExternalLinks"> Enable adding external Links </el-checkbox>
+            <el-form-item :label="$t('config.app.externalLinks')">
+                <el-checkbox v-model="config.enableExternalLinks"> {{ $t('config.app.enableExternalLinks') }} </el-checkbox>
             </el-form-item>
         </el-col>
         <el-col :span="16">
             <p style="font-style: italic; font-size: 13px; color: #888; padding-top: 5px">
-              Add PKG's to your Processing Center from a external URL (experimental)
+              {{ $t('config.app.externalLinksTip') }}
             </p>
         </el-col>
       </el-row>
 
       <el-row>
           <el-col :span="8">
-              <el-form-item label="HB-Store">
-                  <el-checkbox v-model="config.useHB"> Enable HB-Store Tab</el-checkbox>
+              <el-form-item :label="$t('config.app.hbStore')">
+                  <el-checkbox v-model="config.useHB"> {{ $t('config.app.enableHB') }}</el-checkbox>
               </el-form-item>
           </el-col>
           <el-col :span="16">
               <p style="font-style: italic; font-size: 13px; color: #888; padding-top: 5px">
-                Access to the official HB-Store from pkg-zone.com directly
+                {{ $t('config.app.hbStoreTip') }}
               </p>
           </el-col>
       </el-row>
 
       <el-row v-if="config.useHB">
           <el-col :span="8">
-              <el-form-item label="HB-Store Mode">
-                  <el-select v-model="config.useHBMode" placeholder="Mode" default-first-option>
-                      <el-option :label="mode.value" :value="mode.key" :disabled="mode.disabled" v-for="mode in HBModes" :key="mode.key" />
+              <el-form-item :label="$t('config.app.hbStoreMode')">
+                  <el-select v-model="config.useHBMode" :placeholder="$t('config.app.hbStoreMode')" default-first-option>
+                      <el-option :label="$t('config.app.hbModes.refactored')" :value="'refactored'" />
+                      <el-option :label="$t('config.app.hbModes.pkgZone')" :value="'pkg-zone'" />
+                      <el-option :label="$t('config.app.hbModes.custom')" :value="'custom'" />
                   </el-select>
               </el-form-item>
           </el-col>
 
           <el-col :span="16">
-              <p style="font-style: italic; font-size: 13px; color: #888; padding-top: 5px" v-if="config.useHBMode == 'legacy'">
-                  <b>Legacy Mode</b> is for the current working HB-Store API <br>
-              </p>
               <p style="font-style: italic; font-size: 13px; color: #888; padding-top: 5px" v-if="config.useHBMode == 'refactored'">
-                  <b>Refactored Mode</b> allows you to connect to the new HB-Store API <br>
+                  <b>{{ $t('config.app.hbModes.refactored') }}</b> {{ $t('config.app.hbModes.refactoredTip') }} <br>
               </p>
               <p style="font-style: italic; font-size: 13px; color: #888; padding-top: 5px" v-if="config.useHBMode == 'pkg-zone'">
-                  <b>PKG-Zone</b> connects to the official HB-Store API from pkg-zone.com <br>
-              </p>              
+                  <b>{{ $t('config.app.hbModes.pkgZone') }}</b> {{ $t('config.app.hbModes.pkgZoneTip') }} <br>
+              </p>
               <p style="font-style: italic; font-size: 13px; color: #888; padding-top: 5px" v-if="config.useHBMode == 'custom'">
-                  <b>Custom Mode</b> allows you to connect to your own HB-Store CDN Server <br>
+                  <b>{{ $t('config.app.hbModes.custom') }}</b> {{ $t('config.app.hbModes.customTip') }} <br>
               </p>
           </el-col>
       </el-row>
 
       <el-row v-if="config.useHB && config.useHBMode">
           <el-col :span="8">
-              <el-form-item label="HB-Store CDN" class="full-width full-width-150">
+              <el-form-item :label="$t('config.app.hbStoreCdn')" class="full-width full-width-150">
                   <el-input v-model="config.useHBRoot" style="width: 100%;" v-if="config.useHBMode != 'custom'" :disabled="config.useHBMode == 'pkg-zone'"> </el-input>
                   <el-input v-model="config.useHBCustomRoot" style="width: 100%;" v-if="config.useHBMode == 'custom'"> </el-input>
               </el-form-item>
@@ -140,7 +145,7 @@
 
           <el-col :span="16">
               <p style="font-style: italic; font-size: 13px; color: #888; padding-top: 5px; padding-left: 30px;">
-                  Must end with slash (e.g. domain.com<b>/</b>)
+                  {{ $t('config.app.hbStoreCdnTip') }}
               </p>
           </el-col>
       </el-row>
@@ -148,8 +153,8 @@
       <div style="height: 30px" />
 
       <div>
-          <el-form-item label="Show Configuration Object" label-width="300px">
-              <el-checkbox v-model="config.showConfigObject"> Show my full Settings Object </el-checkbox>
+          <el-form-item :label="$t('config.app.showConfigObject')" label-width="300px">
+              <el-checkbox v-model="config.showConfigObject"> {{ $t('config.app.showConfigObjectTip') }} </el-checkbox>
           </el-form-item>
       </div>
 
@@ -165,28 +170,13 @@
 
 <script>
 import { get, sync } from 'vuex-pathify'
+import i18n from '@/plugins/i18n'
 
 export default {
     name: 'AppConfig',
 
     data(){ return {
         debug: false,
-
-        languages: [
-            { key: 'en', value: 'English', disabled: false },
-            { key: 'de', value: 'German', disabled: true },
-            { key: 'fr', value: 'French', disabled: true },
-            { key: 'sp', value: 'Spain', disabled: true },
-            { key: 'tr', value: 'Turkish', disabled: true },
-            { key: 'gr', value: 'Greek', disabled: true },
-        ],
-
-        HBModes: [
-            // { key: 'legacy', value: 'Legacy', disabled: true},  // #deprecated        
-            { key: 'refactored', value: 'Refactored', disabled: false },
-            { key: 'pkg-zone', value: 'PKG-Zone', disabled: false },
-            { key: 'custom', value: 'Custom CDN', disabled: false },
-        ]
     }},
 
     mounted(){
@@ -198,21 +188,29 @@ export default {
     },
 
     watch: {
-        'config.lang'(){ this.save() },
+        'config.lang'(){
+            // Switch i18n locale
+            const newLocale = this.config.lang || 'en'
+            i18n.loadMessages(newLocale).catch(e => {
+                console.warn('Failed to switch language:', e)
+            })
+            this.$store.dispatch('lang/setLocale', { locale: newLocale })
+            this.save()
+        },
         'config.style'(){ this.save() },
         'config.titleBar'(){ this.save() },
         'config.useHB'(){ this.save() },
-        'config.useHBMode'(){ 
+        'config.useHBMode'(){
             if( this.config.useHBMode == 'pkg-zone' )
                 this.config.useHBRoot = 'http://api.pkg-zone.com/'
 
-            this.save() 
+            this.save()
         },
         'config.useHBRoot'(){ this.save() },
-        'config.useHBCustomRoot'(){ this.save() },
-        'config.showConfigObject'(){ this.save() },
-        'config.enableExternalLinks'(){ this.save() },
-        'config.enableSystemNotifications'(){ this.save() },
+        'config.useHBCustomRoot'(){ this.save() },
+        'config.showConfigObject'(){ this.save() },
+        'config.enableExternalLinks'(){ this.save() },
+        'config.enableSystemNotifications'(){ this.save() },
     },
 
     methods: {

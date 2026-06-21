@@ -1,12 +1,15 @@
 import Vue from 'vue'
-import store from '@/store'
 import VueI18n from 'vue-i18n'
+import en from '@/lang/en.json'
 
 Vue.use(VueI18n)
 
 const i18n = new VueI18n({
   locale: 'en',
-  messages: {}
+  fallbackLocale: 'en',
+  messages: {
+    en: en
+  }
 })
 
 /**
@@ -14,8 +17,12 @@ const i18n = new VueI18n({
  */
 export async function loadMessages (locale) {
   if (Object.keys(i18n.getLocaleMessage(locale)).length === 0) {
-    const messages = await import(/* webpackChunkName: "lang-[request]" */ `@/lang/${locale}`)
-    i18n.setLocaleMessage(locale, messages)
+    try {
+      const messages = await import(/* webpackChunkName: "lang-[request]" */ `@/lang/${locale}`)
+      i18n.setLocaleMessage(locale, messages.default || messages)
+    } catch (e) {
+      console.warn(`Failed to load messages for locale: ${locale}`, e)
+    }
   }
 
   if (i18n.locale !== locale) {
@@ -23,8 +30,7 @@ export async function loadMessages (locale) {
   }
 }
 
-(async function () {
-  await loadMessages(store.getters['lang/locale'])
-})()
+// Make loadMessages available on i18n instance for convenience
+i18n.loadMessages = loadMessages
 
 export default i18n

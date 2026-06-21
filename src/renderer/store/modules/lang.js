@@ -1,10 +1,10 @@
 import * as types from '../mutation-types'
 
-const { locale, locales } = { locale: 'en', locales: ['de', 'en'] }
+const { locale, locales } = { locale: 'en', locales: ['de', 'en', 'zh-CN'] }
 
 // state
 export const state = {
-  locale: locale, 
+  locale: locale,
   locales: locales
 }
 

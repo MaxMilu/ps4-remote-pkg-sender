@@ -1,0 +1,471 @@
+{
+  "app": {
+    "title": "远程包发送器"
+  },
+
+  "common": {
+    "buttons": {
+      "test": "测试连接",
+      "search": "搜索",
+      "reload": "刷新",
+      "save": "保存",
+      "cancel": "取消",
+      "ok": "确定",
+      "confirm": "确认",
+      "delete": "删除",
+      "remove": "移除",
+      "add": "添加",
+      "addAll": "全部添加",
+      "reset": "重置",
+      "refresh": "刷新",
+      "close": "关闭",
+      "continue": "继续"
+    },
+    "status": {
+      "enabled": "已启用",
+      "disabled": "已禁用",
+      "loading": "加载中...",
+      "success": "成功",
+      "error": "错误",
+      "warning": "警告",
+      "info": "信息",
+      "online": "在线",
+      "offline": "离线"
+    },
+    "table": {
+      "cover": "封面",
+      "name": "名称",
+      "status": "状态",
+      "size": "大小",
+      "version": "版本",
+      "operation": "操作",
+      "ext": "扩展名",
+      "task": "任务",
+      "progress": "进度",
+      "cusa": "CUSA",
+      "titleId": "标题ID",
+      "type": "类型",
+      "noData": "暂无数据"
+    },
+    "placeholder": {
+      "search": "搜索",
+      "selectPath": "选择路径",
+      "inputManually": "手动输入"
+    }
+  },
+
+  "menu": {
+    "processingCenter": "处理中心",
+    "server": "服务器",
+    "hbStore": "HB-Store",
+    "config": "配置",
+    "miscs": "其他",
+    "downloads": "下载",
+    "changelog": "更新日志",
+    "troubleshootingGuide": "故障排除指南",
+    "githubRepo": "GitHub 仓库 (原版)",
+    "githubRepoSingleDPI": "GitHub 仓库 (singleDPI改版)",
+    "reportIssue": "报告问题",
+    "settings": "设置",
+    "supportFeatures": "支持更多即将推出的功能",
+    "openLocalServer": "打开本地服务器",
+    "openPsApiLogs": "打开 PlayStation API 日志",
+    "info": "信息",
+    "closeConfirm": "确定要关闭应用程序吗？这将停止服务器和所有子进程。",
+    "closeTitle": "警告"
+  },
+
+  "tabs": {
+    "server": {
+      "baseFiles": "基础文件",
+      "draggedFiles": "拖拽文件",
+      "upcomingFeature": "即将推出的主机文件功能！"
+    },
+    "processing": "处理中心",
+    "hbstore": "HB-Store",
+    "download": "下载",
+    "settings": "设置",
+    "changelog": "更新日志"
+  },
+
+  "config": {
+    "server": {
+      "parameters": "参数"
+    },
+    "ps4": {
+      "title": "Playstation 配置",
+      "ip": "Playstation IP",
+      "app": "Playstation 应用",
+      "port": "应用端口",
+      "searchButton": "在网络中搜索 PlayStation",
+      "apps": {
+        "rpi": "PS4 RPI (flatZ)",
+        "rpiOOP": "PS4 RPI (OOP)",
+        "singleDPI": "PS5 singleDPI",
+        "goldhen": "PS4 GoldHEN",
+        "etaHEN": "PS5 etaHEN",
+        "ipi": "PS4 IPI",
+        "hbstore": "PS4 HB-Store"
+      },
+      "timeout": "请求超时",
+      "timeoutTip": "如果您确定其他设置都正确但仍收到超时错误，请设置更高的请求超时时间。",
+      "updateInterval": "更新间隔",
+      "updateIntervalTip": "更新间隔影响任务进度的更新频率。值越高意味着更新之间的延迟越大。",
+      "queueMode": "下一个队列项目",
+      "queueModeImmediate": "立即",
+      "queueModeDelay": "延迟",
+      "queueDelay": "队列延迟",
+      "queueDelaySeconds": "秒",
+      "parameters": "参数"
+    },
+    "server": {
+      "title": "本地服务器配置",
+      "ip": "服务器 IP",
+      "port": "端口",
+      "serverButton": "服务器",
+      "networkInterface": "网络接口",
+      "application": "应用程序",
+      "app": "服务器应用",
+      "status": "状态",
+      "statusValues": {
+        "running": "运行中",
+        "error": "错误",
+        "offline": "离线",
+        "": "离线"
+      },
+      "apps": {
+        "express": "Express",
+        "apache": "Apache",
+        "nginx": "Nginx",
+        "proxy": "代理",
+        "remote": "远程",
+        "custom": "自定义"
+      },
+      "location": "位置",
+      "pkgBasePath": "PKG 基础路径",
+      "pkgBasePathPlaceholder": "选择您的 PKG 文件基础路径",
+      "pkgBasePathEnter": "手动输入",
+      "pkgBasePathChoose": "选择路径",
+      "features": "功能",
+      "autoScan": "自动扫描",
+      "autoScanOnStartup": "启动时自动扫描基础路径",
+      "deepscan": "深度扫描",
+      "scanSubdir": "扫描子目录中的 pkg 文件",
+      "urlPrefix": "URL 前缀",
+      "urlPrefixTip": "使用完整文件路径作为服务文件 URL 的前缀，使每个文件唯一",
+      "queueScanner": "队列扫描器",
+      "queueScannerTip": "启用队列扫描器以自动启动队列中的下一个安装进程",
+      "readSfoHeader": "读取 SFO 头",
+      "readSfoHeaderTip": "读取每个 PKG 的 SFO 头并显示 PKG 信息"
+    },
+    "app": {
+      "title": "应用程序设置",
+      "language": "语言",
+      "languageTip": "*仅准备阶段。如果有人愿意贡献，只需用 [feature/language] 提交一个新 Issue。",
+      "languages": {
+        "en": "English",
+        "de": "Deutsch",
+        "fr": "Français",
+        "sp": "Español",
+        "tr": "Türkçe",
+        "gr": "Ελληνικά",
+        "zhCN": "简体中文"
+      },
+      "style": "样式",
+      "styleTip": "想要特定的配色方案？用 [feature/style] 提交一个新 Issue",
+      "titleBar": "标题栏",
+      "titleBarTip": "设置标题栏外观",
+      "styles": {
+        "light": "浅色模式",
+        "dark": "深色模式",
+        "pureblack": "纯黑"
+      },
+      "titleBars": {
+        "default": "系统默认",
+        "mac": "Mac",
+        "macChromatic": "Mac 彩色",
+        "win": "Windows / Linux",
+        "none": "无"
+      },
+      "features": "功能列表",
+      "notifications": "通知",
+      "notificationsTip": "安装开始和结束时发送系统通知",
+      "enableNotifications": "启用系统通知",
+      "externalLinks": "外部链接",
+      "externalLinksTip": "从外部 URL 添加 PKG 到您的处理中心（实验性）",
+      "enableExternalLinks": "启用添加外部链接",
+      "hbStore": "HB-Store",
+      "hbStoreTip": "直接从 pkg-zone.com 访问官方 HB-Store",
+      "enableHB": "启用 HB-Store 标签页",
+      "hbStoreMode": "HB-Store 模式",
+      "hbModes": {
+        "refactored": "重构模式",
+        "refactoredTip": "允许您连接到新的 HB-Store API",
+        "pkgZone": "PKG-Zone",
+        "pkgZoneTip": "连接到 pkg-zone.com 的官方 HB-Store API",
+        "custom": "自定义 CDN",
+        "customTip": "允许您连接到自己的 HB-Store CDN 服务器"
+      },
+      "hbStoreCdn": "HB-Store CDN",
+      "hbStoreCdnTip": "必须以斜杠结尾（例如 domain.com/）",
+      "showConfigObject": "显示配置对象",
+      "showConfigObjectTip": "显示我的完整设置对象",
+      "resetAppSettings": "重置应用设置",
+      "currentSettings": "您的当前设置对象"
+    }
+  },
+
+  "queue": {
+    "title": "队列中的文件",
+    "stats": {
+      "total": "总计",
+      "installed": "已安装",
+      "failed": "失败"
+    },
+    "actions": {
+      "resetOptions": "重置选项",
+      "checkOptions": "检查选项",
+      "addUrl": "添加 URL",
+      "queueScanner": "队列扫描器",
+      "autostart": "自动启动",
+      "stop": "停止",
+      "skipInstalled": "跳过已安装"
+    },
+    "dropdown": {
+      "resetAll": "重置队列、任务和已安装状态",
+      "resetInstalled": "重置已安装",
+      "clearFinished": "从队列中移除已完成文件",
+      "clearInstalled": "从队列中移除已安装文件",
+      "checkHb": "检查本地服务器",
+      "checkPs4": "检查 PlayStation"
+    },
+    "expand": {
+      "statusInfo": "状态信息",
+      "sfoInfo": "SFO 信息",
+      "filePaths": "文件路径",
+      "percent": "百分比",
+      "type": "类型",
+      "task": "任务",
+      "cusa": "CUSA",
+      "logs": "日志",
+      "title": "标题",
+      "version": "版本",
+      "category": "类别",
+      "contentId": "内容 ID",
+      "fileName": "文件名",
+      "patchedName": "修补后的名称",
+      "path": "路径",
+      "pkgUrl": "PKG URL",
+      "icon0Url": "图标 URL"
+    },
+    "status": {
+      "inQueue": "队列中",
+      "installing": "安装中",
+      "installed": "已安装",
+      "installedSkipped": "已安装",
+      "skipped": "已跳过",
+      "finish": "已完成",
+      "serving": "服务中",
+      "error": "错误",
+      "pause": "暂停",
+      "stop": "停止",
+      "exists": "已存在",
+      "remote": "远程",
+      "sentToPs5": "已发送到 PS5"
+    },
+    "messages": {
+      "nextQueueDelay": "下一个队列项目将在 {seconds} 秒后开始",
+      "queueCompletedSkipped": "队列完成。跳过了 {count} 个已安装项目。",
+      "queueNoItems": "队列中没有要安装的项目",
+      "foundNextFile": "找到队列中的下一个文件。<br>{filename}",
+      "resetAllConfirm": "这将清除您的队列、任务和已安装状态。",
+      "resetAllSuccess": "队列、任务和已安装状态已重置",
+      "resetInstalledSuccess": "已将 {count} 个已安装项目重置到队列中。",
+      "autostartStopped": "队列自动启动已停止。"
+    },
+    "operation": {
+      "retryFailed": "重试失败的安装"
+    }
+  },
+
+  "server": {
+    "messages": {
+      "noBasePath": "未设置服务器基础路径。请先配置。",
+      "filesReloaded": "文件已刷新",
+      "allAddedToQueue": "所有文件已添加到队列",
+      "alreadyInQueue": "{filename} 已在队列中",
+      "cannotRemove": "无法从队列中移除 {filename}，因为它处于其他状态",
+      "basePathSet": "您的 base_path 已设置为：{path}",
+      "inputCanceled": "输入已取消",
+      "removeFromList": "从列表中移除文件",
+      "isInQueue": "在队列中",
+      "confirmRemove": "确定要移除这个文件吗？",
+      "notServingRemoved": "非服务文件已移除",
+      "pleaseInputBasePath": "请输入基础路径",
+      "basePathTitle": "服务器的基路径",
+      "loadingFiles": "正在加载服务器文件"
+    }
+  },
+
+  "hbstore": {
+    "categories": {
+      "all": "全部",
+      "media": "多媒体",
+      "game": "自制游戏",
+      "utility": "工具",
+      "emulator": "模拟器"
+    },
+    "order": {
+      "az": "A-Z",
+      "latest": "最新",
+      "popular": "热门"
+    },
+    "expand": {
+      "reviewStars": "评价星级",
+      "author": "作者",
+      "type": "类型",
+      "pv": "浏览量",
+      "releaseDate": "发布日期",
+      "name": "名称",
+      "description": "描述",
+      "url": "网址"
+    },
+    "download": "下载 PS5 版本",
+    "messages": {
+      "alreadyInQueue": "{filename} 已在队列中",
+      "cannotRemove": "无法移除 {filename}，因为它处于其他状态",
+      "installed": "已在您的 PS5 上安装。",
+      "notInstalled": "未在您的 PS5 上检测到。"
+    },
+    "legacy": {
+      "title": "HB-Store R2（旧版）"
+    },
+    "refactored": {
+      "title": "HB-Store R2（重构版）"
+    },
+    "noData": "未找到软件包"
+  },
+
+  "settings": {
+    "welcome": "感谢您使用我的 <b>远程包发送器 v2</b>！",
+    "welcomeDetail": "希望您到目前为止喜欢我所构建的内容，我非常感谢任何反馈和支持。",
+    "support": "如果您想支持我和我的开发，您可以在 Ko-Fi 上这样做。",
+    "supportDetail": "高质量的应用程序开发是在我的业余时间完成的，需要很多努力。",
+    "todo": "我的待办（黑）列表上还有很多尚未完成的好功能。",
+    "future": "我愿意在这个工具上投入更多时间，为您提供最好的工具之一。"
+  },
+
+  "download": {
+    "title": "下载",
+    "rpi": {
+      "name": "远程包安装器",
+      "author": "作者：flatZ",
+      "desc": "这是由 flatZ 制作的场景中第一个远程包安装器。它于 2019 年构建，暂无最新更新。它被认为是通过网络安装 PKG 的传统默认方式。",
+      "troubleshoot": "任何问题都在故障排除指南中说明。",
+      "download": "下载",
+      "github": "GitHub"
+    },
+    "rpiOop": {
+      "name": "远程包安装器 [Open Orbis 端口]",
+      "author": "作者：njzydark",
+      "desc": "这是 Njzydark 的 RPI OOP 的分支，包含最新更新。查看 GitHub 仓库以比较更新。如果 flatZ RPI 不适合您，您应该试试这个。"
+    },
+    "rpiOopBackporter": {
+      "name": "远程包安装器 [Open Orbis 端口]",
+      "author": "作者：backporter",
+      "desc": "Backporter 正在开发新版远程包安装器，将其从 flatZ 版本移植到使用 Open Orbis SDK 的新版本。",
+      "version": "您可以在下面找到 1.0 直接版本和 GitHub 仓库。"
+    },
+    "hbStore": {
+      "name": "HB-Store R2",
+      "author": "作者：LightningMods",
+      "desc": "由 Darksoftware LLC 构建的官方自制应用商店。",
+      "permission": "感谢 LightningMods 允许我在应用程序中使用 API。这意味着您可以直接下载和安装 HB-Store 应用。",
+      "visit": "访问 PKG-Zone.com"
+    },
+    "cdnServer": {
+      "name": "HB-Store CDN 服务器",
+      "author": "作者：Gkiokan",
+      "desc": "使用 CDN 服务器，您可以轻松地在 HB-Store 上托管所有本地 PKG 文件。它支持基于基础路径的名称修复和子目录扫描，并且跨平台可用。",
+      "cli": "还有一个 CLI 版本，甚至被 <b>RetroNAS</b> 正式支持！",
+      "cdnServerLink": "CDN 服务器",
+      "cdnServerCliLink": "CDN 服务器 CLI 版本"
+    },
+    "yourApp": {
+      "name": "在这里展示您的应用？",
+      "desc": "如果您想将您的自制应用添加到下载区域，请通过 Discord 联系我："
+    }
+  },
+
+  "messages": {
+    "connection": {
+      "ps4Accessible": "PS4 可访问",
+      "ps4NotAccessible": "PS4 不可访问。",
+      "ps5Accessible": "PS5 可访问",
+      "ps5NotAccessible": "PS5 不可访问。",
+      "ps4CheckAccessible": "检查 PlayStation：PS4 可访问",
+      "ps4CheckNotAccessible": "检查 PlayStation：PS4 不可访问",
+      "ps5CheckAccessible": "PS5 连接可用",
+      "ps5CheckNotAccessible": "PS5 连接失败",
+      "serverNotWorking": "无心跳。服务器未工作，请检查服务器日志。",
+      "playstationAccessible": "PlayStation 检查：PS4 可访问",
+      "ps5ConnectionReady": "PS5 连接已准备好进行批量请求",
+      "ps5ConnectionFailed": "PS5 连接失败。无法继续批量请求。"
+    },
+    "install": {
+      "requestSuccess": "安装请求成功<br>{filename}",
+      "requestFailed": "{filename} 安装失败。",
+      "pkgNotFound": "错误 {code} | PKG 文件响应 404。请检查服务器心跳。<br>{filename}",
+      "unknownResponse": "未知响应。请检查日志。",
+      "inQueue": "{filename} 在队列中",
+      "alreadyInstalled": "已在您的 PS5 上安装。",
+      "notInstalled": "未在您的 PS5 上检测到。",
+      "notImplementedPs5": "PS5 的「已安装」功能尚未实现",
+      "notImplementedFind": "PS5 的「查找文件」功能尚未实现",
+      "unknownResponseForPs5": "响应代码 {code}<br>{filename}",
+      "goldhenFailed": "{filename} GoldHEN 安装失败"
+    },
+    "queue": {
+      "bulkInstallTitle": "批量安装请求到 PS5",
+      "bulkInstallWarning": "队列扫描器目前只能批量请求所有文件，因为还没有处理响应来跟踪进度。<br><br>队列处理器将自动向 PS5 发送所有符合条件的文件，中间有延迟。将发送 {count} 个文件。",
+      "bulkInstallContinue": "好的，继续",
+      "bulkFoundFiles": "找到 {count} 个文件作为批量请求发送到 PS5。<br>注意：文件将分延迟发送",
+      "bulkFinished": "队列扫描器完成。请检查您的 PS5 下载/安装",
+      "bulkRequestsFinished": "{count} 个文件的批量请求已完成。"
+    },
+    "notifications": {
+      "installing": "正在安装",
+      "installingBody": "{filename} 正在安装",
+      "finished": "已完成",
+      "finishedBody": "{filename} 安装完成",
+      "queueScanner": "队列扫描器",
+      "test": "测试",
+      "testBody": "这是用于系统通知的测试"
+    },
+    "validation": {
+      "noBasePath": "未设置服务器基础路径。请先配置。"
+    }
+  },
+
+  "errors": {
+    "singleDpiStatusFailed": "{filename} singleDPI 状态检查失败",
+    "singleDpiInstallError": "{filename} singleDPI 安装错误",
+    "singleDpiStatusRequestFailed": "{filename} singleDPI 状态请求失败",
+    "detectionFailed": "{filename} 安装检测失败",
+    "statusInfoFail": "任务信息失败",
+    "infoFail": "{filename} 信息获取失败",
+    "invalidSingleDpiResponse": "无效的 singleDPI 响应",
+    "ps5ConnectionFailed": "PS5 连接失败"
+  },
+
+  "debug": {
+    "checkHeartbeat": "检查心跳",
+    "startServer": "启动服务器",
+    "stopServer": "停止服务器",
+    "restartServer": "重启服务器",
+    "filesFound": "找到 {count} 个文件",
+    "filesServing": "正在服务 {count} 个文件",
+    "serverIs": "服务器状态",
+    "on": "于"
+  }
+}

@@ -8,7 +8,9 @@ export default {
     ps4_rpioop: "https://github.com/Backporter/ps4_remote_pkg_installer-OOSDK/releases",
     ps4_rpioop_github: "https://github.com/Backporter/ps4_remote_pkg_installer-OOSDK",
 
-    github_repo: "https://github.com/Gkiokan/ps4-remote-pkg-sender",
+    github_repo: "https://github.com/Gkiokan/ps4-remote-pkg-sender", // sender的原版仓库
+    github_repo_sender_singleDPI: "https://github.com/MaxMilu/ps4-remote-pkg-sender", // 指 当前分支的支持singleDPI的改版sender
+    github_repo_singleDPI: "https://github.com/MaxMilu/ps5-direct-package-installer", // 指 singleDPI elf 源码仓库
     github_releases: "https://github.com/Gkiokan/ps4-remote-pkg-sender/releases",
     github_releases_latest: "https://github.com/Gkiokan/ps4-remote-pkg-sender/releases/latest",
 

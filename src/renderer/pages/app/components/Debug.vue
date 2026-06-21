@@ -1,18 +1,18 @@
 <template>
 <div>
     <div class="mb-md">
-        {{ serverFiles.length }} files found <br>
-        {{ servingFiles.length }} files serving <br>
+        {{ $t('debug.filesFound', { count: serverFiles.length }) }} <br>
+        {{ $t('debug.filesServing', { count: servingFiles.length }) }} <br>
     </div>
 
-    Server is <el-tag size="mini" :type="$helper.getServerStatusType(running)" >{{ running }}</el-tag> on {{ ip }}:{{ port }}<br>
-    
+    {{ $t('debug.serverIs') }} <el-tag size="mini" :type="$helper.getServerStatusType(running)">{{ $t('config.server.statusValues.' + running) || running }}</el-tag> {{ $t('debug.on') }} {{ ip }}:{{ port }}<br>
+
     <br>
-    <el-button size="mini" @click="$emit('hearthbeat')"> check hearthbeat </el-button> {{ hb }} <br>
+    <el-button size="mini" @click="$emit('hearthbeat')"> {{ $t('debug.checkHeartbeat') }} </el-button> {{ hb }} <br>
     <br>
-    <el-button size="mini" @click="startServer">Start Server </el-button>
-    <el-button size="mini" @click="$emit('stopServer')"> Stop Server </el-button>
-    <el-button size="mini" @click="$emit('restartServer')"> Restart Server </el-button>
+    <el-button size="mini" @click="startServer">{{ $t('debug.startServer') }} </el-button>
+    <el-button size="mini" @click="$emit('stopServer')"> {{ $t('debug.stopServer') }} </el-button>
+    <el-button size="mini" @click="$emit('restartServer')"> {{ $t('debug.restartServer') }} </el-button>
 
 </div>
 </template>
@@ -38,14 +38,15 @@ export default {
       startServer(){
           if(this.ip.length == 0 || this.port.length == 0){
               let error = "Server cannot start. Please configure IP and Port"
-              this.$store.dispatch('server/addLog', error)
-              this.$message({ type: 'warning', message: error });
+              console.error(error)
+              this.$message({ message: error, type: 'error' })
               return
           }
 
-          this.$emit('startServer')
+          this.$root.sendServer('start')
       },
-  }
+  },
+
 }
 </script>
 

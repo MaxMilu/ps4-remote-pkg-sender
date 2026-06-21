@@ -4,56 +4,57 @@
       <el-col :span="20">
         <el-dropdown @command="handleDropdownCommand" style="margin-right: 10px">
           <el-button size="small" icon="el-icon-refresh-left">
-            Reset Options <i class="el-icon-arrow-down el-icon--right"></i>
+            {{ $t('queue.actions.resetOptions') }} <i class="el-icon-arrow-down el-icon--right"></i>
           </el-button>
           <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item icon="el-icon-refresh-left" command="resetAll">Reset Queue, Tasks and Installed</el-dropdown-item>
-            <el-dropdown-item icon="el-icon-refresh-left" command="resetInstalled">Reset Installed</el-dropdown-item>
-            <el-dropdown-item icon="el-icon-refresh-left" command="clearFinishedFiles">Remove finished files from Queue</el-dropdown-item>
-            <el-dropdown-item icon="el-icon-delete" command="clearInstalledFiles">Remove installed files from Queue</el-dropdown-item>
+            <el-dropdown-item icon="el-icon-refresh-left" command="resetAll">{{ $t('queue.dropdown.resetAll') }}</el-dropdown-item>
+            <el-dropdown-item icon="el-icon-refresh-left" command="resetInstalled">{{ $t('queue.dropdown.resetInstalled') }}</el-dropdown-item>
+            <el-dropdown-item icon="el-icon-refresh-left" command="clearFinishedFiles">{{ $t('queue.dropdown.clearFinished') }}</el-dropdown-item>
+            <el-dropdown-item icon="el-icon-delete" command="clearInstalledFiles">{{ $t('queue.dropdown.clearInstalled') }}</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
 
         <el-dropdown @command="handleDropdownCommand" style="margin-right: 10px">
           <el-button size="small" icon="el-icon-check">
-            Check Options <i class="el-icon-arrow-down el-icon--right"></i>
+            {{ $t('queue.actions.checkOptions') }} <i class="el-icon-arrow-down el-icon--right"></i>
           </el-button>
           <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item icon="fa fa-server" command="checkHB">Check Local Server</el-dropdown-item>
-            <el-dropdown-item icon="fab fa-playstation" command="checkPS4">Check Playstation</el-dropdown-item>
+            <el-dropdown-item icon="fa fa-server" command="checkHB">{{ $t('queue.dropdown.checkHb') }}</el-dropdown-item>
+            <el-dropdown-item icon="fab fa-playstation" command="checkPS4">{{ $t('queue.dropdown.checkPs4') }}</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
 
-        <el-button size="small" icon="el-icon-link" @click="openAddFileDialog" v-if="app.config.enableExternalLinks"> Add URL</el-button>
+        <el-button size="small" icon="el-icon-link" @click="openAddFileDialog" v-if="app.config.enableExternalLinks"> {{ $t('queue.actions.addUrl') }}</el-button>
 
-        <el-button size="small" icon="el-icon-sync" :type="queueScanner ? 'success active' : ' active'" @click="toggleQueueScanner"> Queue Scanner</el-button>
+        <el-button size="small" icon="el-icon-sync" :type="queueScanner ? 'success active' : ' active'" @click="toggleQueueScanner"> {{ $t('queue.actions.queueScanner') }}</el-button>
         <el-button size="small"
             :type="queueAutoRunning ? 'danger' : ''"
             :icon="queueAutoRunning ? 'fa fa-stop' : 'fa fa-play'"
             @click="toggleQueueAutostart"
             v-if="queueScanner">
-          {{ queueAutoRunning ? 'Stop' : 'Autostart' }}
+          {{ queueAutoRunning ? $t('queue.actions.stop') : $t('queue.actions.autostart') }}
         </el-button>
-        <el-checkbox v-model="skipInstalledQueueItems" v-if="queueScanner" style="margin-left: 10px"> Skip Installed</el-checkbox>
+        <el-checkbox v-model="skipInstalledQueueItems" v-if="queueScanner" style="margin-left: 10px"> {{ $t('queue.actions.skipInstalled') }}</el-checkbox>
 
         <span class="queue_stats">
-          <el-tag size="small" type="info">Total {{ queueStats.total }}</el-tag>
-          <el-tag size="small" type="success">Installed {{ queueStats.installed }}</el-tag>
-          <el-tag size="small" type="danger">Failed {{ queueStats.failed }}</el-tag>
+          <el-tag size="small" type="info">{{ $t('queue.stats.total') }} {{ queueStats.total }}</el-tag>
+          <el-tag size="small" type="success">{{ $t('queue.stats.installed') }} {{ queueStats.installed }}</el-tag>
+          <el-tag size="small" type="danger">{{ $t('queue.stats.failed') }} {{ queueStats.failed }}</el-tag>
         </span>
 
         <el-button size="small" @click="test" v-if="false">Test</el-button>
       </el-col>
       <el-col :span="4">
-        <el-input v-model="search" size="small" placeholder="Search" prefix-icon="fas fa-search"/>
+        <el-input v-model="search" size="small" :placeholder="$t('common.placeholder.search')" prefix-icon="fas fa-search"/>
       </el-col>
     </el-row>
 
 
     <el-table :data="files" v-loading="loading" class="file"
-        element-loading-text="Loading Server files"
+        :element-loading-text="$t('server.messages.loadingFiles')"
         element-loading-spinner="el-icon-loading"
         element-loading-background="rgba(255, 255, 255, 0.8)"
+        :empty-text="$t('common.table.noData')"
         :max-height="tableMaxHeight"
     style="width: 100%">
 
@@ -63,34 +64,34 @@
         <template slot-scope="scope">
           <!-- 状态信息区 -->
           <div class="expand-section">
-            <div class="expand-section-title">Status Information</div>
+            <div class="expand-section-title">{{ $t('queue.expand.statusInfo') }}</div>
             <div class="expand-grid">
               <div class="expand-item">
-                <span class="expand-label">Percent</span>
+                <span class="expand-label">{{ $t('queue.expand.percent') }}</span>
                 <el-tag size="mini" type="primary">{{ scope.row.percentage }}%</el-tag>
               </div>
               <div class="expand-item">
-                <span class="expand-label">Status</span>
-                <el-tag size="mini" :type="$helper.getFileStatus(scope.row.status)">{{ scope.row.status }}</el-tag>
+                <span class="expand-label">{{ $t('common.table.status') }}</span>
+                <el-tag size="mini" :type="$helper.getFileStatus(scope.row.status)">{{ $t('queue.status.' + scope.row.status) || scope.row.status }}</el-tag>
               </div>
               <div class="expand-item">
-                <span class="expand-label">Type</span>
+                <span class="expand-label">{{ $t('queue.expand.type') }}</span>
                 <span class="expand-value">{{ scope.row.type || '-' }}</span>
               </div>
               <div class="expand-item">
-                <span class="expand-label">Task</span>
+                <span class="expand-label">{{ $t('queue.expand.task') }}</span>
                 <span class="expand-value">{{ scope.row.task || '-' }}</span>
               </div>
               <div class="expand-item" v-if="scope.row.cusa">
-                <span class="expand-label">CUSA</span>
+                <span class="expand-label">{{ $t('queue.expand.cusa') }}</span>
                 <span class="expand-value">{{ scope.row.cusa }}</span>
               </div>
               <div class="expand-item">
-                <span class="expand-label">Size</span>
+                <span class="expand-label">{{ $t('common.table.size') }}</span>
                 <span class="expand-value">{{ scope.row.size || '-' }}</span>
               </div>
               <div class="expand-item">
-                <span class="expand-label">Logs</span>
+                <span class="expand-label">{{ $t('queue.expand.logs') }}</span>
                 <span class="expand-value">{{ scope.row.logs ? scope.row.logs.length : 0 }}</span>
               </div>
             </div>
@@ -98,24 +99,24 @@
 
           <!-- 文件信息区 -->
           <div class="expand-section" v-if="scope.row.sfo?.readSFOHeader">
-            <div class="expand-section-title">SFO Information</div>
+            <div class="expand-section-title">{{ $t('queue.expand.sfoInfo') }}</div>
             <div class="expand-grid">
               <div class="expand-item" v-if="scope.row.sfo.TITLE">
-                <span class="expand-label">Title</span>
+                <span class="expand-label">{{ $t('queue.expand.title') }}</span>
                 <span class="expand-value">{{ scope.row.sfo.TITLE }}</span>
               </div>
               <div class="expand-item" v-if="scope.row.sfo.VERSION">
-                <span class="expand-label">Version</span>
+                <span class="expand-label">{{ $t('queue.expand.version') }}</span>
                 <span class="expand-value">{{ scope.row.sfo.VERSION }}</span>
               </div>
               <div class="expand-item" v-if="scope.row.sfo.CATEGORY">
-                <span class="expand-label">Category</span>
+                <span class="expand-label">{{ $t('queue.expand.category') }}</span>
                 <el-tag size="small" :type="$helper.getSfoCategoryLabel(scope.row.sfo.CATEGORY).color">
                   {{ $helper.getSfoCategoryLabel(scope.row.sfo.CATEGORY).label }}
                 </el-tag>
               </div>
               <div class="expand-item" v-if="scope.row.sfo.CONTENT_ID">
-                <span class="expand-label">Content ID</span>
+                <span class="expand-label">{{ $t('queue.expand.contentId') }}</span>
                 <span class="expand-value">{{ scope.row.sfo.CONTENT_ID }}</span>
               </div>
             </div>
@@ -123,26 +124,26 @@
 
           <!-- 路径信息区 -->
           <div class="expand-section">
-            <div class="expand-section-title">File Paths</div>
+            <div class="expand-section-title">{{ $t('queue.expand.filePaths') }}</div>
             <div class="expand-paths">
               <div class="expand-path-item">
-                <span class="expand-label">File Name</span>
+                <span class="expand-label">{{ $t('queue.expand.fileName') }}</span>
                 <span class="expand-value expand-text">{{ scope.row.name }}</span>
               </div>
               <div class="expand-path-item">
-                <span class="expand-label">Patched Name</span>
+                <span class="expand-label">{{ $t('queue.expand.patchedName') }}</span>
                 <span class="expand-value expand-text">{{ scope.row.patchedFilename || '-' }}</span>
               </div>
               <div class="expand-path-item">
-                <span class="expand-label">Path</span>
+                <span class="expand-label">{{ $t('queue.expand.path') }}</span>
                 <span class="expand-value expand-text">{{ scope.row.path || '-' }}</span>
               </div>
               <div class="expand-path-item">
-                <span class="expand-label">PKG URL</span>
+                <span class="expand-label">{{ $t('queue.expand.pkgUrl') }}</span>
                 <span class="expand-value expand-text">{{ scope.row.url || '-' }}</span>
               </div>
               <div class="expand-path-item">
-                <span class="expand-label">Icon0 URL</span>
+                <span class="expand-label">{{ $t('queue.expand.icon0Url') }}</span>
                 <span class="expand-value expand-text">{{ scope.row.image || '-' }}</span>
               </div>
             </div>
@@ -153,13 +154,13 @@
         </template>
       </el-table-column>
 
-      <el-table-column label="Cover" width="100" v-if="sfoEnabled">
+      <el-table-column :label="$t('common.table.cover')" width="100" v-if="sfoEnabled">
         <template slot-scope="scope">
           <div class='image' :style="{ backgroundImage: 'url('+scope.row.image+')' }"/>
         </template>
       </el-table-column>
 
-      <el-table-column prop="name" label="Name" min-width="220">
+      <el-table-column prop="name" :label="$t('common.table.name')" min-width="220">
         <template slot-scope="scope">
           <template v-if="scope.row.sfo?.readSFOHeader && scope.row.sfo.TITLE">
             <div class="sfo-title">
@@ -184,7 +185,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column label="Ext" width="100" v-if="showExtension">
+      <el-table-column :label="$t('common.table.ext')" width="100" v-if="showExtension">
         <template slot-scope="scope">
           <el-tag size="mini"
               :type="scope.row.ext === '.pkg' ? 'primary' : 'success'"
@@ -193,33 +194,33 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="task" label="Task" width="105" v-if="showTask && !isPS5"></el-table-column>
-      <el-table-column label="Version" width="90" v-if="showVersion">
+      <el-table-column prop="task" :label="$t('common.table.task')" width="105" v-if="showTask && !isPS5"></el-table-column>
+      <el-table-column :label="$t('common.table.version')" width="90" v-if="showVersion">
         <template slot-scope="scope">
           <el-tag size="small" type="info" v-if="scope.row.sfo?.VERSION">{{ scope.row.sfo.VERSION }}</el-tag>
           <span v-else>-</span>
         </template>
       </el-table-column>
 
-      <el-table-column prop="status" label="Status" width="140" align="center">
+      <el-table-column prop="status" :label="$t('common.table.status')" width="140" align="center">
         <template slot-scope="scope">
           <span class="status-tags" v-if="scope.row.status == 'installed + skipped'">
-            <el-tag size="mini" plain type="success">Installed</el-tag>
-            <el-tag size="mini" plain type="info">Skipped</el-tag>
+            <el-tag size="mini" plain type="success">{{ $t('queue.status.installed') }}</el-tag>
+            <el-tag size="mini" plain type="info">{{ $t('queue.status.skipped') }}</el-tag>
           </span>
           <el-tag v-else size="small" plain :type="$helper.getFileStatus(scope.row.status)">
-            <i class="el-icon-loading" v-if="scope.row.status == 'installing'"/> {{ scope.row.status }}
+            <i class="el-icon-loading" v-if="scope.row.status == 'installing'"/> {{ $t('queue.status.' + scope.row.status) || scope.row.status }}
           </el-tag>
         </template>
       </el-table-column>
 
-      <el-table-column prop="size" label="Size" width="120" align="right">
+      <el-table-column prop="size" :label="$t('common.table.size')" width="120" align="right">
         <template slot-scope="scope">
           <el-tag size="small" plain :type="$helper.getFileSizeType(scope.row.size)">{{ scope.row.size }}</el-tag>
         </template>
       </el-table-column>
 
-      <el-table-column label="Progress" width="140" align="center" v-if="showPercentage">
+      <el-table-column :label="$t('common.table.progress')" width="140" align="center" v-if="showPercentage">
         <template slot-scope="scope">
           <div class="progress-display">
             <el-progress :stroke-width="25" :percentage="scope.row.percentage" :show-text="false" stroke-linecap="square"></el-progress>
@@ -234,7 +235,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column label="Operation" width="150" align="right">
+      <el-table-column :label="$t('common.table.operation')" width="150" align="right">
         <template slot-scope="scope">
           <el-button circle size="small" icon="fa fa-minus" @click="removeFromQueue(scope.row)"/>
 
@@ -242,7 +243,7 @@
           <el-button circle size="small" icon="fa fa-stop" @click="stop(scope.row)" v-if="false"></el-button>
           <el-button circle size="small" icon="fa fa-play" v-if="scope.row.status != 'installing' && !(isSingleDPI && scope.row.status == 'error')" @click="start(scope.row)"></el-button>
           <el-button circle size="small" type="danger" icon="el-icon-refresh-right"
-              title="Retry failed installation"
+              :title="$t('queue.operation.retryFailed')"
               v-if="isSingleDPI && scope.row.status == 'error'"
               @click="retryFailedInstall(scope.row)"></el-button>
           <el-button circle size="small" icon="fa fa-pause" v-if="scope.row.status == 'installing'" @click="pause(scope.row)"></el-button>
@@ -264,6 +265,7 @@
 <script>
 import {get, sync} from 'vuex-pathify'
 import JSON5 from 'json5'
+import i18n from '@/plugins/i18n'
 
 export default {
   name: 'Index',
@@ -285,7 +287,6 @@ export default {
       queueNextTimer: null,
       search: '',
       tableMaxHeight: 400,
-      skipInstalledQueueItems: true,
     }
   },
 
@@ -352,7 +353,7 @@ export default {
       })
           .catch(e => {
             this.$message({
-              message: "No Heartbeat. Server is not working, please check the Server Logs.",
+              message: this.$t('messages.connection.serverNotWorking'),
               type: 'error'
             })
           })
@@ -363,31 +364,31 @@ export default {
       if (this.isPS5)
         return await this.$ps5.checkPS5()
             .then(() => {
-              this.log("PS5 Connection available")
-              this.$message({message: "PS5 Connection available", type: 'success'})
+              this.log(this.$t('messages.connection.ps5CheckAccessible'))
+              this.$message({message: this.$t('messages.connection.ps5CheckAccessible'), type: 'success'})
             })
             .catch(e => {
               console.log(e)
               this.log(e)
-              this.$message({message: "PS5 Connection failed", type: 'error'})
+              this.$message({message: this.$t('messages.connection.ps5CheckNotAccessible'), type: 'error'})
             })
 
 
       // backwardscompatibility for ps4
       this.$ps4.checkPS4()
           .then((res) => {
-            this.log("PS4 is accessible", {status: res.status, statusText: res.statusText})
-            this.$message({message: "Check Playstation: PS4 is accessible", type: 'success'})
+            this.log(this.$t('messages.connection.ps4Accessible'), {status: res.status, statusText: res.statusText})
+            this.$message({message: this.$t('messages.connection.ps4CheckAccessible'), type: 'success'})
           })
           .catch(e => {
-            this.log("Check Playstation: PS4 is not accessible", e)
-            this.$message({message: "PS4 is not accessible.", type: 'error'})
+            this.log(this.$t('messages.connection.ps4CheckNotAccessible'), e)
+            this.$message({message: this.$t('messages.connection.ps4NotAccessible'), type: 'error'})
           })
     },
 
     test() {
       if (this.notify)
-        this.sendNotification({title: "Test", body: "This test is for Systemwide Notifications"})
+        this.sendNotification({title: this.$t('messages.notifications.test'), body: this.$t('messages.notifications.testBody')})
     },
 
     isInstalled(file, {silent = false} = {}) {
@@ -395,15 +396,15 @@ export default {
         return this.$ps5.isInstalled(file)
             .then(data => {
               if (!data || data.res !== 0)
-                throw new Error(data && data.error ? data.error : 'Invalid singleDPI response')
+                throw new Error(data && data.error ? data.error : this.$t('errors.invalidSingleDpiResponse'))
 
               const exists = data.exists === true || data.exists === 1 || data.exists === 'true'
               if (exists)
                 file.status = 'installed'
 
               const message = exists
-                  ? 'Already installed on your PS5.'
-                  : 'Not detected on your PS5.'
+                  ? this.$t('messages.install.alreadyInstalled')
+                  : this.$t('messages.install.notInstalled')
               const type = exists ? 'warning' : 'success'
               this.log(message, data)
               if (!silent)
@@ -413,7 +414,7 @@ export default {
             })
             .catch(e => {
               console.log(e)
-              this.log(file.name + ' installation detection failed', e, 'error')
+              this.log(file.name + ' ' + this.$t('errors.detectionFailed'), e, 'error')
               if (!silent)
                 this.$message({message: e.message || String(e), type: 'error'})
               return false
@@ -422,7 +423,7 @@ export default {
 
       if (this.isPS5) {
         if (!silent)
-          this.$message({message: "'Is Installed' feature is not implemented for PS5 yet", type: "info"})
+          this.$message({message: this.$t('messages.install.notImplementedPs5'), type: "info"})
         return Promise.resolve(false)
       }
 
@@ -441,7 +442,7 @@ export default {
           .catch(e => {
             this.clearInterval(file)
             console.log(e)
-            this.log(file.name + ' installation detection failed', e, 'error')
+            this.log(file.name + ' ' + this.$t('errors.detectionFailed'), e, 'error')
             return false
           })
     },
@@ -477,7 +478,7 @@ export default {
                   this.log(file.name + ' install request successfull', file.url)
                   return this.$message({
                     dangerouslyUseHTMLString: true,
-                    message: `Install Request Success for <br>${file.name}`,
+                    message: this.$t('messages.install.requestSuccess', { filename: file.name }),
                     type: "success"
                   })
                 }
@@ -491,7 +492,7 @@ export default {
                   this.log(file.name + ' file at URL not found', file.url)
                   return this.$message({
                     dangerouslyUseHTMLString: true,
-                    message: `Error ${code} | PKG file response 404. Check Server heartbeat. <br>${file.name}`,
+                    message: this.$t('messages.install.pkgNotFound', { code: code, filename: file.name }),
                     type: "error"
                   })
                 }
@@ -499,7 +500,7 @@ export default {
                 // something else, maybe in queue, maybe full storage, maybe whatever
                 this.$message({
                   dangerouslyUseHTMLString: true,
-                  message: `Response Code ${data.res} for <br>${file.name}`,
+                  message: this.$t('messages.install.unknownResponseForPs5', { code: data.res, filename: file.name }),
                   type: "info"
                 })
               } else {
@@ -507,7 +508,7 @@ export default {
                   this.clearInterval(file)
                   this.setStatus(file, 'error')
                 }
-                this.$message({message: `Unknown Response. Please check Logs.`, type: "warning"})
+                this.$message({message: this.$t('messages.install.unknownResponse'), type: "warning"})
               }
             })
             .catch(e => {
@@ -532,7 +533,7 @@ export default {
               console.error("GoldHEN Error")
               console.log(e)
               this.setStatus(file, 'error')
-              this.log(file.name + ' GoldHEN install failed', e, 'error')
+              this.log(`${file.name} GoldHEN install failed`, e, 'error')
               this.$message({message: e.message || String(e), type: 'error'})
             })
       }
@@ -564,7 +565,7 @@ export default {
 
               this.setTask(file, data.task_id)
               this.setStatus(file, 'installing')
-              this.sendNotification({title: "Installing", body: file.name + " is installing"})
+              this.sendNotification({title: this.$t('messages.notifications.installing'), body: file.name + " " + this.$t('messages.notifications.installingBody').replace('{filename}', '')})
               this.startInterval(file)
               this.$root.track({name: 'install.success', data: {name: 'Install Request success', value: file.name}})
 
@@ -573,7 +574,7 @@ export default {
               console.log(file.name + " error on install", data)
               this.log(file.name + " error on install", data)
               this.setStatus(file, 'error')
-              this.$message({message: file.name + ' installation failed.', type: 'error'})
+              this.$message({message: this.$t('messages.install.requestFailed', { filename: file.name }), type: 'error'})
               this.$root.track({name: 'install.error', data: {name: 'Install Request failed', value: file.name}})
               // 2157510677 error on double install?
               // 2157510663 already installed?
@@ -858,7 +859,7 @@ export default {
       }
 
       this.setTask(file, '')
-      this.sendNotification({title: "Finished", body: file.name + " is finished installing"})
+      this.sendNotification({title: i18n.t('messages.notifications.finished'), body: file.name + " " + i18n.t('messages.notifications.finishedBody').replace('{filename}', '')})
       this.$store.dispatch('queue/installed', file)
       this.$root.track({name: 'installed', data: {name: 'File installed', value: file.name}})
 
@@ -895,7 +896,7 @@ export default {
 
       this.$message({
         type: 'info',
-        message: `Next queue item will start in ${delaySeconds} seconds`
+        message: this.$t('queue.messages.nextQueueDelay', { seconds: delaySeconds })
       })
 
       this.queueNextTimer = setTimeout(() => {
@@ -934,10 +935,10 @@ export default {
     },
 
     resetAll() {
-      this.$confirm('This will clear your Queue, Tasks and Installed states.', 'Reset Queue, Tasks and Installed',
+      this.$confirm(this.$t('queue.messages.resetAllConfirm'), this.$t('queue.dropdown.resetAll'),
           {
-            confirmButtonText: 'OK',
-            cancelButtonText: 'Cancel',
+            confirmButtonText: this.$t('common.buttons.ok'),
+            cancelButtonText: this.$t('common.buttons.cancel'),
             type: 'warning',
             center: true,
           })
@@ -952,14 +953,10 @@ export default {
 
             this.$message({
               type: 'success',
-              message: 'Queue, Tasks and Installed state has been resetted'
+              message: this.$t('queue.messages.resetAllSuccess')
             });
           })
           .catch(() => {
-            // this.$message({
-            //   type: 'info',
-            //   message: 'Reset action canceled'
-            // });
           });
     },
 
@@ -994,7 +991,7 @@ export default {
       this.$root.track({name: 'resetInstalled', data: {name: 'Reset installed Files'}})
       this.$message({
         type: 'success',
-        message: `Reset ${filesToReset.length} installed item(s) to the queue.`
+        message: this.$t('queue.messages.resetInstalledSuccess', { count: filesToReset.length })
       })
     },
 
@@ -1063,7 +1060,7 @@ export default {
       }
 
       if (notify)
-        this.$message({type: 'error', message: 'Queue Autostart stopped.'})
+        this.$message({type: 'error', message: this.$t('queue.messages.autostartStopped')})
     },
 
     async handleQueueScannerNextItem() {
@@ -1086,8 +1083,8 @@ export default {
         return this.$message({
           type: 'success',
           message: skippedCount > 0
-              ? `Queue completed. Skipped ${skippedCount} installed item(s).`
-              : 'There are no items to be installed in the queue'
+              ? this.$t('queue.messages.queueCompletedSkipped', { count: skippedCount })
+              : this.$t('queue.messages.queueNoItems')
         });
       }
 
@@ -1116,7 +1113,7 @@ export default {
         this.$message({
           dangerouslyUseHTMLString: true,
           type: 'success',
-          message: 'Found next File in the Queue. <br>' + file.name,
+          message: this.$t('queue.messages.foundNextFile', { filename: file.name }),
         });
         this.$root.track({
           name: 'QueueScanner.next',
@@ -1130,23 +1127,18 @@ export default {
       if (this.queueSkippedInstalledCount > 0)
         this.$message({
           type: 'success',
-          message: `Queue completed. Skipped ${this.queueSkippedInstalledCount} installed item(s).`
+          message: this.$t('queue.messages.queueCompletedSkipped', { count: this.queueSkippedInstalledCount })
         })
     },
 
     async handleQueueScannerNextItemPS5(files = []) {
       this.$confirm(
-          `Queue Scanner can currently only Bulk Request` +
-          `all files because there is no Process Handling` +
-          `Response yet to track the progress. <br><br>` +
-          `The Queue handler will send all eligible files ` +
-          `automatically to the PS5 with a delay in ` +
-          `between. ${files.length} files to be send.`,
-          'Bulk Install Request to PS5',
+          i18n.t('messages.queue.bulkInstallWarning', { count: files.length }),
+          i18n.t('messages.queue.bulkInstallTitle'),
           {
             dangerouslyUseHTMLString: true,
-            confirmButtonText: 'OK, Continue',
-            cancelButtonText: 'Cancel',
+            confirmButtonText: i18n.t('messages.queue.bulkInstallContinue'),
+            cancelButtonText: i18n.t('common.buttons.cancel'),
             type: 'warning',
             center: true,
           })
@@ -1154,15 +1146,15 @@ export default {
             // first check the connection
             await this.$ps5.checkPS5()
                 .then(async () => {
-                  this.log("PS5 Connection is ready for Bulk Requests")
-                  this.$message({message: "PS5 Connection is Ready for Bulk Requests", type: 'success'})
+                  this.log(i18n.t('messages.connection.ps5ConnectionReady'))
+                  this.$message({message: i18n.t('messages.connection.ps5ConnectionReady'), type: 'success'})
                   await new Promise((resolve => setTimeout(() => resolve(), 200)))
                 })
                 .catch(e => {
                   console.log(e)
                   this.log(e)
-                  this.$message({message: "PS5 Connection failed. Bulk Request can't proceed.", type: 'error'})
-                  throw new Error('PS5 Connection failed')
+                  this.$message({message: i18n.t('messages.connection.ps5ConnectionFailed'), type: 'error'})
+                  throw new Error(i18n.t('errors.ps5ConnectionFailed'))
                 })
 
             // warn the user
@@ -1170,9 +1162,7 @@ export default {
               dangerouslyUseHTMLString: true,
               type: 'success',
               timeout: 3000,
-              message: `Found ${files.length} files to be send as Bulk Requests to the PS5. <br>` +
-                  `Attention: Files will be send with a delay in between `
-              // + `for <br>` +  `all files that are 'in queue' from the Queue.`
+              message: i18n.t('messages.queue.bulkFoundFiles', { count: files.length })
             })
 
             // countdown
@@ -1190,10 +1180,10 @@ export default {
             if (!this.queueAutoRunning)
               return
 
-            this.$message({message: "Queue Scanner finished. Check your PS5 download/installation", type: 'success'})
+            this.$message({message: i18n.t('messages.queue.bulkFinished'), type: 'success'})
 
             if (this.notify)
-              this.$root.notify({title: "Queue Scanner", body: "Bulk Requests finished for " + total + " files."})
+              this.$root.notify({title: i18n.t('messages.notifications.queueScanner'), body: i18n.t('messages.queue.bulkRequestsFinished', { count: total })})
           })
           .catch(() => {
           })
