@@ -269,13 +269,10 @@ export default {
         queueNextTimer: null,
         search: '',
         tableMaxHeight: 400,
-        skipInstalledQueueItems:true,
     }},
 
     mounted(){
         this.search = ''
-        if(typeof this.skipInstalledQueueItems !== 'boolean')
-            this.skipInstalledQueueItems = true
         this.$nextTick(() => { this.calcTableMaxHeight() })
         window.addEventListener('resize', this.onResize)
     },
