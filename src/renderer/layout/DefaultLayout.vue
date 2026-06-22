@@ -25,6 +25,7 @@
                   <div style="background: #ddd; height: 1px; margin: 5px 0px" />
 
                   <el-menu-item @click="$root.open(links.github_repo)">{{ $t('menu.githubRepo') }}</el-menu-item>
+                  <el-menu-item @click="$root.open(links.github_repo_sender_singleDPI)">{{ $t('menu.githubRepoSenderSingleDPI') }}</el-menu-item>
                   <el-menu-item @click="$root.open(links.github_repo_singleDPI)">{{ $t('menu.githubRepoSingleDPI') }}</el-menu-item>
                   <el-menu-item @click="$root.open(links.report_issue)">{{ $t('menu.reportIssue') }}</el-menu-item>
               </el-submenu>
