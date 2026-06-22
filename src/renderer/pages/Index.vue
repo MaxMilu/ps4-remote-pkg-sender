@@ -204,8 +204,8 @@
 
       <el-table-column prop="status" :label="$t('common.table.status')" width="140" align="center">
         <template slot-scope="scope">
-          <span class="status-tags" v-if="scope.row.status == 'installed + skipped'">
-            <el-tag size="mini" plain type="success">{{ $t('queue.status.installed') }}</el-tag>
+          <span class="status-tags" v-if="scope.row.status == 'installedSkipped' || scope.row.status == 'installed + skipped'">
+            <el-tag size="mini" plain type="success">{{ $t('queue.status.installedSkipped') }}</el-tag>
             <el-tag size="mini" plain type="info">{{ $t('queue.status.skipped') }}</el-tag>
           </span>
           <el-tag v-else size="small" plain :type="$helper.getFileStatus(scope.row.status)">
@@ -292,6 +292,12 @@ export default {
 
   mounted() {
     this.search = ''
+    // Migrate old status values to new ones
+    this.queueFiles.forEach(file => {
+      if (file.status === 'installed + skipped') {
+        file.status = 'installedSkipped'
+      }
+    })
     this.$nextTick(() => {
       this.calcTableMaxHeight()
     })
@@ -919,7 +925,7 @@ export default {
     },
 
     markQueueItemInstalledAndSkipped(file) {
-      const status = 'installed + skipped'
+      const status = 'installedSkipped'
       const servingFile = this.$store.getters['server/findFile'](file)
 
       this.$store.dispatch('queue/installed', file)

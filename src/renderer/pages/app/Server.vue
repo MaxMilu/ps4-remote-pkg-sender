@@ -227,8 +227,8 @@ export default {
         },
 
         addHearthbeatEndpoint(){
-            const heartbeatMessage = this.$t('server.heartbeatSuccess')
-            this.$store.dispatch('server/addLog', this.$t('server.createHeartbeatEndpoint'))
+            const heartbeatMessage = this.$t('server.messages.heartbeatSuccess')
+            this.$store.dispatch('server/addLog', this.$t('server.messages.createHeartbeatEndpoint'))
             this.host.router.get('/hb', function(request, response){
                 response.status(200).json({
                     remoteAddress: request.connection.remoteAddress,

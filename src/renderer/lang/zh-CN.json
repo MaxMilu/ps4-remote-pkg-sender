@@ -263,12 +263,14 @@
       "icon0Url": "图标 URL"
     },
     "status": {
+      "in queue": "队列中",
       "inQueue": "队列中",
       "installing": "安装中",
       "installed": "已安装",
       "installedSkipped": "已安装",
       "skipped": "已跳过",
       "finish": "已完成",
+      "finished": "已完成",
       "serving": "服务中",
       "error": "错误",
       "pause": "暂停",

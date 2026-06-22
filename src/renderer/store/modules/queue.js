@@ -78,7 +78,7 @@ export const actions = {
         // file exists in installed
         else {
           console.log(file.name + ' is already installed')
-          state.installed[i].status = 'installed +'
+          state.installed[i].status = 'installedSkipped'
         }
     },
 

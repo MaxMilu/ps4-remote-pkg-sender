@@ -64,6 +64,7 @@
     "changelog": "Changelog",
     "troubleshootingGuide": "Troubleshooting Guide",
     "githubRepo": "GitHub Repo",
+    "githubRepoSenderSingleDPI": "GitHub Sender singleDPI",
     "githubRepoSingleDPI": "GitHub Repo (singleDPI)",
     "reportIssue": "Report a Issue",
     "settings": "Settings",
@@ -262,12 +263,14 @@
       "icon0Url": "Icon0 URL"
     },
     "status": {
+      "in queue": "in queue",
       "inQueue": "in queue",
       "installing": "installing",
       "installed": "Installed",
       "installedSkipped": "Installed",
       "skipped": "Skipped",
       "finish": "finished",
+      "finished": "finished",
       "serving": "serving",
       "error": "error",
       "pause": "pause",
