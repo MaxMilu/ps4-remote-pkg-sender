@@ -1,20 +1,32 @@
 # PS4 Remote PKG Sender v2  
 
+## 前言
+
+- 我本人的ps5机器停留在5.5版本由于没啥想玩的就是搞了点ps4游戏尝试安装
+- 结果etaHEN本身的安装在主机的下载列表中只能显示进度，没有安装名称，图标
+- 本来没什么自己记着点对应pkg数量就行了，结果安装到 生与死5 1000个dlc 我直接哭了
+- 然后又因为当前流行ytb jb的模式，都是用单功能elf来代替原本etaHEN toolbox的功能
+- 我没仔细找，但是好像没有这方面的独立安装功能，于是就参考etaHEN的安装功能独立了一个出来
+- 这个sender原本ps4时代我就在用，挺好用的，但是作者不更新了，我就拿来做了功能改造与界面优化
+
 ## 本 Fork 当前修改
+
+本分支修改主要目的是为了兼容`singleDPI`的ps4 pkg安装功能，其他的都是因为作者强迫症犯了非得干的。
 
 本分支在原项目的 PS5 etaHEN 支持基础上增加了以下功能：
 
-- 增加 PS5 `singleDPI` 目标，通过 TCP 9090 API 连接独立的 Direct Package Installer payload。
-- 发送 PKG 时同时传递标题、Content ID 和图标地址，并轮询显示下载、安装与 Promote 进度。
-- 通过 SFO 的 CATEGORY、Title ID 和 Content ID 检测 Base、Patch 与 DLC 是否已有安装记录。
-- 修复 singleDPI 队列完成后仍弹窗确认并导致条目重复安装的问题；队列现在严格逐项执行。
-- 队列可选择上一项完成后立即安装下一项，或等待自定义秒数后继续。
-- Queue Scanner 可选择跳过已经检测为 `installed` 的条目，或仍将其加入自动安装候选。
-- Processing Center 显示 SFO 标题、版本、分类、Content ID、剩余时间和估算传输速度。
-- 列表高度随窗口自动调整，长队列可在表格内部滚动。
-- Reset Options 可单独重置已安装状态、移除完成条目或移除 `installed` 类型条目。
-- 保留原有 PS5 etaHEN 和 PS4 安装模式，不改变其既有发送方式。
+- **[核心功能] 增加 PS5 `singleDPI` 目标**，通过 TCP 9090 API 连接独立的 Direct Package Installer payload
+- **完整国际化支持**：集成 vue-i18n，支持简体中文、德语等多语言切换，语言选择器仅显示已翻译的语言
+- **Skip Installed 选项**：队列扫描时可选择跳过已安装的条目，或仍将其加入安装候选
+- **延迟安装模式**：队列可选择上一项完成后等待自定义秒数（默认 2 秒，推荐延迟，如果安装速度太快可能会出现问题）再继续下一项
+- 发送 PKG 时同时传递标题、Content ID 和图标地址，并轮询显示下载、安装与 Promote 进度
+- 通过 SFO 的 CATEGORY、Title ID 和 Content ID 检测 Base、Patch 与 DLC 是否已有安装记录
+- Processing Center 和 Server 页面表格展开时显示 SFO 标题、版本、分类、Content ID、剩余时间和估算传输速度
+- 列表高度随窗口自动调整，长队列可在表格内部滚动
+- Reset Options 可单独重置已安装状态、移除完成条目或移除 `installed` 类型条目
+- 保留原有 PS5 etaHEN 和 PS4 安装模式，不改变其既有发送方式(未测试，fork主要为了兼容singleDPI)
 - 增加仅构建 Windows x64 版本的命令，避免旧依赖在 ia32 构建阶段要求 Python：
+- 目前仅构建win64，暂无多平台构建。有机器与环境的可以自行拉取代码进行构建操作
 
 ```powershell
 npm run build:win:x64
@@ -22,6 +34,10 @@ npm run build:win:x64
 
 使用 singleDPI 前，需要先在 PS5 上加载与系统版本匹配的 kstuff 或 kstuff-lite，
 然后加载 `singleDPI.elf`，并在应用配置中选择 `PS5 singleDPI`。
+
+---
+
+# 原始 readme
 
 [![ko-fi](https://img.shields.io/badge/Buy%20me%20a%20Shisha%20on-Ko--fi-red)](https://ko-fi.com/M4M082WK8)
 [![os](https://img.shields.io/badge/platform-windows%20%7C%20macos%20%7C%20linux-lightgrey)](https://github.com/Gkiokan/ps4-remote-pkg-sender)
