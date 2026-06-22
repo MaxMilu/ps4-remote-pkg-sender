@@ -64,6 +64,27 @@
     "changelog": "Änderungsprotokoll"
   },
 
+  "menu": {
+    "processingCenter": "Verarbeitungszentrum",
+    "server": "Server",
+    "hbStore": "HB-Store",
+    "config": "Konfiguration",
+    "miscs": "Sonstiges",
+    "downloads": "Downloads",
+    "changelog": "Änderungsprotokoll",
+    "troubleshootingGuide": "Fehlerbehebung",
+    "githubRepo": "GitHub Repo",
+    "githubRepoSenderSingleDPI": "GitHub Sender singleDPI",
+    "githubRepoSingleDPI": "GitHub Repo (singleDPI)",
+    "reportIssue": "Problem melden",
+    "settings": "Einstellungen",
+    "supportFeatures": "Unterstützung für weitere kommende Funktionen",
+    "openLocalServer": "Lokalen Server öffnen",
+    "openPsApiLogs": "Playstation-API-Protokolle öffnen",
+    "localServer": "Lokaler Server",
+    "playstation": "PlayStation"
+  },
+
   "config": {
     "server": {
       "parameters": "Parameter"
@@ -227,12 +248,14 @@
       "icon0Url": "Icon0-URL"
     },
     "status": {
+      "in queue": "in Warteschlange",
       "inQueue": "in Warteschlange",
       "installing": "installiert",
       "installed": "Installiert",
       "installedSkipped": "Installiert",
       "skipped": "Übersprungen",
       "finish": "abgeschlossen",
+      "finished": "abgeschlossen",
       "serving": "bedient",
       "error": "Fehler",
       "pause": "Pause",
@@ -422,5 +445,17 @@
     "infoFail": "{filename} Info fehlgeschlagen",
     "invalidSingleDpiResponse": "Ungültige singleDPI-Antwort",
     "ps5ConnectionFailed": "PS5-Verbindung fehlgeschlagen"
+  },
+
+  "debug": {
+    "checkHeartbeat": "Heartbeat prüfen",
+    "startServer": "Server starten",
+    "stopServer": "Server stoppen",
+    "restartServer": "Server neu starten",
+    "filesFound": "{count} Dateien gefunden",
+    "filesServing": "{count} Dateien werden bereitgestellt",
+    "serverIs": "Server ist",
+    "on": "auf",
+    "heartbeatSuccess": "Glückwunsch. Heartbeat funktioniert"
   }
 }
