@@ -19,50 +19,46 @@
     "watch": "electron-webpack dev"
   },
   "devDependencies": {
-    "@babel/core": "^7.24.5",
-    "@babel/plugin-proposal-nullish-coalescing-operator": "^7.18.6",
-    "@babel/preset-env": "^7.24.5",
-    "@fortawesome/fontawesome-free": "^5.15.4",
-    "electron": "^8.5.5",
-    "electron-builder": "^23.0.3",
-    "electron-devtools-installer": "^3.2.0",
-    "electron-packager": "^12.2.0",
+    "@babel/core": "^7.29.7",
+    "@babel/preset-env": "^7.29.7",
+    "@fortawesome/fontawesome-free": "^7.3.0",
+    "electron": "^43.1.0",
+    "electron-builder": "^26.15.3",
     "electron-webpack": "^2.8.2",
     "electron-webpack-vue": "^2.4.0",
-    "element-ui": "^2.15.6",
-    "json5": "^2.2.0",
+    "element-ui": "^2.15.14",
+    "json5": "^2.2.3",
     "lodash": "^4.17.21",
-    "node-sass": "4.14.1",
-    "sass-loader": "10.1.1",
-    "vue": "^2.6.14",
+    "sass-loader": "10.5.2",
+    "vue": "^2.7.16",
     "vue-devtools": "^5.1.4",
-    "vue-i18n": "^8.26.7",
-    "vue-router": "^3.4.5",
-    "vuex": "^3.5.1",
-    "vuex-electron": "git+https://github.com/michaeljpeake/vuex-electron.git",
-    "vuex-pathify": "^1.4.1",
+    "vue-i18n": "^8.28.2",
+    "vue-router": "^3.6.5",
+    "vuex": "^3.6.2",
+    "vuex-electron": "^1.0.3",
+    "vuex-pathify": "^1.5.1",
     "vuex-router-sync": "^5.0.0",
-    "webpack": "~4.42.1"
+    "webpack": "~4.46.0",
+    "@babel/plugin-transform-nullish-coalescing-operator": "^7.27.1",
+    "sass": "^1.101.0"
   },
   "dependencies": {
     "@njzy/ps4-pkg-info": "^0.1.0",
-    "axios": "^0.24.0",
-    "debounce": "^1.2.1",
-    "express": "^4.17.1",
-    "fs.promises": "^0.1.2",
+    "axios": "^1.18.1",
+    "debounce": "^3.0.0",
+    "express": "^4.22.2",
     "net": "^1.0.2",
     "os": "^0.1.2",
-    "source-map-support": "^0.5.16",
+    "source-map-support": "^0.5.21",
     "uaup-js": "0.0.22",
-    "uuid": "^9.0.0",
-    "webtorrent": "^0.102.4"
+    "uuid": "^11.1.0"
   },
   "babel": {
     "presets": [
       "@babel/preset-env"
     ],
     "plugins": [
-      "@babel/plugin-proposal-nullish-coalescing-operator"
+      "@babel/plugin-transform-nullish-coalescing-operator"
     ]
   },
   "build": {
