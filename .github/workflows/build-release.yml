@@ -104,9 +104,9 @@ jobs:
       - name: Install required Flatpak runtimes
         run: |
           sudo flatpak install -y flathub \
-            org.freedesktop.Platform//25.08 \
-            org.freedesktop.Sdk//25.08 \
-            org.electronjs.Electron2.BaseApp//25.08
+            org.freedesktop.Platform//24.08 \
+            org.freedesktop.Sdk//24.08 \
+            org.electronjs.Electron2.BaseApp//24.08
 
       - name: Install dependencies
         run: npm ci
