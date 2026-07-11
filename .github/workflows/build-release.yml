@@ -30,7 +30,7 @@ jobs:
         run: npm ci
 
       - name: Build Windows x64 release artifacts
-        run: npm run build:win:x64
+        run: npm run build:win:x64 -- --publish never
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
@@ -66,7 +66,7 @@ jobs:
         run: npm ci
 
       - name: Build Linux deb artifact
-        run: npm run build:linux:deb
+        run: npm run build:linux:deb -- --publish never
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
