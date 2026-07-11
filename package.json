@@ -13,7 +13,6 @@
     "build:win:x64": "cross-env NODE_OPTIONS=--openssl-legacy-provider electron-webpack && electron-builder --win zip portable --x64",
     "build:linux": "cross-env NODE_OPTIONS=--openssl-legacy-provider electron-webpack && electron-builder --linux",
     "build:linux:deb": "cross-env NODE_OPTIONS=--openssl-legacy-provider electron-webpack && electron-builder --linux deb",
-    "build:linux:flatpak": "cross-env NODE_OPTIONS=--openssl-legacy-provider electron-webpack && electron-builder --linux flatpak",
     "build:all": "cross-env NODE_OPTIONS=--openssl-legacy-provider electron-webpack && electron-builder -mwl",
     "dist": "cross-env NODE_OPTIONS=--openssl-legacy-provider electron-webpack && electron-builder --dir",
     "publish": "electron-builder --mac --linux --win --publish onTag",
@@ -109,13 +108,6 @@
           "target": "deb"
         }
       ]
-    },
-    "flatpak": {
-      "base": "org.electronjs.Electron2.BaseApp",
-      "baseVersion": "24.08",
-      "runtime": "org.freedesktop.Platform",
-      "runtimeVersion": "24.08",
-      "sdk": "org.freedesktop.Sdk"
     },
     "portable": {
       "artifactName": "${productName}-${version}.exe",

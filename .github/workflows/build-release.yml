@@ -89,30 +89,36 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: npm
-
       - name: Install Flatpak tooling
         run: sudo apt-get update && sudo apt-get install -y flatpak flatpak-builder
 
       - name: Add Flathub remote
         run: sudo flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 
-      - name: Install required Flatpak runtimes
-        run: |
-          sudo flatpak install -y flathub \
-            org.freedesktop.Platform//24.08 \
-            org.freedesktop.Sdk//24.08 \
-            org.electronjs.Electron2.BaseApp//24.08
+      - name: Install flatpak-node-generator
+        run: pip3 install flatpak-node-generator==0.1.1
 
-      - name: Install dependencies
-        run: npm ci
+      - name: Generate Flatpak node sources
+        run: |
+          mkdir -p flatpak
+          flatpak-node-generator npm package-lock.json -o flatpak/generated-sources.json
 
       - name: Build Linux Flatpak artifact
-        run: npm run build:linux:flatpak -- --publish never
+        run: |
+          flatpak-builder \
+            --install-deps-from=flathub \
+            --force-clean \
+            --user \
+            --repo=flatpak-repo \
+            flatpak-build-dir \
+            gkiokan.net.ps4remotepkgsenderv2.yml
+
+      - name: Bundle Flatpak
+        run: |
+          mkdir -p release
+          flatpak build-bundle flatpak-repo \
+            release/ps4-remote-pkg-sender.flatpak \
+            gkiokan.net.ps4remotepkgsenderv2
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4

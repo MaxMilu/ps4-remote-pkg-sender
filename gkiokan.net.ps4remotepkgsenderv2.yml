@@ -1,0 +1,65 @@
+app-id: gkiokan.net.ps4remotepkgsenderv2
+runtime: org.freedesktop.Platform
+runtime-version: '24.08'
+sdk: org.freedesktop.Sdk
+base: org.electronjs.Electron2.BaseApp
+base-version: '24.08'
+sdk-extensions:
+  - org.freedesktop.Sdk.Extension.node22
+command: run.sh
+separate-locales: false
+
+finish-args:
+  - --share=ipc
+  - --socket=x11
+  - --socket=pulseaudio
+  - --share=network
+  - --device=dri
+  - --env=ELECTRON_TRASH=gio
+
+build-options:
+  append-path: /usr/lib/sdk/node22/bin
+  env:
+    NPM_CONFIG_LOGLEVEL: info
+
+modules:
+  - name: ps4-remote-pkg-sender
+    buildsystem: simple
+    build-options:
+      env:
+        XDG_CACHE_HOME: /run/build/ps4-remote-pkg-sender/flatpak-node/cache
+        npm_config_cache: /run/build/ps4-remote-pkg-sender/flatpak-node/npm-cache
+        npm_config_offline: 'true'
+        electron_config_cache: /run/build/ps4-remote-pkg-sender/flatpak-node/cache
+    build-commands:
+      # Install npm dependencies from pre-cached packages
+      - npm install --offline
+      # jq is available in the Freedesktop SDK and is the recommended way to patch
+      # the linux target at build time per https://docs.flatpak.org/en/latest/electron.html
+      # Using array format to match the existing target structure in package.json
+      - jq '.build.linux.target = [{"target": "dir"}]' package.json > package.json.tmp && mv package.json.tmp package.json
+      # `webpack` script is defined in package.json as:
+      # cross-env NODE_OPTIONS=--openssl-legacy-provider electron-webpack
+      - npm run webpack
+      # Build the unpacked Electron app
+      - |
+        . flatpak-node/electron-builder-arch-args.sh
+        npx electron-builder $ELECTRON_BUILDER_ARCH_ARGS --linux --dir
+      # Install the app
+      - cp -a release/linux-unpacked /app/main
+      # Install the launcher wrapper
+      - install -Dm755 -t /app/bin/ run.sh
+      # build/icon.png (512x512) is committed to the repository
+      - install -Dm644 build/icon.png /app/share/icons/hicolor/512x512/apps/gkiokan.net.ps4remotepkgsenderv2.png
+      # build/gkiokan.net.ps4remotepkgsenderv2.desktop is committed to the repository
+      - install -Dm644 build/gkiokan.net.ps4remotepkgsenderv2.desktop /app/share/applications/gkiokan.net.ps4remotepkgsenderv2.desktop
+    sources:
+      - type: dir
+        path: .
+      - flatpak/generated-sources.json
+      - type: script
+        dest-filename: run.sh
+        commands:
+          # The executable name matches the `name` field in package.json (PS4RemotePKGSenderV2).
+          # Verify against the actual electron-builder --dir output if the launch fails.
+          - zypak-wrapper.sh /app/main/PS4RemotePKGSenderV2 "$@"
