@@ -6,22 +6,25 @@
   "author": "Gkiokan <support@gkiokan.net>",
   "description": "Manage and send PKG files to your PS4 and PS5",
   "scripts": {
-    "build": "electron-webpack && electron-builder --dir",
-    "build:mac": "electron-webpack && electron-builder --mac",
-    "build:win": "electron-webpack && electron-builder --win",
-    "build:win:x64": "electron-webpack && electron-builder --win zip portable --x64",
-    "build:linux": "electron-webpack && electron-builder --linux",
-    "build:linux:deb": "electron-webpack && electron-builder --linux deb",
-    "build:all": "electron-webpack && electron-builder -mwl",
-    "dist": "electron-webpack && electron-builder --dir",
+    "build": "cross-env NODE_OPTIONS=--openssl-legacy-provider electron-webpack && electron-builder --dir",
+    "build:mac": "cross-env NODE_OPTIONS=--openssl-legacy-provider electron-webpack && electron-builder --mac",
+    "build:win": "cross-env NODE_OPTIONS=--openssl-legacy-provider electron-webpack && electron-builder --win",
+    "build:win:x64": "cross-env NODE_OPTIONS=--openssl-legacy-provider electron-webpack && electron-builder --win zip portable --x64",
+    "build:linux": "cross-env NODE_OPTIONS=--openssl-legacy-provider electron-webpack && electron-builder --linux",
+    "build:linux:deb": "cross-env NODE_OPTIONS=--openssl-legacy-provider electron-webpack && electron-builder --linux deb",
+    "build:all": "cross-env NODE_OPTIONS=--openssl-legacy-provider electron-webpack && electron-builder -mwl",
+    "dist": "cross-env NODE_OPTIONS=--openssl-legacy-provider electron-webpack && electron-builder --dir",
     "publish": "electron-builder --mac --linux --win --publish onTag",
-    "webpack": "electron-webpack",
-    "watch": "electron-webpack dev"
+    "webpack": "cross-env NODE_OPTIONS=--openssl-legacy-provider electron-webpack",
+    "watch": "cross-env NODE_OPTIONS=--openssl-legacy-provider electron-webpack dev"
   },
   "devDependencies": {
     "@babel/core": "^7.29.7",
+    "@babel/plugin-transform-nullish-coalescing-operator": "^7.27.1",
+    "@babel/plugin-transform-optional-chaining": "^7.29.7",
     "@babel/preset-env": "^7.29.7",
-    "@fortawesome/fontawesome-free": "^7.3.0",
+    "@fortawesome/fontawesome-free": "^6.7.2",
+    "cross-env": "^10.1.0",
     "electron": "^43.1.0",
     "electron-builder": "^26.15.3",
     "electron-webpack": "^2.8.2",
@@ -29,6 +32,7 @@
     "element-ui": "^2.15.14",
     "json5": "^2.2.3",
     "lodash": "^4.17.21",
+    "sass": "^1.101.0",
     "sass-loader": "10.5.2",
     "vue": "^2.7.16",
     "vue-devtools": "^5.1.4",
@@ -38,9 +42,7 @@
     "vuex-electron": "^1.0.3",
     "vuex-pathify": "^1.5.1",
     "vuex-router-sync": "^5.0.0",
-    "webpack": "~4.46.0",
-    "@babel/plugin-transform-nullish-coalescing-operator": "^7.27.1",
-    "sass": "^1.101.0"
+    "webpack": "~4.46.0"
   },
   "dependencies": {
     "@njzy/ps4-pkg-info": "^0.1.0",
@@ -58,7 +60,8 @@
       "@babel/preset-env"
     ],
     "plugins": [
-      "@babel/plugin-transform-nullish-coalescing-operator"
+      "@babel/plugin-transform-nullish-coalescing-operator",
+      "@babel/plugin-transform-optional-chaining"
     ]
   },
   "build": {
