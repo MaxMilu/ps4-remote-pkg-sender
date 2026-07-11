@@ -1,7 +1,6 @@
 // Import Font Awesome 5 Free
 // $fa-css-prefix: 'el-icon-fa';
-// $fa-font-path: '~@fortawesome/fontawesome-free/webfonts';
-$fa-font-path: './webfonts';
+$fa-font-path: '~@fortawesome/fontawesome-free/webfonts';
 
 @import '~@fortawesome/fontawesome-free/scss/fontawesome.scss';
 @import '~@fortawesome/fontawesome-free/scss/regular.scss';
