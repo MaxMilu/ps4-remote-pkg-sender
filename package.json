@@ -5,6 +5,7 @@
   "productName": "PS4 Remote PKG Sender V2",
   "author": "Gkiokan <support@gkiokan.net>",
   "description": "Manage and send PKG files to your PS4 and PS5",
+  "desktopName": "gkiokan.net.ps4remotepkgsenderv2.desktop",
   "scripts": {
     "build": "cross-env NODE_OPTIONS=--openssl-legacy-provider electron-webpack && electron-builder --dir",
     "build:mac": "cross-env NODE_OPTIONS=--openssl-legacy-provider electron-webpack && electron-builder --mac",
@@ -12,6 +13,7 @@
     "build:win:x64": "cross-env NODE_OPTIONS=--openssl-legacy-provider electron-webpack && electron-builder --win zip portable --x64",
     "build:linux": "cross-env NODE_OPTIONS=--openssl-legacy-provider electron-webpack && electron-builder --linux",
     "build:linux:deb": "cross-env NODE_OPTIONS=--openssl-legacy-provider electron-webpack && electron-builder --linux deb",
+    "build:linux:flatpak": "cross-env NODE_OPTIONS=--openssl-legacy-provider electron-webpack && electron-builder --linux flatpak",
     "build:all": "cross-env NODE_OPTIONS=--openssl-legacy-provider electron-webpack && electron-builder -mwl",
     "dist": "cross-env NODE_OPTIONS=--openssl-legacy-provider electron-webpack && electron-builder --dir",
     "publish": "electron-builder --mac --linux --win --publish onTag",
@@ -89,6 +91,8 @@
       ]
     },
     "linux": {
+      "category": "Utility",
+      "syncDesktopName": true,
       "target": [
         {
           "target": "AppImage",
@@ -105,6 +109,13 @@
           "target": "deb"
         }
       ]
+    },
+    "flatpak": {
+      "base": "org.electronjs.Electron2.BaseApp",
+      "baseVersion": "24.08",
+      "runtime": "org.freedesktop.Platform",
+      "runtimeVersion": "24.08",
+      "sdk": "org.freedesktop.Sdk"
     },
     "portable": {
       "artifactName": "${productName}-${version}.exe",
