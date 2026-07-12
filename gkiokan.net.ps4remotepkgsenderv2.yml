@@ -37,7 +37,8 @@ modules:
       # jq is available in the Freedesktop SDK and is the recommended way to patch
       # the linux target at build time per https://docs.flatpak.org/en/latest/electron.html
       # Using array format to match the existing target structure in package.json
-      - jq '.build.linux.target = [{"target": "dir"}]' package.json > package.json.tmp && mv package.json.tmp package.json
+      - |-
+        jq '.build.linux.target = [{"target": "dir"}]' package.json > package.json.tmp && mv package.json.tmp package.json
       # `webpack` script is defined in package.json as:
       # cross-env NODE_OPTIONS=--openssl-legacy-provider electron-webpack
       - npm run webpack
