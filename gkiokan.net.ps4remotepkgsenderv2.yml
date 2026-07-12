@@ -58,7 +58,7 @@ modules:
             ELECTRON_BUILDER_ARCH_ARGS=
             ;;
         esac
-        npx electron-builder ${ELECTRON_BUILDER_ARCH_ARGS:+$ELECTRON_BUILDER_ARCH_ARGS} --linux --dir --publish never
+        npx electron-builder $ELECTRON_BUILDER_ARCH_ARGS --linux --dir --publish never
       # Install the app
       - cp -a release/linux-unpacked /app/main
       # Install the launcher wrapper
