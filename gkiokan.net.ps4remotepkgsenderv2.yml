@@ -51,11 +51,12 @@ modules:
           aarch64)
             ELECTRON_BUILDER_ARCH_ARGS=--arm64
             ;;
-          armv7l|armv7*)
+          armv7l)
             ELECTRON_BUILDER_ARCH_ARGS=--armv7l
             ;;
           *)
-            ELECTRON_BUILDER_ARCH_ARGS=
+            echo "Unsupported architecture: $(uname -m)" >&2
+            exit 1
             ;;
         esac
         npx electron-builder $ELECTRON_BUILDER_ARCH_ARGS --linux --dir --publish never
