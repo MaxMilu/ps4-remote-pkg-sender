@@ -99,7 +99,7 @@ jobs:
         run: npm ci
 
       - name: Build Linux unpacked app
-        run: npm run build -- --linux=dir --publish never
+        run: npm run build:linux:dir -- --publish never
 
       - name: Install Flatpak tooling
         run: sudo apt-get update && sudo apt-get install -y flatpak flatpak-builder

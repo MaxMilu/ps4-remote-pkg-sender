@@ -12,6 +12,7 @@
     "build:win": "cross-env NODE_OPTIONS=--openssl-legacy-provider electron-webpack && electron-builder --win",
     "build:win:x64": "cross-env NODE_OPTIONS=--openssl-legacy-provider electron-webpack && electron-builder --win zip portable --x64",
     "build:linux": "cross-env NODE_OPTIONS=--openssl-legacy-provider electron-webpack && electron-builder --linux",
+    "build:linux:dir": "cross-env NODE_OPTIONS=--openssl-legacy-provider electron-webpack && electron-builder --linux --dir",
     "build:linux:deb": "cross-env NODE_OPTIONS=--openssl-legacy-provider electron-webpack && electron-builder --linux deb",
     "build:all": "cross-env NODE_OPTIONS=--openssl-legacy-provider electron-webpack && electron-builder -mwl",
     "dist": "cross-env NODE_OPTIONS=--openssl-legacy-provider electron-webpack && electron-builder --dir",

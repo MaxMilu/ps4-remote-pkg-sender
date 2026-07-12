@@ -33,7 +33,7 @@ modules:
         electron_config_cache: /run/build/ps4-remote-pkg-sender/flatpak-node/cache
     build-commands:
       # Install the app
-      - test -d release/linux-unpacked || (echo "Missing release/linux-unpacked. Run the Linux unpacked build before flatpak-builder." >&2; exit 1)
+      - test -d release/linux-unpacked || (echo "Missing release/linux-unpacked. Ensure the Linux unpacked build completed successfully before packaging." >&2; exit 1)
       - cp -a release/linux-unpacked /app/main
       # Install the launcher wrapper
       - install -Dm755 -t /app/bin/ run.sh
