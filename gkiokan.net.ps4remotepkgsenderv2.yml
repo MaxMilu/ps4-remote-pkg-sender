@@ -1,9 +1,9 @@
 app-id: gkiokan.net.ps4remotepkgsenderv2
 runtime: org.freedesktop.Platform
-runtime-version: '24.08'
+runtime-version: '25.08'
 sdk: org.freedesktop.Sdk
 base: org.electronjs.Electron2.BaseApp
-base-version: '24.08'
+base-version: '25.08'
 sdk-extensions:
   - org.freedesktop.Sdk.Extension.node22
 command: run.sh
@@ -11,14 +11,14 @@ separate-locales: false
 
 finish-args:
   - --share=ipc
-  - --socket=x11
+  - --socket=wayland
+  - --socket=fallback-x11
   - --socket=pulseaudio
   - --share=network
-  - --device=dri
+  - --env=XCURSOR_PATH=/run/host/user-share/icons:/run/host/share/icons
   - --env=ELECTRON_TRASH=gio
-
 build-options:
-  append-path: /usr/lib/sdk/node22/bin
+  append-path: /usr/lib/sdk/node24/bin
   env:
     NPM_CONFIG_LOGLEVEL: info
 
