@@ -98,19 +98,14 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Build Linux unpacked app
+        run: npm run build -- --publish never
+
       - name: Install Flatpak tooling
         run: sudo apt-get update && sudo apt-get install -y flatpak flatpak-builder
 
       - name: Add Flathub remote
         run: flatpak remote-add --user --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
-
-      - name: Install flatpak-node-generator
-        run: pip3 install flatpak-node-generator==0.1.1
-
-      - name: Generate Flatpak node sources
-        run: |
-          mkdir -p flatpak
-          flatpak-node-generator npm package-lock.json -o flatpak/generated-sources.json
 
       - name: Build Linux Flatpak artifact
         run: |

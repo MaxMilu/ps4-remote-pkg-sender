@@ -32,34 +32,6 @@ modules:
         npm_config_offline: 'true'
         electron_config_cache: /run/build/ps4-remote-pkg-sender/flatpak-node/cache
     build-commands:
-      # Install npm dependencies from pre-cached packages
-      - npm install --offline
-      # jq is available in the Freedesktop SDK and is the recommended way to patch
-      # the linux target at build time per https://docs.flatpak.org/en/latest/electron.html
-      # Using array format to match the existing target structure in package.json
-      - |-
-        jq '.build.linux.target = [{"target": "dir"}]' package.json > package.json.tmp && mv package.json.tmp package.json
-      # `webpack` script is defined in package.json as:
-      # cross-env NODE_OPTIONS=--openssl-legacy-provider electron-webpack
-      - npm run webpack
-      # Build the unpacked Electron app
-      - |
-        case "$(uname -m)" in
-          x86_64)
-            ELECTRON_BUILDER_ARCH_ARGS=--x64
-            ;;
-          aarch64)
-            ELECTRON_BUILDER_ARCH_ARGS=--arm64
-            ;;
-          armv7l)
-            ELECTRON_BUILDER_ARCH_ARGS=--armv7l
-            ;;
-          *)
-            echo "Unsupported architecture: $(uname -m)" >&2
-            exit 1
-            ;;
-        esac
-        npx electron-builder $ELECTRON_BUILDER_ARCH_ARGS --linux --dir --publish never
       # Install the app
       - cp -a release/linux-unpacked /app/main
       # Install the launcher wrapper
@@ -71,7 +43,6 @@ modules:
     sources:
       - type: dir
         path: .
-      - flatpak/generated-sources.json
       - type: script
         dest-filename: run.sh
         commands:
