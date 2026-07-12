@@ -45,7 +45,7 @@ modules:
       # Build the unpacked Electron app
       - |
         . flatpak-node/electron-builder-arch-args.sh
-        npx electron-builder $ELECTRON_BUILDER_ARCH_ARGS --linux --dir
+        npx electron-builder $ELECTRON_BUILDER_ARCH_ARGS --linux --dir --publish never
       # Install the app
       - cp -a release/linux-unpacked /app/main
       # Install the launcher wrapper
