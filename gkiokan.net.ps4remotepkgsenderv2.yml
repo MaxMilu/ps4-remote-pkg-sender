@@ -44,8 +44,21 @@ modules:
       - npm run webpack
       # Build the unpacked Electron app
       - |
-        . flatpak-node/electron-builder-arch-args.sh
-        npx electron-builder $ELECTRON_BUILDER_ARCH_ARGS --linux --dir --publish never
+        case "$(uname -m)" in
+          x86_64)
+            ELECTRON_BUILDER_ARCH_ARGS=--x64
+            ;;
+          aarch64)
+            ELECTRON_BUILDER_ARCH_ARGS=--arm64
+            ;;
+          armv7l|armv7*)
+            ELECTRON_BUILDER_ARCH_ARGS=--armv7l
+            ;;
+          *)
+            ELECTRON_BUILDER_ARCH_ARGS=
+            ;;
+        esac
+        npx electron-builder ${ELECTRON_BUILDER_ARCH_ARGS:+$ELECTRON_BUILDER_ARCH_ARGS} --linux --dir --publish never
       # Install the app
       - cp -a release/linux-unpacked /app/main
       # Install the launcher wrapper
