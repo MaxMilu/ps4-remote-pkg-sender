@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop">
+  <id>gkiokan.net.ps4remotepkgsenderv2</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>MIT</project_license>
+  <name>PS4 Remote PKG Sender V2</name>
+  <summary>Manage and send PKG files to your PS4 and PS5</summary>
+  <description>
+    <p>
+      An application to manage and send PKG files to your PS4 and PS5 over the network.
+      It features a modern GUI and supports background processing.
+    </p>
+  </description>
+  <launchable type="desktop-id">gkiokan.net.ps4remotepkgsenderv2.desktop</launchable>
+  <url type="homepage">https://github.com/Gkiokan/ps4-remote-pkg-sender</url>
+  <url type="bugtracker">https://github.com/Gkiokan/ps4-remote-pkg-sender/issues</url>
+  <developer_name>Gkiokan</developer_name>
+  <provides>
+    <binary>ps4-remote-pkg-sender</binary>
+  </provides>
+</component>

@@ -31,9 +31,19 @@ modules:
         npm_config_cache: /run/build/ps4-remote-pkg-sender/flatpak-node/npm-cache
         npm_config_offline: 'true'
         electron_config_cache: /run/build/ps4-remote-pkg-sender/flatpak-node/cache
+        ELECTRON_CACHE: /run/build/ps4-remote-pkg-sender/flatpak-node/cache/electron
+        ELECTRON_BUILDER_CACHE: /run/build/ps4-remote-pkg-sender/flatpak-node/cache/electron-builder
+        ELECTRON_BUILDER_OFFLINE: 'true'
+        DEBUG: '*'
     build-commands:
-      # Install the app
-      - test -d release/linux-unpacked || (echo "Missing release/linux-unpacked directory. Ensure the unpacked Linux build is created before Flatpak packaging." >&2; exit 1)
+      # Extract the cached electron zip manually to bypass @electron/get checksum downloads
+      - mkdir -p electron-dist
+      - find flatpak-node/cache/electron -name "electron-v*-linux-x64.zip" -exec unzip -q {} -d electron-dist \;
+      # Strip unused targets, repository metadata, and point to the manual electronDist
+      - jq 'del(.build.win, .build.mac, .build.dmg, .build.publish, .repository) | .build.linux.target="dir" | .build.electronDist="electron-dist"' package.json > package.json.tmp && mv package.json.tmp package.json
+      # Build the app from source
+      - npm install --offline
+      - npm run build:linux:dir
       - cp -a release/linux-unpacked /app/main
       # Install the launcher wrapper
       - install -Dm755 -t /app/bin/ run.sh
@@ -41,11 +51,14 @@ modules:
       - install -Dm644 build/icon.png /app/share/icons/hicolor/512x512/apps/gkiokan.net.ps4remotepkgsenderv2.png
       # build/gkiokan.net.ps4remotepkgsenderv2.desktop is committed to the repository
       - install -Dm644 build/gkiokan.net.ps4remotepkgsenderv2.desktop /app/share/applications/gkiokan.net.ps4remotepkgsenderv2.desktop
+      # Install AppStream metadata
+      - install -Dm644 gkiokan.net.ps4remotepkgsenderv2.metainfo.xml /app/share/metainfo/gkiokan.net.ps4remotepkgsenderv2.metainfo.xml
     sources:
       # The CI workflow creates release/linux-unpacked before invoking flatpak-builder,
       # and this repository source includes that prebuilt app directory for packaging.
       - type: dir
         path: .
+      - flatpak-node-sources.json
       - type: script
         dest-filename: run.sh
         commands:
