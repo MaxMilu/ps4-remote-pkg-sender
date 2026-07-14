@@ -44,6 +44,18 @@
           </el-col>
       </el-row>
 
+      <el-row :gutter="20" v-if="ps4.app == 'singleDPI'">
+          <el-col :span="10">
+              <el-form-item :label="$t('config.ps4.singleDPIInstallMode')">
+                  <el-radio-group v-model="ps4.singleDPI_install_mode" size="mini">
+                      <el-radio-button label="auto">{{ $t('config.ps4.singleDPIInstallModeAuto') }}</el-radio-button>
+                      <el-radio-button label="v1">{{ $t('config.ps4.singleDPIInstallModeV1') }}</el-radio-button>
+                      <el-radio-button label="v2">{{ $t('config.ps4.singleDPIInstallModeV2') }}</el-radio-button>
+                  </el-radio-group>
+              </el-form-item>
+          </el-col>
+      </el-row>
+
 
       <el-divider content-position="left">{{ $t('config.ps4.parameters') }}</el-divider>
       <el-row :gutter="20">
@@ -113,6 +125,9 @@ export default {
 
     mounted(){
         if(this.ps4.app == 'singleDPI'){
+            if(!['auto', 'v1', 'v2'].includes(this.ps4.singleDPI_install_mode))
+                this.ps4.singleDPI_install_mode = 'auto'
+
             if(!['immediate', 'delay'].includes(this.ps4.singleDPI_queue_mode))
                 this.ps4.singleDPI_queue_mode = 'delay'
 
@@ -141,8 +156,14 @@ export default {
             }
 
             if(val == 'singleDPI'){
-                this.ps4.port = this.ps4.port_singleDPI ?? 9090
                 this.server.readSFOHeader = true
+
+                if(!['auto', 'v1', 'v2'].includes(this.ps4.singleDPI_install_mode))
+                    this.ps4.singleDPI_install_mode = 'auto'
+
+                this.ps4.port = this.ps4.singleDPI_install_mode == 'v2'
+                    ? (this.ps4.port_singleDPI_v2 ?? 12800)
+                    : (this.ps4.port_singleDPI ?? 9090)
 
                 this.ps4.singleDPI_queue_mode = 'delay'
                 this.ps4.singleDPI_queue_delay_seconds = 2
@@ -160,13 +181,25 @@ export default {
             if(this.ps4.app == 'rpiOOP')
               this.ps4.port_rpiOOP = this.ps4.port
 
-            if(this.ps4.app == 'singleDPI')
-              this.ps4.port_singleDPI = this.ps4.port
+            if(this.ps4.app == 'singleDPI'){
+              if(this.ps4.singleDPI_install_mode == 'v2')
+                this.ps4.port_singleDPI_v2 = this.ps4.port
+              else
+                this.ps4.port_singleDPI = this.ps4.port
+            }
 
             this.save()
         },
         'ps4.timeout'(){ this.save() },
         'ps4.updateInterval'(){ this.save() },
+        'ps4.singleDPI_install_mode'(){
+            if(this.ps4.app == 'singleDPI')
+                this.ps4.port = this.ps4.singleDPI_install_mode == 'v2'
+                    ? (this.ps4.port_singleDPI_v2 ?? 12800)
+                    : (this.ps4.port_singleDPI ?? 9090)
+
+            this.save()
+        },
         'ps4.singleDPI_queue_mode'(){ this.save() },
         'ps4.singleDPI_queue_delay_seconds'(){ this.save() },
     },
@@ -192,6 +225,19 @@ export default {
                         console.log(e)
                         this.$root.log(this.$t('messages.connection.ps5CheckNotAccessible'), e)
                         this.$message({ message: this.$t('messages.connection.ps5NotAccessible'), type: 'error' })
+                    })
+
+            if( this.$store.getters['app/getPS4TargetApp'] == 'goldhen' )
+                return await this.$ps4_goldhen.checkPS4()
+                    .then( () => {
+                        this.testingConnection = false
+                        this.$root.log(this.$t('messages.connection.ps4Accessible'), null)
+                        this.$message({ message: this.$t('messages.connection.playstationAccessible'), type: 'success' })
+                    })
+                    .catch( e => {
+                        this.testingConnection = false
+                        this.$root.log(this.$t('messages.connection.ps4CheckNotAccessible'), e)
+                        this.$message({ message: this.$t('messages.connection.ps4NotAccessible'), type: 'error' })
                     })
 
             this.$ps4.checkPS4()

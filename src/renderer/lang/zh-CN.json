@@ -117,6 +117,10 @@
       "queueMode": "下一个队列项目",
       "queueModeImmediate": "立即",
       "queueModeDelay": "延迟",
+      "singleDPIInstallMode": "singleDPI 模式",
+      "singleDPIInstallModeAuto": "自动",
+      "singleDPIInstallModeV1": "DPI v1",
+      "singleDPIInstallModeV2": "DPI v2 URL",
       "queueDelay": "队列延迟",
       "queueDelaySeconds": "秒",
       "parameters": "参数"

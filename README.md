@@ -15,7 +15,7 @@
 
 本分支在原项目的 PS5 etaHEN 支持基础上增加了以下功能：
 
-- **[核心功能] 增加 PS5 `singleDPI` 目标**，通过 TCP 9090 API 连接独立的 Direct Package Installer payload
+- **[核心功能] 增加 PS5 `singleDPI` 目标**，通过 9090 DPI v1 控制 API 与实验性的 12800 DPI v2 URL 入口连接独立的 Direct Package Installer payload
 - **完整国际化支持**：集成 vue-i18n，支持简体中文、德语等多语言切换，语言选择器仅显示已翻译的语言
 - **Skip Installed 选项**：队列扫描时可选择跳过已安装的条目，或仍将其加入安装候选
 - **延迟安装模式**：队列可选择上一项完成后等待自定义秒数（默认 2 秒，推荐延迟，如果安装速度太快可能会出现问题）再继续下一项
@@ -25,6 +25,7 @@
 - 列表高度随窗口自动调整，长队列可在表格内部滚动
 - Reset Options 可单独重置已安装状态、移除完成条目或移除 `installed` 类型条目
 - 保留原有 PS5 etaHEN 和 PS4 安装模式，不改变其既有发送方式(未测试，fork主要为了兼容singleDPI)
+- `PS5 singleDPI` 下方增加 `singleDPI Mode`：`Auto`/`DPI v1` 显示 9090，`DPI v2 URL` 显示 12800；`ping`、状态与已安装检测仍固定通过 9090 控制接口完成，安装失败时会按可用模式尝试回退
 - 增加仅构建 Windows x64 版本的命令，避免旧依赖在 ia32 构建阶段要求 Python：
 - 目前仅构建win64，暂无多平台构建。有机器与环境的可以自行拉取代码进行构建操作
 
@@ -33,7 +34,9 @@ npm run build:win:x64
 ```
 
 使用 singleDPI 前，需要先在 PS5 上加载与系统版本匹配的 kstuff 或 kstuff-lite，
-然后加载 `singleDPI.elf`，并在应用配置中选择 `PS5 singleDPI`。
+然后加载 `singleDPI.elf`，并在应用配置中选择 `PS5 singleDPI`。如果选择 `Auto`，客户端会先通过
+9090 `ping` 读取 singleDPI 返回的系统版本与 v2 能力，高固件优先尝试 12800 DPI v2 URL，低固件优先尝试
+9090 DPI v1；手动选择 v2 时会显示并优先使用 12800。
 
 ---
 

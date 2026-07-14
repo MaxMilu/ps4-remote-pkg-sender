@@ -117,6 +117,10 @@
       "queueMode": "Next Queue Item",
       "queueModeImmediate": "Immediately",
       "queueModeDelay": "Delay",
+      "singleDPIInstallMode": "singleDPI Mode",
+      "singleDPIInstallModeAuto": "Auto",
+      "singleDPIInstallModeV1": "DPI v1",
+      "singleDPIInstallModeV2": "DPI v2 URL",
       "queueDelay": "Queue Delay",
       "queueDelaySeconds": "seconds",
       "parameters": "Parameters"

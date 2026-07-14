@@ -237,19 +237,22 @@ export default {
         },
 
         isInstalled(file){
-            if(this.$store.getters['app/isSingleDPI']){
+            const detectionTarget = this.$helper.getInstalledDetectionTarget(this.$store.getters['app/getPS4TargetApp'])
+
+            if(detectionTarget == 'ps5'){
                 return this.$ps5.isInstalled(file)
                     .then(data => {
                         if(!data || data.res !== 0)
                             throw new Error(data && data.error ? data.error : this.$t('errors.invalidSingleDpiResponse'))
 
-                        if(data.exists)
+                        const exists = this.$helper.isInstalledDetected(data.exists)
+                        if(exists)
                             file.status = 'installed'
 
-                        const message = data.exists
+                        const message = exists
                             ? this.$t('hbstore.messages.installed')
                             : this.$t('hbstore.messages.notInstalled')
-                        const type = data.exists ? 'warning' : 'success'
+                        const type = exists ? 'warning' : 'success'
                         this.log(message, data)
                         this.$message({ message, type })
                     })
@@ -259,12 +262,13 @@ export default {
                     })
             }
 
-            if( this.$store.getters['app/isPS5'] )
+            if(detectionTarget == 'unsupported')
                 return this.$message({ message: this.$t('messages.install.notImplementedPs5'), type: "info" })
 
             this.$ps4.isInstalled(file)
                     .then( ({ data }) => {
-                        if(data.exists == true)
+                        const installed = this.$helper.isInstalledDetected(data.exists)
+                        if(installed)
                           file.status = 'installed'
 
                         let { exists, size, type } = data

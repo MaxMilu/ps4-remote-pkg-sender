@@ -181,11 +181,13 @@ let ps4_goldhen = {
             return new Promise( (resolve, reject) => reject("Can't find file URL for " + file.name) )
         }
 
+        const sfo = file.sfo || {}
+        const data = file.data || {}
         let o = {
-            id: file.sfo.CONTENT_ID,
+            id: sfo.CONTENT_ID || data.CONTENT_ID || data.content_id || file.cusa || file.patchedFilename,
             contentUrl: file.url,
-            iconPath: file.image,
-            contentName: file.sfo.TITLE,
+            iconPath: file.image || data.image || data.icon || '',
+            contentName: sfo.TITLE || data.name || file.name,
         }
 
         console.log("Prepare Send Object", o)

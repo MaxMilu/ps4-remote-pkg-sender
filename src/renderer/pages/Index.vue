@@ -235,13 +235,17 @@
         </template>
       </el-table-column>
 
-      <el-table-column :label="$t('common.table.operation')" width="150" align="right">
+      <el-table-column :label="$t('common.table.operation')" width="185" align="right">
         <template slot-scope="scope">
           <el-button circle size="small" icon="fa fa-minus" @click="removeFromQueue(scope.row)"/>
 
           <el-button circle size="small" icon="fa fa-info" @click="info(scope.row)" v-if="false"></el-button>
           <el-button circle size="small" icon="fa fa-stop" @click="stop(scope.row)" v-if="false"></el-button>
           <el-button circle size="small" icon="fa fa-play" v-if="scope.row.status != 'installing' && !(isSingleDPI && scope.row.status == 'error')" @click="start(scope.row)"></el-button>
+          <el-button circle size="small" type="warning" icon="el-icon-refresh"
+              title="Recover RPI task"
+              v-if="canRecoverSingleRPITask(scope.row)"
+              @click="recover(scope.row)"></el-button>
           <el-button circle size="small" type="danger" icon="el-icon-refresh-right"
               :title="$t('queue.operation.retryFailed')"
               v-if="isSingleDPI && scope.row.status == 'error'"
@@ -329,6 +333,9 @@ export default {
     isSingleDPI: get('app/isSingleDPI'),
     sfoEnabled: get('app/getReadSFOHeader'),
     getPS4TargetApp: get('app/getPS4TargetApp'),
+    isSingleRPI() {
+      return this.$helper.isSingleRPITarget(this.getPS4TargetApp)
+    },
     files() {
       return this.queueFiles.filter(file => this.$helper.matchesFileSearch(file, this.search))
     },
@@ -380,6 +387,17 @@ export default {
             })
 
 
+      if (this.getPS4TargetApp == 'goldhen')
+        return await this.$ps4_goldhen.checkPS4()
+            .then(() => {
+              this.log(this.$t('messages.connection.ps4Accessible'))
+              this.$message({message: this.$t('messages.connection.ps4CheckAccessible'), type: 'success'})
+            })
+            .catch(e => {
+              this.log(this.$t('messages.connection.ps4CheckNotAccessible'), e)
+              this.$message({message: this.$t('messages.connection.ps4NotAccessible'), type: 'error'})
+            })
+
       // backwardscompatibility for ps4
       this.$ps4.checkPS4()
           .then((res) => {
@@ -397,14 +415,26 @@ export default {
         this.sendNotification({title: this.$t('messages.notifications.test'), body: this.$t('messages.notifications.testBody')})
     },
 
+    canRecoverSingleRPITask(file) {
+      if (!this.isSingleRPI)
+        return false
+
+      if (!this.$helper.getFileContentId(file))
+        return false
+
+      return ['error', 'pause', 'stop', 'installing'].includes(file.status)
+    },
+
     isInstalled(file, {silent = false} = {}) {
-      if (this.isSingleDPI) {
+      const detectionTarget = this.$helper.getInstalledDetectionTarget(this.getPS4TargetApp)
+
+      if (detectionTarget == 'ps5') {
         return this.$ps5.isInstalled(file)
             .then(data => {
               if (!data || data.res !== 0)
                 throw new Error(data && data.error ? data.error : this.$t('errors.invalidSingleDpiResponse'))
 
-              const exists = data.exists === true || data.exists === 1 || data.exists === 'true'
+              const exists = this.$helper.isInstalledDetected(data.exists)
               if (exists)
                 file.status = 'installed'
 
@@ -427,7 +457,7 @@ export default {
             })
       }
 
-      if (this.isPS5) {
+      if (detectionTarget == 'unsupported') {
         if (!silent)
           this.$message({message: this.$t('messages.install.notImplementedPs5'), type: "info"})
         return Promise.resolve(false)
@@ -435,7 +465,8 @@ export default {
 
       return this.$ps4.isInstalled(file)
           .then(({data}) => {
-            if (data.exists == true)
+            const installed = this.$helper.isInstalledDetected(data.exists)
+            if (installed)
               file.status = 'installed'
 
             let {exists, size, type} = data
@@ -443,7 +474,7 @@ export default {
             if (!silent)
               this.$message({message: data.message, type: data.type})
 
-            return Boolean(data.exists)
+            return installed
           })
           .catch(e => {
             this.clearInterval(file)
@@ -569,6 +600,9 @@ export default {
             if (data.status == 'success') {
               this.$store.dispatch('queue/addTask', data)
 
+              if (data.content_id)
+                this.$set(file, 'content_id', data.content_id)
+
               this.setTask(file, data.task_id)
               this.setStatus(file, 'installing')
               this.sendNotification({title: this.$t('messages.notifications.installing'), body: file.name + " " + this.$t('messages.notifications.installingBody').replace('{filename}', '')})
@@ -633,7 +667,7 @@ export default {
 
       this.clearInterval(file)
 
-      this.$ps4.stop(file)
+      this.$ps4.pause(file)
           .then(({data}) => {
             console.log("pause ", data)
             this.setStatus(file, 'pause')
@@ -663,6 +697,54 @@ export default {
           .catch(e => {
             this.clearInterval(file)
             console.log(e)
+          })
+    },
+
+    recover(file) {
+      console.log(file.name + ' recover RPI task')
+
+      this.clearInterval(file)
+
+      this.$ps4.recover(file, {resume: true})
+          .then(({data}) => {
+            if (data.status == 'not_found') {
+              this.setStatus(file, 'error')
+              this.log(file.name + ' RPI task not found', data, 'error')
+              this.$message({message: file.name + ' RPI task not found', type: 'warning'})
+              return
+            }
+
+            if (data.status == 'success' && data.task_id >= 0) {
+              this.setTask(file, data.task_id)
+              this.setStatus(file, 'installing')
+              if (data.content_id)
+                this.$set(file, 'content_id', data.content_id)
+
+              if (data.length && data.transferred) {
+                let length = Math.round(parseInt(data.length))
+                let done = Math.round(parseInt(data.transferred))
+                let onePercent = length > 0 ? 100 / length : 0
+                file.percentage = Math.max(0, Math.min(100, Math.round(done * onePercent)))
+                file.rest = data.rest_sec_total || 0
+              }
+
+              if (!file.logs)
+                this.$set(file, 'logs', [])
+              file.logs.unshift(data)
+              this.startInterval(file)
+              this.log(file.name + ' RPI task recovered', data)
+              this.$message({message: file.name + ' RPI task recovered', type: 'success'})
+              return
+            }
+
+            this.setStatus(file, 'error')
+            this.log(file.name + ' RPI recover returned unexpected response', data, 'error')
+          })
+          .catch(e => {
+            this.clearInterval(file)
+            this.setStatus(file, 'error')
+            this.log(file.name + ' RPI recover failed', e, 'error')
+            this.$message({message: e.message || String(e), type: 'error'})
           })
     },
 

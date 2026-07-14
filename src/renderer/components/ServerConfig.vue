@@ -157,9 +157,9 @@ export default {
         loadNetworkInterfaces(){
             this.ifaces = this.$helper.getNetWorkInterfaces()
 
-            if(this.ifaces.length){
-                // this.server.iface = this.ifaces[0]
-            }
+            const fallbackIP = this.$helper.getFallbackNetworkInterfaceIP(this.server.ip)
+            if(fallbackIP && fallbackIP != this.server.ip)
+                this.server.ip = fallbackIP
         },
 
         async selectBasePath(){

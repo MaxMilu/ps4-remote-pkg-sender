@@ -29,6 +29,16 @@ let helper = {
         return ifaces;
     },
 
+    getFallbackNetworkInterfaceIP(currentIP='') {
+        const ifaces = this.getNetWorkInterfaces()
+        const selected = ifaces.find(iface => iface.ip == currentIP)
+
+        if(selected)
+            return selected.ip
+
+        return ifaces.length ? ifaces[0].ip : ''
+    },
+
     getServerStatusType(i=''){
         if(i == 'error')
           return 'danger'
@@ -113,6 +123,31 @@ let helper = {
             .join('\n')
 
         return terms.every(term => searchableText.includes(term))
+    },
+
+    getInstalledDetectionTarget(targetApp=''){
+        if(targetApp == 'singleDPI')
+          return 'ps5'
+
+        if(['rpi', 'rpiOOP'].includes(targetApp))
+          return 'ps4-rpi'
+
+        return 'unsupported'
+    },
+
+    isSingleRPITarget(targetApp=''){
+        return ['rpi', 'rpiOOP'].includes(targetApp)
+    },
+
+    getFileContentId(file={}){
+        const sfo = file.sfo || {}
+        const data = file.data || {}
+
+        return sfo.CONTENT_ID || data.CONTENT_ID || data.content_id || file.content_id || ''
+    },
+
+    isInstalledDetected(value){
+        return value === true || value === 1 || value === 'true'
     },
 
     getFileStatus(type=''){

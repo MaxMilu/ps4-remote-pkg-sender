@@ -64,6 +64,7 @@ export default {
         this.$store.dispatch('server/resetLogs')
         this.$store.dispatch('server/setServerFiles', [])
 
+        this.ensureValidServerIP()
         this.loadBasePathFiles()
         this.createServer()
         this.startServer()
@@ -133,6 +134,17 @@ export default {
         loadBasePathFiles(){
             if(this.config.server.auto_scan_on_startup)
               this.$store.dispatch('server/loadFiles', this.config.server.base_path)
+        },
+
+        ensureValidServerIP(){
+            const fallbackIP = this.$helper.getFallbackNetworkInterfaceIP(this.config.server.ip)
+
+            if(fallbackIP && fallbackIP != this.config.server.ip){
+                this.config.server.ip = fallbackIP
+                const server = { ...this.config.server, ip: fallbackIP }
+                this.$store.dispatch('app/setServer', server)
+                this.$store.dispatch('server/addLog', 'Selected server IP was not available. Using ' + fallbackIP)
+            }
         },
 
         createServer(){
@@ -275,18 +287,21 @@ export default {
 
         addFileEndpoint(file){
             // this.$store.dispatch('server/addLog', "Create endpoint " + file.patchedFilename)
-            this.host.router.get(`/${file.patchedFilename}`, function(request, response){
+            const routePath = '/' + file.patchedFilename
+            const publicPath = encodeURI(routePath)
+
+            this.host.router.get(routePath, function(request, response){
                 response.status(200).download(file.path, file.name)
             })
 
             // add Image callback to file as ${file}/icon0.png
-            this.host.router.get(`/${file.patchedFilename}/icon0.png`, async (request, response) => await this.fileImageCallbackResponse(file, request, response) )
+            this.host.router.get(routePath + '/icon0.png', async (request, response) => await this.fileImageCallbackResponse(file, request, response) )
 
             // Validate a couple states
             let inQueue = this.$store.getters['queue/isInQueue'](file)
             let isInstalled = this.$store.getters['queue/isInstalled'](file)
 
-            file.url    = 'http://' + this.ip + ':' + this.port + '/' + file.patchedFilename
+            file.url    = 'http://' + this.ip + ':' + this.port + publicPath
             file.image  = file.url + '/icon0.png'
             file.status = 'serving'
 
@@ -300,17 +315,23 @@ export default {
         },
 
         async fileImageCallbackResponse(file, request, response){
-            let image = null
             try {
                 let s = await getPs4PkgInfo(file.path, { generateBase64Icon: true })
                     .catch( e => {
-                        console.error("Error in PKG Extraction: "+ e + '; File: ' + fileName)
+                        console.error("Error in PKG Extraction: "+ e + '; File: ' + file.name)
                         throw e
-                    })            
+                    })
 
-                const image = s.icon0Raw;
-                response.writeHead(200, { 'Content-Type': 'image/png' });
-                response.end(image, 'binary');
+                if(!s || (!s.icon0Raw && !s.icon0))
+                    throw new Error('No icon0 found in PKG')
+
+                if(s.icon0Raw){
+                    response.writeHead(200, { 'Content-Type': 'image/png' });
+                    response.end(s.icon0Raw, 'binary');
+                    return
+                }
+
+                response.redirect(s.icon0)
             }
             catch (e){
                 console.error(e)

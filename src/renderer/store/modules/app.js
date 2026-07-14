@@ -41,7 +41,9 @@ export const state = {
         port_ftp: 2121,
         port_etaHEN: 9090,
         port_singleDPI: 9090,
+        port_singleDPI_v2: 12800,
         port_goldhen: 9090,
+        singleDPI_install_mode: 'auto',
         singleDPI_queue_mode: 'delay',
         singleDPI_queue_delay_seconds: 2,
         timeout: 2500,
@@ -87,7 +89,9 @@ export const mutations = {
             port_ftp: 2121,
             port_etaHEN: 9090,
             port_singleDPI: 9090,
+            port_singleDPI_v2: 12800,
             port_goldhen: 9090,
+            singleDPI_install_mode: 'auto',
             singleDPI_queue_mode: 'delay',
             singleDPI_queue_delay_seconds: 2,
             timeout: 2500,
@@ -186,6 +190,10 @@ export const getters = {
 
     getReadSFOHeader(state){
             return state.server.readSFOHeader
+    },
+
+    getSingleDPIInstallMode(state){
+            return state.ps4.singleDPI_install_mode || 'auto'
     },
 
     getStyle(state){

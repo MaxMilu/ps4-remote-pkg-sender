@@ -244,6 +244,15 @@ let ps4 = {
         return this.request(this.getURL() + '/api/find_task', { content_id: file.patchedFilename, sub_type: 6 }, { timeout: this.getTimeout() })
     },
 
+    recover(file, options = {}){
+        const contentId = Vue.prototype.$helper.getFileContentId(file)
+
+        if(!contentId)
+            return new Promise((resolve, reject) => reject("Can't find content id for " + file.name))
+
+        return this.request(this.getURL() + '/api/recover_task', { content_id: contentId, resume: !!options.resume }, { timeout: this.getTimeout() })
+    },
+
 }
 
 Vue.prototype.$ps4 = ps4

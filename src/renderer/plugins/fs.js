@@ -2,6 +2,7 @@ import Vue from 'vue'
 import fs from 'fs'
 import { promises as fs_ } from 'fs'
 import path from 'path'
+import crypto from 'crypto'
 import store from './../store'
 import { getPs4PkgInfo } from "@njzy/ps4-pkg-info"
 
@@ -40,6 +41,14 @@ const getFiles = (folder, deep = false) => {
 };
 
 let o = {
+    createSafeRouteName(filePath='', fileName='', isFile=true){
+        const ext = isFile ? path.extname(fileName) || '.pkg' : ''
+        const baseName = (isFile ? path.basename(fileName, ext) : fileName).replace(/[^a-zA-Z0-9-_.]/g, '')
+        const safeBaseName = baseName || (isFile ? 'pkg' : 'dir')
+        const hash = crypto.createHash('sha1').update(filePath).digest('hex').slice(0, 8)
+
+        return `${safeBaseName}-${hash}${ext}`
+    },
 
     async getFilesFromBasePath(folder='', scan_subdir=false){
         if(!folder){
@@ -125,13 +134,16 @@ let o = {
 
         let fileName = path.basename(item)
         let fullPath = path.resolve(folder, item)
-        let patchedFilename; // = shouldPrefix ? fullPath.replace(/[^a-zA-Z0-9-_./]/g, '') : fileName.replace(/[^a-zA-Z0-9-_.]/g, '');
+        let patchedFilename;
 
         if(shouldPrefix){
-            patchedFilename = (fullPath.charAt(0) == "/") ? fullPath.substr(1).replace(/[^a-zA-Z0-9-_./]/g, '') : fullPath.replace(/[^a-zA-Z0-9-_./]/g, '')
+            const parts = path.relative(folder, fullPath).split(path.sep)
+            patchedFilename = parts
+                .map((part, index) => this.createSafeRouteName(path.join(folder, ...parts.slice(0, index + 1)), part, index == parts.length - 1))
+                .join('/')
         }
         else {
-            patchedFilename = fileName.replace(/[^a-zA-Z0-9-_.]/g, '');
+            patchedFilename = this.createSafeRouteName(fullPath, fileName)
         }
 
         let stats = fs.lstatSync(fullPath)
@@ -273,7 +285,7 @@ let o = {
         const readSFOHeader = store.getters['app/getReadSFOHeader']        
         
         let name            = path.basename(draggedFilePath)
-        let patchedFilename = name.replace(/[^a-zA-Z0-9-_.]/g, '')
+        let patchedFilename = this.createSafeRouteName(draggedFilePath, name)
         let size            = this.getFileSize(draggedFilePath, 2, true)
         let searchCUSA      = name.match(/(CUSA\d{5})/i)
         let cusa            = searchCUSA ? searchCUSA[0].toUpperCase() : ''      
