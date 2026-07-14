@@ -13,6 +13,10 @@
 
 本分支修改主要目的是为了兼容`singleDPI`的ps4 pkg安装功能，其他的都是因为作者强迫症犯了非得干的。
 
+当前版本：`0.2.0`
+
+- 更新 DPI v2 的安装方式，理论兼容 etaHEN 对应 DPI v2 的安装方式。
+
 本分支在原项目的 PS5 etaHEN 支持基础上增加了以下功能：
 
 - **[核心功能] 增加 PS5 `singleDPI` 目标**，通过 9090 DPI v1 控制 API 与实验性的 12800 DPI v2 URL 入口连接独立的 Direct Package Installer payload
