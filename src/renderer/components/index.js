@@ -7,12 +7,12 @@
 
 import Vue from 'vue'
 
-const requireContext = require.context('./', false, /.*\.vue$/)
-const layouts = requireContext.keys()
-  .map(file =>
-    [file.replace(/(^.\/)|(\.vue$)/g, ''), requireContext(file)]
-  )
+const modulesList = import.meta.glob('./*.vue', { eager: true })
+const layouts = Object.keys(modulesList)
+  .map(file => [file.replace(/^\.\//, '').replace(/\.vue$/, ''), modulesList[file]])
   .reduce((components, [name, component]) => {
     let Component = component.default || component
-    Vue.component(Component.name, Component)
+    if(Component.name) {
+      Vue.component(Component.name, Component)
+    }
   }, {})

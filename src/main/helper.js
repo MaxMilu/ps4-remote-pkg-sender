@@ -29,16 +29,11 @@ export default {
     setWindowLoadURL(window, to='/'){
         window.webContents.setUserAgent("StoreHAX")
 
-        if (isDevelopment) {
-          window.loadURL(`http://localhost:${process.env.ELECTRON_WEBPACK_WDS_PORT}` + '#' + to)
+        if (isDevelopment && process.env['ELECTRON_RENDERER_URL']) {
+          window.loadURL(process.env['ELECTRON_RENDERER_URL'] + '/#' + to)
         }
         else {
-          window.loadURL('file://' + path.join(__dirname, 'index.html') + '#' + to)
-          // window.loadURL(formatUrl({
-          //   pathname: path.join(__dirname, 'index.html'+ '#' + to),
-          //   protocol: 'file',
-          //   slashes: true
-          // }))
+          window.loadURL('file://' + path.join(__dirname, '../renderer/index.html') + '#' + to)
         }
     },
 
@@ -69,6 +64,7 @@ export default {
             webPreferences: {
                 allowRunningInsecureContent: true,
                 nodeIntegration: true,
+                contextIsolation: false,
                 enableRemoteModule: true,
             }
         }
@@ -117,6 +113,7 @@ export default {
                 webPreferences: {
                     allowRunningInsecureContent: false,
                     nodeIntegration: true,
+                    contextIsolation: false,
                     enableRemoteModule: true,
                     webviewTag: true,
                 }
@@ -153,11 +150,11 @@ export default {
     },
 
     getIconPath(){
-        return path.join(__static, 'assets/ps_icon_white.png')
+        return path.join(isDevelopment ? process.cwd() : process.resourcesPath, 'static', 'assets/ps_icon_white.png')
     },
 
     getAppIconPath(){
-        return path.join(__static, 'assets/ps_icon_white.icns')
+        return path.join(isDevelopment ? process.cwd() : process.resourcesPath, 'static', 'assets/ps_icon_white.icns')
     },
 
 

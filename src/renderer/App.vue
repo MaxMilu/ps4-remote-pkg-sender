@@ -21,7 +21,7 @@ export default {
     versions: {
       app: require('./../../package.json').version,
       electron: process.versions.electron,
-      electronWebpack: require('electron-webpack/package.json').version
+      electronVite: "2.3.0"
     },
     serverTab: 'server',
     rpsv2: {
@@ -139,7 +139,8 @@ export default {
           
           // proxy though application view
           if (isDevelopment) {
-            window.open(`http://localhost:${process.env.ELECTRON_WEBPACK_WDS_PORT}` + '#window.loader?q=' + url, 'Download', 'width=200,height=30,backgroundColor=black,frame=false,hide=true')
+            const baseUrl = typeof process !== 'undefined' && process.env.ELECTRON_RENDERER_URL ? process.env.ELECTRON_RENDERER_URL : window.location.origin;
+            window.open(baseUrl + '/#window.loader?q=' + url, 'Download', 'width=200,height=30,backgroundColor=black,frame=false,hide=true')
           }
           else {
             window.open('file://' + path.join(__dirname, 'index.html') + '#window.loader?q=' + url, 'Download', 'width=200,height=30,backgroundColor=black,frame=false,hide=true')

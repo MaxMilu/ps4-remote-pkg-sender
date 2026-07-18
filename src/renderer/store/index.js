@@ -7,18 +7,18 @@ import { createPersistedState, createSharedMutations } from "vuex-electron"
 Vue.use(Vuex)
 
 // Load store modules dynamically.
-const requireContext = require.context('./modules', false, /.*\.js$/)
+const modulesList = import.meta.glob('./modules/*.js', { eager: true })
 
-const modules = requireContext.keys()
-    .map(file =>
-        [file.replace(/(^.\/)|(\.js$)/g, ''), requireContext(file)]
-    )
+const modules = Object.keys(modulesList)
+    .map(file => [file.replace(/^\.\/modules\//, '').replace(/\.js$/, ''), modulesList[file]])
     .reduce((modules, [name, module]) => {
-        if (module.namespaced === undefined) {
-        module.namespaced = true
+        let mod = module.default || module;
+        mod = { ...mod }; // Make it extensible
+        if (mod.namespaced === undefined) {
+            mod.namespaced = true
         }
 
-        return { ...modules, [name]: module }
+        return { ...modules, [name]: mod }
     }, {})
 
 function createStore(){

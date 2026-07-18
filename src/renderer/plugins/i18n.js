@@ -18,7 +18,7 @@ const i18n = new VueI18n({
 export async function loadMessages (locale) {
   if (Object.keys(i18n.getLocaleMessage(locale)).length === 0) {
     try {
-      const messages = await import(/* webpackChunkName: "lang-[request]" */ `@/lang/${locale}`)
+      const messages = await import(/* @vite-ignore */ `../lang/${locale}.json`)
       i18n.setLocaleMessage(locale, messages.default || messages)
     } catch (e) {
       console.warn(`Failed to load messages for locale: ${locale}`, e)

@@ -1,11 +1,14 @@
+const pages = import.meta.glob('../pages/**/*.vue')
+const layouts = import.meta.glob('../layout/**/*.vue')
+
 function loadTemplate(pre='', page=''){
-    // return () => import(__dirname + '/../pages/' + pre + page).then(m => m.default || m)
-    return () => import('@/pages/' + pre + page).then(m => m.default || m)
+    const path = `../pages/${pre}${page}.vue`
+    return pages[path] ? pages[path] : () => Promise.reject(new Error(`Page not found: ${path}`))
 }
 
 function loadLayout(pre='', page=''){
-    // return () => import(__dirname + '/../pages/' + pre + page).then(m => m.default || m)
-    return () => import('@/layout/' + pre + page).then(m => m.default || m)
+    const path = `../layout/${pre}${page}.vue`
+    return layouts[path] ? layouts[path] : () => Promise.reject(new Error(`Layout not found: ${path}`))
 }
 
 function loadPage(page){

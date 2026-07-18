@@ -51,7 +51,6 @@ function createMainWindow() {
 
   windows.main = window
 
-  // for hard debugging
   // mainWindow.webContents.openDevTools()
 }
 
