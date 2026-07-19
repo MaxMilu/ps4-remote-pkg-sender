@@ -127,7 +127,7 @@
 </template>
 
 <script>
-import { debounce } from 'debounce'
+import debounce from 'debounce'
 import { get } from 'vuex-pathify'
 
 export default {

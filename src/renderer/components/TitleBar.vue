@@ -19,8 +19,8 @@
 </template>
 
 <script>
-import os from 'os'
-import { remote } from 'electron'
+const os = require('os')
+const remote = require('@electron/remote')
 import { get } from 'vuex-pathify'
 
 export default {

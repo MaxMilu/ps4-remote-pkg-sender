@@ -1,25 +1,23 @@
 <template>
   <router-view _key="$route.path" />
 </template>
-
 <script>
 import './scss/app.scss';
-// import "@fortawesome/fontawesome-free/js/all";
 import { get } from 'vuex-pathify'
-import { remote, ipcRenderer, shell } from 'electron'
-import url from 'url'
+const { remote, ipcRenderer, shell } = require('electron')
+const url = require('url')
 import axios from 'axios'
-import path from 'path'
-// import uuid from 'uuid'
-const uuid = require('uuid');
+const path = require('path')
+const uuid = require('uuid')
+import pkg from './../../package.json'
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
 export default {
   name: 'App',
 
-  data(){ return {    
+  data(){ return {
     versions: {
-      app: require('./../../package.json').version,
+      app: pkg.version,
       electron: process.versions.electron,
       electronVite: "2.3.0"
     },
@@ -44,20 +42,17 @@ export default {
                 os: process.platform,
                 arch: process.arch,
                 hostname: this.serial,
-                title: n.name,                
+                title: n.name,
                 url: n.fullPath,
                 referrer: o ? o.fullPath : '',
                 language: window.navigator.language, // #todo swap to selected language
-                // website: this.rpsv2.id,
             }
 
             this.track(data)
-            
-            // console.log(data)
       },
   },
 
-  created(){      
+  created(){
       this.checkColorStyle()
       this.addDependencies()
   },
@@ -74,9 +69,6 @@ export default {
     // info: Vue specific error information such as lifecycle hooks, events etc.
     console.log(err, vm, info)
     alert(err)
-
-    // TODO: Perform any custom logic or log to server
-    // return false to stop the propagation of errors further to parent or global error handler
   },
 
   methods:{
@@ -87,7 +79,7 @@ export default {
           })
 
           ipcRenderer.on('main-error', (event, data) => {
-              this.$message({ type: 'error', message: data })
+              this.$message({ type: 'error', message: data })
           })
 
           ipcRenderer.on('error', (event, data) => {
@@ -105,22 +97,22 @@ export default {
 
             api.get('https://rpsv2.gkiokan.net?c')
                 .then( ({data}) => {
-                    if( !data ) 
+                    if( !data )
                         throw new Error("rpsv2 config data error")
 
                     this.rpsv2.id = data.id
 
                     const analytics = document.createElement('script')
-                    analytics.defer = false 
-                    analytics.src = data.src // "https://rpsv2.gkiokan.net?s"
+                    analytics.defer = false
+                    analytics.src = data.src
                     analytics.setAttribute('data-website-id', data.id)
                     analytics.setAttribute('data-host-url', data['data-host-url'])
                     analytics.setAttribute('data-auto-track', false)
-                    
+
                     return analytics
                 })
                 .then( (analytics) => {
-                    document.head.appendChild(analytics);
+                    document.head.appendChild(analytics)
                 })
                 .catch( (e) => {
                     console.log("Error in fetching rpsv2 configs", e)
@@ -131,19 +123,15 @@ export default {
           shell.openExternal(b)
       },
 
-      openWithAutoclose(url){
-          console.log("Open with Autoclose ", url)
-          
-          // straight open a new window with the url
-        //   return window.open(url, 'Download', 'width=200,height=30,backgroundColor=black,frame=false,hide=true') // deprecated
-          
+      openWithAutoclose(downloadUrl){
+          console.log("Open with Autoclose ", downloadUrl)
+
           // proxy though application view
-          if (isDevelopment) {
-            const baseUrl = typeof process !== 'undefined' && process.env.ELECTRON_RENDERER_URL ? process.env.ELECTRON_RENDERER_URL : window.location.origin;
-            window.open(baseUrl + '/#window.loader?q=' + url, 'Download', 'width=200,height=30,backgroundColor=black,frame=false,hide=true')
+          if (isDevelopment && process.env['ELECTRON_RENDERER_URL']) {
+            window.open(process.env['ELECTRON_RENDERER_URL'] + '#window.loader?q=' + downloadUrl, 'Download', 'width=200,height=30,backgroundColor=black,frame=false,hide=true')
           }
           else {
-            window.open('file://' + path.join(__dirname, 'index.html') + '#window.loader?q=' + url, 'Download', 'width=200,height=30,backgroundColor=black,frame=false,hide=true')
+            window.open('file://' + path.join(__dirname, 'index.html') + '#window.loader?q=' + downloadUrl, 'Download', 'width=200,height=30,backgroundColor=black,frame=false,hide=true')
           }
       },
 
@@ -174,12 +162,11 @@ export default {
       },
 
       log(msg='', data={}, type='log'){
-          this.$root.sendPS4({ time: Date.now(), msg, data, type })
+          this.$root.sendPS4({ time: Date.now(), msg, data, type })
       },
 
       getImage(img){
           const isDevelopment = process.env.NODE_ENV === 'development';
-          // const staticPath = isDevelopment ? __static : __dirname.replace(/app\.asar$/, 'static');
 
           if(isDevelopment)
             return url.resolve(window.location.origin, img);
@@ -199,7 +186,7 @@ export default {
                 let newHostSerial = uuid.v4()
                 console.log("No Application Serial found. Creating one", newHostSerial)
                 this.$store.dispatch('app/setSerial', newHostSerial)
-            }        
+            }
             else {
                 console.log("Application Serial " + this.serial)
             }
@@ -207,13 +194,7 @@ export default {
 
       track(data={}){
             // Disable route tracking to avoid preflight CORS errors with keepalive
-            // This was causing: "Preflight request for request with keepalive specified is currently not supported"
             return
-            /*
-            // Original tracking code (commented out due to CORS issues with keepalive)
-            if( window.umami )
-                window.umami.track( props => ({ ...props, ...data }) )
-            */
       },
 
       move(params){
@@ -225,7 +206,7 @@ export default {
          }
 
          this.$router.push(params)
-      },      
+      },
 
   },
 }

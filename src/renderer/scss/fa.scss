@@ -1,6 +1,10 @@
 // Import Font Awesome 5 Free
 // $fa-css-prefix: 'el-icon-fa';
-$fa-font-path: '~@fortawesome/fontawesome-free/webfonts';
+// Vite (unlike webpack's sass-loader) doesn't understand the "~" prefix for
+// resolving node_modules paths inside url(); it was being requested literally
+// as "/~@fortawesome/..." and failing to load (invalid font). Bare specifiers
+// resolve to node_modules fine without the tilde.
+$fa-font-path: '@fortawesome/fontawesome-free/webfonts';
 
 @import '@fortawesome/fontawesome-free/scss/fontawesome.scss';
 @import '@fortawesome/fontawesome-free/scss/regular.scss';

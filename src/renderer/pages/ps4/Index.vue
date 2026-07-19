@@ -22,7 +22,7 @@
 </template>
 
 <script>
-import { ipcRenderer } from 'electron'
+const { ipcRenderer } = require('electron')
 
 export default {
     name: 'PS4',

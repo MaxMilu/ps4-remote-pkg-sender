@@ -12,7 +12,6 @@
 
 import Vue from 'vue'
 import store from '../store'
-import { connect } from 'http2'
 // import net from 'net'
 const net = require('net')
 

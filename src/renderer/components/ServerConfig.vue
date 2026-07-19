@@ -102,7 +102,8 @@
 <script>
 import { get, sync } from 'vuex-pathify'
 import { throttle } from 'lodash'
-import { remote, ipcRenderer } from 'electron'
+const { ipcRenderer } = require('electron')
+const remote = require('@electron/remote')
 
 export default {
     name: 'ServerConfig',

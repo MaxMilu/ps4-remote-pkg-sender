@@ -1,9 +1,32 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>PS4 Remote PKG Sender V2</title>
+    <style>
+      body { background: #222; margin: 0; padding: 0; height: 100vh; overflow: hidden; }
+    </style>
+    <script>
+      // Registered before the module script loads so that even a fatal error
+      // during module import (which devtools may not surface reliably here)
+      // is rendered directly into the page.
+      function showBootError(err) {
+        try {
+          var msg = (err && (err.stack || err.message)) || String(err);
+          console.error('[Fatal boot error]', err);
+          var el = document.getElementById('app') || document.body;
+          el.innerHTML = '<pre style="color:#f66;background:#111;padding:16px;white-space:pre-wrap;font-family:monospace;">Boot error:\n' +
+            msg.replace(/&/g, '&amp;').replace(/</g, '&lt;') + '</pre>';
+        } catch (e) { /* nothing we can do */ }
+      }
+      window.addEventListener('error', function (event) {
+        showBootError(event.error || event.message);
+      });
+      window.addEventListener('unhandledrejection', function (event) {
+        showBootError(event.reason);
+      });
+    </script>
   </head>
   <body>
     <div id="app"></div>

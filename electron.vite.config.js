@@ -15,6 +15,14 @@ export default defineConfig({
     root: 'src/renderer',
     publicDir: '../../static',
     plugins: [vue()],
+    optimizeDeps: {
+      exclude: ['fs', 'path', 'os', 'child_process', 'crypto', 'electron', 'net', 'url', 'http', 'express', 'uaup-js', '@njzy/ps4-pkg-info', 'vuex-electron']
+    },
+    build: {
+      rollupOptions: {
+        external: ['fs', 'path', 'os', 'child_process', 'crypto', 'electron', 'net', 'url', 'http', 'express', 'uaup-js', '@njzy/ps4-pkg-info', 'vuex-electron']
+      }
+    },
     resolve: {
       alias: {
         '@': path.resolve(__dirname, 'src/renderer')

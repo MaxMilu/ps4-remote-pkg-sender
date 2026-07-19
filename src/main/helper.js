@@ -1,23 +1,20 @@
 import { BrowserWindow, Menu, ipcMain, app, nativeImage } from 'electron'
 import path from 'path'
 import { format as formatUrl } from 'url'
+import remoteMain from '@electron/remote/main'
+
+remoteMain.initialize()
 
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
 export default {
     installDevtools(window){
-        window.webContents.on('did-frame-finish-load', () => {
-          require('vue-devtools').install()
-          // BrowserWindow.addDevToolsExtension('node_modules/vue-devtools/vender')
-          window.webContents.openDevTools()
-        })
-
-        window.webContents.on('devtools-opened', () => {
-          window.focus()
-          setImmediate(() => {
-            window.focus()
-          })
-        })
+        // try {
+        //   require('vue-devtools').install()
+        // } catch(e) {
+        //   console.error("vue-devtools install failed", e);
+        // }
+        window.webContents.openDevTools()
     },
 
     setDevtools(window){
@@ -30,7 +27,10 @@ export default {
         window.webContents.setUserAgent("StoreHAX")
 
         if (isDevelopment && process.env['ELECTRON_RENDERER_URL']) {
-          window.loadURL(process.env['ELECTRON_RENDERER_URL'] + '/#' + to)
+          // ensure 'to' paths that start with '/' are handled cleanly since the URL already resolves cleanly
+          // electron-vite router usually does not need '/#'
+          const loadPath = to.startsWith('/') ? to : '/' + to;
+          window.loadURL(process.env['ELECTRON_RENDERER_URL'] + '/#' + loadPath)
         }
         else {
           window.loadURL('file://' + path.join(__dirname, '../renderer/index.html') + '#' + to)
@@ -59,13 +59,16 @@ export default {
             width: 900,
             // frame: false,
             title: 'PS4 Remote Package Sender v2',
-            icon: nativeImage.createFromDataURL(this.getAppIconPath()),
+            // .icns is macOS-only and can't be decoded by nativeImage on Linux/Windows;
+            // createFromPath (not createFromDataURL, which expects a data: URL string,
+            // not a file path) with the cross-platform .png works everywhere.
+            icon: nativeImage.createFromPath(this.getIconPath()),
             // titleBarStyle: 'hiddenInset',
             webPreferences: {
                 allowRunningInsecureContent: true,
                 nodeIntegration: true,
                 contextIsolation: false,
-                enableRemoteModule: true,
+                devTools: true
             }
         }
 
@@ -81,8 +84,15 @@ export default {
     createWindowInstance(to='/', args={}, debug=false){
         const window = this.createBaseWindow(args)
 
-        if(debug)
-        this.setDevtools(window)
+        remoteMain.enable(window.webContents)
+
+        window.webContents.on('console-message', (event, level, message, line, sourceId) => {
+            console.log(`[Renderer Console] ${message} (at ${sourceId}:${line})`);
+        });
+
+        if (isDevelopment && debug) {
+          window.webContents.openDevTools({ mode: 'detach' });
+        }
 
         this.setWindowLoadURL(window, to)
 
@@ -109,15 +119,16 @@ export default {
             var win = new BrowserWindow({ 
                 show: true, 
                 frame: false,
-                icon: nativeImage.createFromDataURL(this.getAppIconPath()),
+                icon: nativeImage.createFromPath(this.getIconPath()),
                 webPreferences: {
                     allowRunningInsecureContent: false,
                     nodeIntegration: true,
                     contextIsolation: false,
-                    enableRemoteModule: true,
                     webviewTag: true,
                 }
             })
+
+            remoteMain.enable(win.webContents)
 
             win.webContents.setUserAgent("StoreHAX")
             win.once('ready-to-show', () => win.show())

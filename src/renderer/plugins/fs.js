@@ -1,9 +1,9 @@
 import Vue from 'vue'
-import fs from 'fs'
-import { promises as fs_ } from 'fs'
-import path from 'path'
+const fs = require('fs')
+const fs_ = fs.promises
+const path = require('path')
 import store from './../store'
-import { getPs4PkgInfo } from "@njzy/ps4-pkg-info"
+const { getPs4PkgInfo } = require("@njzy/ps4-pkg-info")
 
 const getFiles = (folder, deep = false) => {
     const files = [];

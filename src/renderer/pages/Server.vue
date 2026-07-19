@@ -173,13 +173,13 @@
 </template>
 
 <script>
-import fs from 'fs'
-import path from 'path'
+const fs = require('fs')
+const path = require('path')
 import {get, sync} from 'vuex-pathify'
-import {remote, ipcRenderer} from 'electron'
+const {remote, ipcRenderer} = require('electron')
 
-import express from 'express'
-import http from 'http'
+const express = require('express')
+const http = require('http')
 
 export default {
   name: 'ServerList',

@@ -24,19 +24,19 @@
 </template>
 
 <script>
-import fs from 'fs'
-import path from 'path'
+const fs = require('fs')
+const path = require('path')
 import { get, sync } from 'vuex-pathify'
-import { shell, ipcRenderer } from 'electron'
+const { shell, ipcRenderer } = require('electron')
 
-import express from 'express'
-import http from 'http'
+const express = require('express')
+const http = require('http')
 
 import Logs from './components/Logs'
 import Files from './components/Files'
 import Debug from './components/Debug'
 import Routes from './components/Routes'
-import { getPs4PkgInfo } from "@njzy/ps4-pkg-info"
+const { getPs4PkgInfo } = require("@njzy/ps4-pkg-info")
 
 export default {
     name: 'Server',

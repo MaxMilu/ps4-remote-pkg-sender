@@ -2,7 +2,15 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import pathify from './pathify'
 
-import { createPersistedState, createSharedMutations } from "vuex-electron"
+const { createSharedMutations } = require("vuex-electron")
+// NOTE: createPersistedState is intentionally NOT used here. vuex-electron's
+// persisted-state plugin relies on the "electron-store" package, whose constructor
+// unconditionally calls (electron.app || electron.remote.app).getPath('userData').
+// In the renderer process `app` is undefined and `remote` no longer exists (removed
+// in modern Electron), so this always threw a TypeError and prevented the store
+// (and thus the whole Vue app) from ever mounting - this was the root cause of the
+// original black/white screen. TODO: reintroduce persistence via a renderer-safe
+// mechanism (e.g. IPC to a main-process store, or localStorage).
 
 Vue.use(Vuex)
 
@@ -25,47 +33,27 @@ function createStore(){
     return new Vuex.Store({
         plugins: [
             pathify.plugin,
-            createPersistedState({
-                throttle: 1000,
-                blacklist: [
-                    'server/addLog', 
-                    'server/routes', 
-                    'server/setStatus', 
-                    'server/setRoutes',
-                    'server/setServingFiles',
-                    'server/setDraggedServingFiles'
-                ],
-
-                // whitelist: (mutation) => {
-                //     // console.log(mutation.type, mutation.payload )
-                //     let block = ['server/addLog', 'server/routes']
-
-                //     if( block.includes(mutation.type) ){
-                //         console.info("Store::Blocking | " + mutation.type)
-                //         return false 
-                //     }
-
-                //     console.log("Store::Pass | " + mutation.type)
-                //     return true
-                // },
-            }),
             createSharedMutations()
-        ],
+        ], // createPersistedState omitted, see note above
         modules
     })
 }
 
 let store
+let lastError
 
-while(store === undefined){
+for (let attempt = 0; attempt < 5 && store === undefined; attempt++) {
     try {
         store = createStore()
-        break;
     }
-    catch(e){
-        // alert("Error in Store, guess race condition. Recreating Storage." + e)
-        continue;
+    catch (e) {
+        lastError = e
+        console.error('[Store] createStore() failed on attempt ' + (attempt + 1), e)
     }
+}
+
+if (store === undefined) {
+    throw lastError || new Error('[Store] createStore() failed and produced no store')
 }
 
 export default store

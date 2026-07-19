@@ -96,9 +96,8 @@
 
 <script>
 import { get } from 'vuex-pathify'
-import { shell } from 'electron'
+const { shell, ipcRenderer, remote } = require('electron')
 import links from '@/../config/links'
-import { ipcRenderer, remote } from 'electron'
 
 export default {
   name: 'DefaultLayout',

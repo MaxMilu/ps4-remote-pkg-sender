@@ -62,7 +62,7 @@ import Vue from 'vue'
 import axios from './axios'
 import store from './../store'
 import { get } from 'vuex-pathify'
-import { ipcRenderer } from 'electron'
+const { ipcRenderer } = require('electron')
 
 let ps4 = {
 

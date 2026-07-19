@@ -1,4 +1,4 @@
-import { app, session, BrowserWindow, Notification, ipcMain, globalShortcut, protocol } from 'electron'
+import { app, session, BrowserWindow, Notification, ipcMain, globalShortcut, protocol, Menu } from 'electron'
 import path from 'path'
 import { format as formatUrl } from 'url'
 
@@ -7,14 +7,16 @@ import menu from './menu'
 import tray from './tray'
 import store from './../renderer/store/index.js'
 
-// import './crashReporter'
-
 // prepatch 
 console.log("Plattform Check " + process.platform)
+// Force Wayland GPU patches to prevent white screens
 if (process.platform === "linux") {
   console.log("Apply --no-sandbox to commandline to fix Linux (debian) graphical issues")
-  console.log("More Info: https://github.com/Gkiokan/ps4-remote-pkg-sender/issues/76#issuecomment-2127757683")
+  
   app.commandLine.appendSwitch("no-sandbox");
+  app.commandLine.appendSwitch("disable-gpu");
+  app.commandLine.appendSwitch("disable-software-rasterizer");
+  app.disableHardwareAcceleration();
 }
 
 // set vars
@@ -25,7 +27,6 @@ const showServerDevtools = false
 const showPS4DevTools = false
 const showMainDevTools = isDevelopment
 
-// global reference to mainWindow (necessary to prevent window from being garbage collected)
 let windows = {
   info: null,
   main: null,
@@ -33,8 +34,9 @@ let windows = {
   ps4: null,
 }
 
-// Create Windows
 function createMainWindow() {
+  Menu.setApplicationMenu(null)
+  
   const window = helper.createWindowInstance('/', {
     width: 1300, height: 800, frame: false,
   }, showMainDevTools)
@@ -44,17 +46,17 @@ function createMainWindow() {
     window.hide()
   })
   window.on('closed', () => { windows.main = null })
-  // window.webContents.openDevTools()
 
-  // handle download child windows and autoclose
   helper.autocloseAfterDownload(window)
 
   windows.main = window
-
-  // mainWindow.webContents.openDevTools()
+  
+  // ensure main DevTools run properly in dev mode
+  window.once('ready-to-show', () => {
+    window.show()
+  })
 }
 
-// create Server Window
 function createServerWindow(){
   const window = helper.createWindowInstance('/app/Server', {
     width: 800, height: 500, title: 'Server', show: showServerWindowOnStartUp,
@@ -67,7 +69,6 @@ function createServerWindow(){
   windows.server = window
 }
 
-// create Info Window
 function createInfoWindow(){
   const window = helper.createWindowInstance('/info', {
     width: 500, height: 600, title: 'Info', show: false,
@@ -80,7 +81,6 @@ function createInfoWindow(){
   windows.info = window
 }
 
-// create Info Window
 function createPS4Window(){
   const window = helper.createWindowInstance('/ps4', {
     width: 800, height: 800, title: 'PS4', show: false,
@@ -93,14 +93,12 @@ function createPS4Window(){
   windows.ps4 = window
 }
 
-// hearthbeat
 function hearthbeat(){
   setInterval( () => {
     store.dispatch('app/addTime')
   }, 1000)
 }
 
-// registerChannel
 function registerChannel(){
     ipcMain.on('server', (event, data) => windows.server.webContents.send('server', data) )
     ipcMain.on('server-show', () => windows.server.show() )
@@ -117,7 +115,6 @@ function registerChannel(){
     ipcMain.on('quit', () => app.quit() )
 }
 
-// add Shortcuts
 function addShortcuts(){
     globalShortcut.register('CommandOrControl+C', () => {
       contents.copy()
@@ -128,22 +125,14 @@ function addShortcuts(){
     })
 }
 
-// create Protocols
 function createProtocols(){
     return;
-    protocol.registerSchemesAsPrivileged([
-      { scheme: 'http', privileges: { standard: true, bypassCSP: true, allowServiceWorkers: true, supportFetchAPI: true, corsEnabled: true, stream: true } },
-      { scheme: 'https', privileges: { standard: true, bypassCSP: true, allowServiceWorkers: true, supportFetchAPI: true, corsEnabled: true, stream: true } },
-      { scheme: 'mailto', privileges: { standard: true } },
-    ]);
 }
 
-// notifications
 function notify(data){
     new Notification(data).show()
 }
 
-// show window
 function showWindow(data){
     if(data == 'ps4')
       windows.ps4.show()
@@ -155,30 +144,24 @@ function showWindow(data){
       windows.info.show()
 }
 
-// quit application when all windows are closed
 app.on('window-all-closed', () => {
   console.log("All windows are closed. Kill all processes.")
-  // on macOS it is common for applications to stay open until the user explicitly quits
-  // if (process.platform !== 'darwin') {
-  //   app.quit()
-  // }
-
   app.quit()
 })
 
-// fix quit issue when open windows are left
 app.on('before-quit', (event) => {
   console.log("Closing applications")
 
   console.log("Closing Server")
-  windows.server.webContents.send('server', 'stop')
+  if (windows.server && windows.server.webContents) {
+      windows.server.webContents.send('server', 'stop')
+  }
 
   setTimeout(() => {
     Object.values(windows).map( (win) => {
       if(!win){
           return console.log("No win object")
       }
-
       win.removeAllListeners('close')
       win.close()
     })
@@ -187,12 +170,10 @@ app.on('before-quit', (event) => {
   console.log("Application closed.")
 })
 
-//  activate hook
 app.on('activate', () => {
   windows.main.show()
 })
 
-// create main BrowserWindow when electron is ready
 app.on('ready', () => {
   createMainWindow()
   createServerWindow()
@@ -200,15 +181,11 @@ app.on('ready', () => {
   createPS4Window()
   createProtocols()
 
-  // addShortcuts()
-
   menu.createMenu()
   tray.createTray()
 
-  new Notification({ title: 'PS4 Remote PKG Sender', body: 'Welcome to PS4 Remote PKG Installer. \nStart your Remote Package Installer App on your PS4 and add your PKG files here. \nHave fun.' }).show()
+  new Notification({ title: 'PS4 Remote PKG Sender', body: 'Welcome to PS4 Remote PKG Installer.' }).show()
   registerChannel()
-  // hearthbeat()
 })
-
 
 export default windows

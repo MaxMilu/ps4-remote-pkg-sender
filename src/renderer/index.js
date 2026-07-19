@@ -1,28 +1,11 @@
 import Vue from 'vue'
 import App from './App.vue'
-
 import router from './router'
 import store from './store'
 import i18n from './plugins/i18n'
 
 import './plugins'
 import './components'
-
-const styles=document.createElement('style');
-styles.innerText=`@import url(https://unpkg.com/spectre.css/dist/spectre.min.css);
-  .empty{display:flex;
-    flex-direction:column;
-    justify-content:center;
-    height:100vh;
-    position:relative}.footer{bottom:0;
-      font-size:13px;
-      left:50%;
-      opacity:.9;
-      position:absolute;
-      transform:translateX(-50%);
-      width:100%}`;
-
-// document.head.appendChild(styles);
 
 Vue.config.devtools = process.env.NODE_ENV !== 'production',
 Vue.config.productionTip = false,
@@ -34,6 +17,10 @@ Vue.config.errorHandler = (error, vm, info) => {
 const savedLocale = store?.getters?.['lang/locale'] || 'en'
 i18n.loadMessages(savedLocale).catch(e => console.warn('Failed to load locale:', e))
 
+// Spread App's options (data/computed/methods/template) into the root instance
+// itself, rather than rendering App as a child (`render: h => h(App)`). Many
+// components call `this.$root.sendPS4(...)`, `this.$root.notify(...)`,
+// `this.$root.versions`, etc. - those only exist on $root if $root IS App.
 new Vue({
   router,
   store,
@@ -60,3 +47,5 @@ window.addEventListener('unhandledrejection', function(event) {
     console.log(event)
     alert(event.reason)
 });
+
+console.log('Step 4: App.vue mounted with router + store + i18n + plugins + components');
