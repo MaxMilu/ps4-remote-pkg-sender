@@ -1,6 +1,8 @@
-# PS4 Remote PKG Sender v2  
+# 🎮 PS4 Remote PKG Sender v2
 
-## 前言
+> 用于向 PS4 / PS5 发送并安装 PKG 文件的桌面工具。本 Fork 额外适配了 PS5 `singleDPI`。
+
+## 📌 前言
 
 - 我本人的ps5机器停留在5.5版本由于没啥想玩的就是搞了点ps4游戏尝试安装
 - 结果etaHEN本身的安装在主机的下载列表中只能显示进度，没有安装名称，图标
@@ -9,11 +11,11 @@
 - 我没仔细找，但是好像没有这方面的独立安装功能，于是就参考etaHEN的安装功能独立了一个出来
 - 这个sender原本ps4时代我就在用，挺好用的，但是作者不更新了，我就拿来做了功能改造与界面优化
 
-## 本 Fork 当前修改
+## 🧩 本 Fork 当前修改
 
 本分支修改主要目的是为了兼容`singleDPI`的ps4 pkg安装功能，其他的都是因为作者强迫症犯了非得干的。
 
-本分支在原项目的 PS5 etaHEN 支持基础上增加了以下功能：
+本分支在原项目 PS5 etaHEN 支持的基础上，增加或调整了以下功能：
 
 - **[核心功能] 增加 PS5 `singleDPI` 目标**，通过 TCP 9090 API 连接独立的 Direct Package Installer payload
 - **完整国际化支持**：集成 vue-i18n，支持简体中文、德语等多语言切换，语言选择器仅显示已翻译的语言
@@ -25,8 +27,8 @@
 - 列表高度随窗口自动调整，长队列可在表格内部滚动
 - Reset Options 可单独重置已安装状态、移除完成条目或移除 `installed` 类型条目
 - 保留原有 PS5 etaHEN 和 PS4 安装模式，不改变其既有发送方式(未测试，fork主要为了兼容singleDPI)
-- 增加仅构建 Windows x64 版本的命令，避免旧依赖在 ia32 构建阶段要求 Python：
-- 目前仅构建win64，暂无多平台构建。有机器与环境的可以自行拉取代码进行构建操作
+- 增加仅构建 Windows x64 版本的命令，避免旧依赖在 ia32 构建阶段要求 Python
+- 当前发布包以 Windows x64 为主；其他平台可自行拉取代码构建
 
 ```powershell
 npm run build:win:x64
@@ -35,13 +37,38 @@ npm run build:win:x64
 使用 singleDPI 前，需要先在 PS5 上加载与系统版本匹配的 kstuff 或 kstuff-lite，
 然后加载 `singleDPI.elf`，并在应用配置中选择 `PS5 singleDPI`。
 
+## 🆕 2.10.5 修复内容
+
+本版本重点修复 PS5 高版本系统通过网络安装 PKG 时，主机返回以下错误的问题：
+
+```text
+0x80B2116F (SCE_PLAYGO_ERROR_CORE_INVALID_SLOT)
+```
+
+### ✅ 修复项目
+
+- 修复 PS5 13.60 使用 HTTP 方式安装 PKG 时，因响应中的 `Last-Modified` 时间变化而触发系统拒绝安装的问题
+- 让同一个 PKG 在重复请求、断点请求和安装流程中的响应保持稳定
+- 兼容 `singleDPI` 的 DPI v1 / v2 安装流程
+- 保留原有 PS4、PS5、etaHEN 和 singleDPI 安装方式
+- 更新版本号至 `2.10.5`，并提供 Windows x64 ZIP 与 Portable 构建包
+
+### ⚠️ 使用说明
+
+- PS5 上仍需先加载与系统版本匹配的 `kstuff` / `kstuff-lite`，再加载 `singleDPI.elf`
+- 在 Sender 中选择 `PS5 singleDPI` 作为目标
+- PS5 13.60 用户必须使用 **PS4 Remote PKG Sender 2.10.5 或更高版本**
+- 如果仍然出现 `0x80B2116F`，请先确认使用的是新版 Sender，并检查 PKG 文件本身是否能够通过系统 Debug Settings → Package Installer 正常安装
+
+本次修复位于 PKG HTTP 服务响应层，singleDPI 本身的安装调用逻辑没有改变。
+
 ---
 
 # 原始 readme
 
 [![ko-fi](https://img.shields.io/badge/Buy%20me%20a%20Shisha%20on-Ko--fi-red)](https://ko-fi.com/M4M082WK8)
 [![os](https://img.shields.io/badge/platform-windows%20%7C%20macos%20%7C%20linux-lightgrey)](https://github.com/Gkiokan/ps4-remote-pkg-sender)
-[![commits_since_release](https://img.shields.io/github/commits-since/gkiokan/ps4-remote-pkg-sender/v2.10.4)](https://github.com/Gkiokan/ps4-remote-pkg-sender/releases)
+[![commits_since_release](https://img.shields.io/github/commits-since/gkiokan/ps4-remote-pkg-sender/v2.10.5)](https://github.com/Gkiokan/ps4-remote-pkg-sender/releases)
 [![version](https://img.shields.io/github/package-json/v/gkiokan/ps4-remote-pkg-sender)](https://github.com/Gkiokan/ps4-remote-pkg-sender/releases)  
 [![downloads](https://img.shields.io/github/downloads/gkiokan/ps4-remote-pkg-sender/total)](https://github.com/Gkiokan/ps4-remote-pkg-sender/releases)
 [![last_commit](https://img.shields.io/github/last-commit/gkiokan/ps4-remote-pkg-sender)](https://github.com/Gkiokan/ps4-remote-pkg-sender)
@@ -87,8 +114,8 @@ The refactored Version provides a better GUI and technicall more ordered feature
 ## ToDo's for the future (Comming into v2.10+)
 - [x] Drag & Drop files and folders 
 - [x] RPSV2 API Service for dynamic configurations
-- [x] Add PS5 Support (v2.10.4)
-- [x] Add Queue Scanner Bulk Request Support for PS5  (v2.10.4)
+- [x] Add PS5 Support (v2.10.5)
+- [x] Add Queue Scanner Bulk Request Support for PS5  (v2.10.5)
 - [x] SFO Header Reader Implementation (WIP v2.11+)
 - [x] Preview Game title covers   (WIP v2.11+)
 - [x] Read CUSA from file hex values instead of title  (WIP v2.11+)
