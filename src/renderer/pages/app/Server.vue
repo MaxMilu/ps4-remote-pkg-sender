@@ -276,7 +276,16 @@ export default {
         addFileEndpoint(file){
             // this.$store.dispatch('server/addLog', "Create endpoint " + file.patchedFilename)
             this.host.router.get(`/${file.patchedFilename}`, function(request, response){
-                response.status(200).download(file.path, file.name)
+                // PS5 firmware 13.60 can reject a package served with a
+                // changing file mtime and return 0x80B2116F
+                // (SCE_PLAYGO_ERROR_CORE_INVALID_SLOT). Keep the package
+                // representation stable across requests so AppInst does not
+                // enter Sony's rejected patch path. This mirrors the
+                // workaround used by newer PS5 package installers.
+                response.setHeader('Last-Modified', 'Wed, 01 Jan 2025 00:00:00 GMT')
+                response.status(200).download(file.path, file.name, {
+                    lastModified: false,
+                })
             })
 
             // add Image callback to file as ${file}/icon0.png
