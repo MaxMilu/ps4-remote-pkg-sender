@@ -2,6 +2,10 @@
 
 > 用于向 PS4 / PS5 发送并安装 PKG 文件的桌面工具。本 Fork 额外适配了 PS5 `singleDPI`。
 
+🌐 **语言 / Language**：简体中文（当前页面） · [English / 英文说明](README_EN.md)
+
+📚 [查看原始项目 README（英文）](https://github.com/Gkiokan/ps4-remote-pkg-sender#readme)
+
 ## 📌 前言
 
 - 我本人的ps5机器停留在5.5版本由于没啥想玩的就是搞了点ps4游戏尝试安装
